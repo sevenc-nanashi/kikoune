@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue"
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
   const currentCommit = childProcess
-    .execSync("git rev-parse HEAD")
+    .execSync("git rev-parse --short HEAD")
     .toString()
     .trim()
 
@@ -13,10 +13,6 @@ export default defineConfig(async () => {
   return {
     plugins: [vue()],
     server: {
-      headers: {
-        "Content-Security-Policy":
-          "frame-src 'self' https://embed.nicovideo.jp/",
-      },
       port: 1103,
     },
     resolve: {

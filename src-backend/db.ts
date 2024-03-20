@@ -1,41 +1,35 @@
 import consola from "consola"
 import { Redis } from "ioredis"
-import { Member, Session } from "~types/db"
+import { Position } from "~types/type.js"
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379"
 
 export const redis = new Redis(redisUrl)
 
+export type DbSessionVideo = {
+  videoId: string
+  requestedBy: string
+  nonce: string
+}
+export type DbSession = {
+  video: DbSessionVideo | null
+  startedAt: number
+  queue: DbSessionVideo[]
+}
+
 export const userToken = (userId: string) => `token:${userId}`
-export const createToken = async (userId: string, channelId: string) => {
-  const token = crypto.randomUUID() + "-" + channelId
+export const createToken = async (userId: string, instanceId: string) => {
+  const token = crypto.randomUUID() + "-" + instanceId
   await redis.set(userToken(userId), token)
   return token
 }
 export const getToken = async (userId: string) => {
   return redis.get(userToken(userId))
 }
-export const getMembers = async (roomId: string) => {
-  const keys = await redis.keys(`room:${roomId}:user:*`)
-  return await redis.mget(keys).then((values) =>
-    keys
-      .map(
-        (key, i) =>
-          values[i] && {
-            userId: key.split(":")[2],
-            position: JSON.parse(values[i]!) as {
-              x: number
-              y: number
-            },
-          }
-      )
-      .flatMap((x) => x || [])
-  )
-}
 export const setMember = async (
   roomId: string,
   userId: string,
-  data: Member
+  data: { position: Position }
 ) => {
   await redis.set(
     `room:${roomId}:user:${userId}`,
@@ -44,53 +38,73 @@ export const setMember = async (
     15
   )
 }
-export const getSession = async (
-  roomId: string
-): Promise<Session | undefined> => {
-  const isAlive = await redis.exists(`room:${roomId}:session`)
-  if (isAlive === 0) {
-    return undefined
+export const getMembers = async (roomId: string, userIds: string[]) => {
+  const members = await Promise.all(
+    userIds.map(async (id) => {
+      const data = await redis.get(`room:${roomId}:user:${id}`)
+      return data ? JSON.parse(data) : undefined
+    })
+  )
+  return members.filter((m) => m) as { position: Position }[]
+}
+export const getSession = async (roomId: string): Promise<DbSession> => {
+  const sessionRaw = await redis.get(`room:${roomId}:session`)
+  if (!sessionRaw) {
+    throw new Error("Session does not exist")
   }
-  const videoId = await redis.get(`room:${roomId}:session:videoId`)
-  const startedAt = Number(await redis.get(`room:${roomId}:session:startedAt`))
-  const willEndAt = await redis.get(`room:${roomId}:session:willEndAt`)
-  const queue = await redis.lrange(`room:${roomId}:session:queue`, 0, -1)
-  return {
-    videoId: videoId ?? undefined,
-    startedAt,
-    willEndAt: willEndAt ? Number(willEndAt) : undefined,
-    queue,
-  }
+  return JSON.parse(sessionRaw)
 }
 export const keepAliveSession = async (roomId: string) => {
-  await redis.set(`room:${roomId}:session`, "alive", "EX", 60)
+  await redis.expire(`room:${roomId}:session`, 60)
 }
-export const createSession = async (roomId: string): Promise<Session> => {
+export const createSession = async (roomId: string): Promise<DbSession> => {
   const startedAt = Date.now()
-  await redis.set(`room:${roomId}:session:startedAt`, startedAt)
-  await redis.del(
-    `room:${roomId}:session:videoId`,
-    `room:${roomId}:session:willEndAt`
-  )
-
-  await redis.ltrim(`room:${roomId}:session:queue`, 0, 0)
-
-  return {
-    videoId: undefined,
+  const session = {
+    video: null,
     startedAt,
-    willEndAt: undefined,
     queue: [],
   }
+  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+
+  return session
+}
+export const enqueueVideo = async (
+  roomId: string,
+  videoId: string,
+  userId: string
+) => {
+  const sessionRaw = await redis.get(`room:${roomId}:session`)
+  if (!sessionRaw) {
+    throw new Error("Session does not exist")
+  }
+  const nonce = crypto.randomUUID()
+  const session: DbSession = JSON.parse(sessionRaw)
+  session.queue.push({ videoId, requestedBy: userId, nonce })
+  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+}
+export const dequeueVideo = async (
+  roomId: string,
+  session: DbSession
+): Promise<void> => {
+  const videoId = session.queue.shift()
+  session.startedAt = Date.now()
+  session.video = videoId ?? null
+  consola.info(`[${roomId}] Dequeued video: ${videoId}`)
+  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+}
+export const cancelVideo = async (roomId: string, nonce: string) => {
+  const sessionRaw = await redis.get(`room:${roomId}:session`)
+  if (!sessionRaw) {
+    throw new Error("Session does not exist")
+  }
+  const session: DbSession = JSON.parse(sessionRaw)
+  session.queue = session.queue.filter((v) => v.nonce !== nonce)
+  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 }
 export const getOrCreateSession = async (
   roomId: string
-): Promise<{
-  videoId: string | undefined
-  startedAt: number
-  willEndAt: number | undefined
-  queue: string[]
-}> => {
-  const session = await getSession(roomId)
+): Promise<DbSession> => {
+  const session = await getSession(roomId).catch(() => undefined)
   if (session) {
     return session
   }

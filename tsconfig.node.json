@@ -7,6 +7,7 @@
     "lib": ["es2021", "ESNext"],
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "strict": true,
     "outDir": "dist-backend",
     "baseUrl": ".",

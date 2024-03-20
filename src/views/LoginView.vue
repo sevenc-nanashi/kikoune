@@ -22,7 +22,7 @@ const authorize = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ code, channelId: discordSdk.channelId }),
+    body: JSON.stringify({ code, instanceId: discordSdk.instanceId }),
   })
   if (!response.ok) {
     throw new Error("Failed to authenticate")
@@ -33,6 +33,23 @@ const authorize = async () => {
   })
 
   await store.setToken(body.kikouneAccessToken)
+
+  consola.info("Fetching participants")
+  discordSdk.subscribe("ACTIVITY_INSTANCE_PARTICIPANTS_UPDATE", (event) => {
+    store.setParticipants(event.participants)
+  })
+  const participants = await discordSdk.commands
+    .getInstanceConnectedParticipants()
+    .then((res) => res.participants)
+  consola.info("Fetched participants", participants)
+  store.setParticipants(participants)
+  const me = participants.find((user) => user.id === body.userId)
+  if (!me) {
+    throw new Error("Failed to fetch me")
+  }
+  store.setMe(me)
+
+  store.setView("main")
 }
 onMounted(async () => {
   try {
@@ -44,19 +61,17 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div
-    class="w-screen h-screen relative place-items-center place-content-center grid"
-  >
+  <div class="w-screen h-screen place-items-center place-content-center grid">
+    <div class="absolute inset-0 cursor-wait" />
     <h1 class="text-9xl font-extrabold">Kikoune</h1>
     <p class="text-2xl">
       Developed by
-      <a target="_blank" class="text-[#48b0d5]" href="https://sevenc7c.com"
-        >Nanashi.</a
-      >
+      <span class="text-[#48b0d5]">Nanashi.</span>
     </p>
     <hr class="border-b-[1px] border-white w-full my-5" />
     <p v-if="error" class="text-2xl text-red-500">{{ error }}</p>
     <p v-else class="text-2xl">ログイン中...</p>
+    <BuildInfo />
   </div>
 </template>
 <style lang="scss"></style>

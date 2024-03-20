@@ -1,3 +1,4 @@
+@import "@fontsource/noto-sans-jp";
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -10,6 +11,7 @@
   --saib: var(--discord-safe-area-inset-bottom, env(safe-area-inset-bottom));
   --sail: var(--discord-safe-area-inset-left, env(safe-area-inset-left));
   --sair: var(--discord-safe-area-inset-right, env(safe-area-inset-right));
+  overflow: hidden;
 }
 
 #app {

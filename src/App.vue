@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { computed } from "vue"
 import { useStore } from "./store"
 import LoginView from "./views/LoginView.vue"
 import MainView from "./views/MainView.vue"
+import ErrorView from "./views/ErrorView.vue"
 
 const store = useStore()
-const isReady = computed(() => {
-  return !!store._token
-})
 </script>
 
 <template>
-  <MainView v-if="isReady" />
-  <LoginView v-else />
+  <LoginView
+    class="transition-opacity absolute inset-0 duration-1000"
+    :style="{
+      opacity: store.$state.view === 'login' ? 1 : 0,
+      pointerEvents: store.$state.view === 'login' ? 'auto' : 'none',
+    }"
+  />
+  <MainView v-if="store.$state.view === 'main'" />
+  <ErrorView v-else-if="store.$state.view === 'error'" />
 </template>
 
 <style scoped>

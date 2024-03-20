@@ -1,5 +1,4 @@
 import { Hono } from "hono"
-import { REST } from "@discordjs/rest"
 import {
   RouteBases,
   Routes,
@@ -18,7 +17,6 @@ if (!discordToken) {
   throw new Error("Discord token is not set")
 }
 const app = new Hono()
-const rest = new REST({ version: "10" }).setToken(discordToken)
 const route = (route: string) => {
   if (route.includes("..")) {
     throw new Error("Invalid route")
@@ -48,7 +46,7 @@ app.post(
     "json",
     z.object({
       code: z.string(),
-      channelId: z.string(),
+      instanceId: z.string(),
     })
   ),
   async (c) => {
@@ -74,13 +72,13 @@ app.post(
       return c.json({ error: "Invalid code" })
     }
     const discordAccessToken = response.access_token
-    const user = (await rest.get(Routes.user("@me"), {
+    const user = (await fetchWithRateLimit(route(Routes.user("@me")), {
       headers: {
         Authorization: `Bearer ${discordAccessToken}`,
       },
-    })) as RESTGetAPIUserResult
-    const kikouneAccessToken = await db.createToken(user.id, body.channelId)
-    consola.info(`User authenticated: ${user.id} in ${body.channelId}`)
+    }).then((res) => res.json())) as RESTGetAPIUserResult
+    const kikouneAccessToken = await db.createToken(user.id, body.instanceId)
+    consola.info(`User authenticated: ${user.id} in ${body.instanceId}`)
     return c.json({ userId: user.id, discordAccessToken, kikouneAccessToken })
   }
 )

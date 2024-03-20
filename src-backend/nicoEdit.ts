@@ -51,7 +51,6 @@ app.get("/watch/:id{.+}", async (c) => {
   )
 
   c.header("Content-Type", "application/javascript")
-  console.log(c.req.header("origin"))
   return c.text(
     replaceToExternal(js)
       .replace(/\/api\/watch/g, "/nico/api-watch")

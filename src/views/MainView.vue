@@ -1,37 +1,57 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watchEffect } from "vue"
+import { computed, onMounted, onUnmounted, ref } from "vue"
 import consola from "consola"
 import NicoPlayer from "~/components/NicoPlayer.vue"
 import QueueList from "~/components/QueueList.vue"
 import NowPlaying from "~/components/NowPlaying.vue"
 import CafeSpace from "~/components/CafeSpace.vue"
-import { VideoInfo } from "~/lib/nicoTypes"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
+import { Position, Session } from "~types/type.js"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
-const currentId = ref("sm42571052")
-const thumbnailUrl = ref("")
+const thumbnailUrl = computed(() => {
+  const base = store.session.video?.thumbnailUrl
+  if (!base) return ""
+  const path = new URL(base).pathname
+  return `/external/nicovideo-cdn-nimg-jp${path}`
+})
 
 const userX = ref(0)
 const userY = ref(0)
 
+const errorCount = ref(0)
+
 const update = async () => {
-  const res = await fetch(`/api/room/${discordSdk.channelId}`, {
-    method: "put",
+  const res = await fetch(`/api/room/${discordSdk.instanceId}/sync`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `${discordSdk.clientId} ${store.token}`,
+      Authorization: `${store.me.id} ${store.token}`,
     },
     body: JSON.stringify({
-      x: userX.value,
-      y: userY.value,
+      userIds: store.participants.map((user) => user.id),
+      position: store.myPosition,
     }),
   })
-  const data = await res.json()
-  consola.info(data)
+  if (!res.ok) {
+    consola.error("Failed to update user position")
+    errorCount.value++
+    if (errorCount.value > 3) {
+      store.panic()
+    }
+    return
+  }
+  errorCount.value = 0
+  const data: {
+    member: Record<string, Position>
+    session: Session
+  } = await res.json()
+  store.setSession(data.session)
 }
+
+const currentId = computed(() => store.session.video?.id ?? "")
 let interval: ReturnType<typeof setInterval>
 onMounted(() => {
   update()
@@ -40,43 +60,50 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(interval)
 })
-const onNicoLoad = ({ videoInfo }: { videoInfo: VideoInfo }) => {
-  thumbnailUrl.value = videoInfo.thumbnailUrl
-}
 </script>
 <template>
-  <div class="gap-8 w-screen h-screen sm:relative root">
-    <div>
-      <NicoPlayer
-        :id="currentId"
-        class="h-screen w-screen sm:w-auto sm:h-full aspect-video"
-        @load-complete="onNicoLoad"
-      />
-      <QueueList />
+  <div
+    class="bg-white/25 absolute inset-0 place-items-center place-content-center grid transition-opacity z-20"
+    :style="{
+      opacity: errorCount > 0 ? 1 : 0,
+      pointerEvents: errorCount > 0 ? 'auto' : 'none',
+    }"
+  />
+  <div class="w-screen h-screen sm:relative root">
+    <div class="sm:relative flex top-section h-full">
+      <NicoPlayer class="h-screen w-screen sm:w-auto sm:h-full aspect-video" />
+      <QueueList class="hidden sm:flex h-full" />
     </div>
-    <NowPlaying />
-    <CafeSpace class="cafe-space" />
+    <NowPlaying class="hidden sm:flex h-full" />
+    <CafeSpace class="cafe-space hidden sm:block" />
   </div>
-  <div class="background-container">
+  <div class="background-container hidden sm:block">
     <div
       class="background"
-      :style="{ backgroundImage: `url(${thumbnailUrl})` }"
+      :style="{ backgroundImage: currentId && `url(${thumbnailUrl})` }"
+      :class="{ 'bg-slate-500': !currentId }"
     />
   </div>
 </template>
 <style scoped lang="scss">
+$padding: 8px;
 .root {
-  padding-top: calc(var(--sait) + 2rem);
-  padding-left: calc(var(--sail) + 2rem);
-  padding-right: calc(var(--sair) + 2rem);
-  padding-bottom: calc(var(--saib) + 2rem);
+  padding-top: calc(var(--sait) + $padding);
+  padding-left: calc(var(--sail) + $padding);
+  padding-right: calc(var(--sair) + $padding);
+  padding-bottom: calc(var(--saib) + $padding);
+
+  gap: $padding;
 
   @media (max-width: 640px) {
     padding: 0;
   }
 
   display: grid;
-  grid-template-rows: 40% 5% 1fr;
+  grid-template-rows: calc(50vh - 4.5rem) 4.5rem 1fr;
+}
+.top-section {
+  gap: $padding;
 }
 .background-container {
   position: absolute;
