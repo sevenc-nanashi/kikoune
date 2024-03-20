@@ -6,6 +6,9 @@ export default {
       fontFamily: {
         sans: ["Noto Sans JP", "sans-serif"],
       },
+      screens: {
+        xs: "375px",
+      },
     },
   },
   plugins: [],

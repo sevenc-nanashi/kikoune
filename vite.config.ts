@@ -18,7 +18,7 @@ export default defineConfig(async () => {
     resolve: {
       alias: {
         "~": "/src",
-        "~types": "/types",
+        "~shared": "/src-shared",
       },
     },
   }

@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { computed, ref } from "vue"
+import { useStore } from "~/store"
+import { MemberState, defaultMemberState } from "~shared/schema"
+
+const props = defineProps<{
+  id: string
+}>()
+const store = useStore()
+const name = computed(() => store.getName(props.id))
+const memberState = computed<MemberState>(() => {
+  if (props.id === store.me.id) {
+    return { ...store.memberStates[props.id], ...store.stateOverride }
+  }
+  return { ...defaultMemberState, ...store.memberStates[props.id] }
+})
+const avatarUrl = computed(() => store.getAvatarUrl(props.id))
+const showTooltip = ref(false)
+</script>
+<template>
+  <div
+    class="w-12 h-12 lg:w-16 lg:h-16 absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300 ease-out"
+    :style="{
+      left: `${50 + (memberState.x || 0) * 50}%`,
+      top: `${50 + (memberState.y || 0) * 50}%`,
+    }"
+    @mouseenter="showTooltip = true"
+    @mouseleave="showTooltip = false"
+  >
+    <img
+      :src="avatarUrl"
+      class="absolute inset-0 rounded-full"
+      :style="{
+        animation: memberState.rotate ? 'spin 5s linear infinite' : 'none',
+      }"
+    />
+    <p
+      v-if="memberState.message"
+      class="absolute top-[-2rem] w-max left-1/2 -translate-x-1/2 text-center text-sm p-1 text-slate-950 rounded border-[1px] border-cyan-500 bg-cyan-100 drop-shadow-md transition-all"
+    >
+      {{ memberState.message }}
+    </p>
+    <p
+      class="absolute bottom-[-1rem] left-0 right-0 text-center text-xs text-white drop-shadow-md"
+      :class="{
+        'opacity-0 pointer-events-none': !showTooltip,
+        'opacity-100 pointer-events-auto': showTooltip,
+      }"
+    >
+      {{ name }}
+    </p>
+  </div>
+</template>
+<style lang="scss">
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

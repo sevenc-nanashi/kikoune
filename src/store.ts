@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { Participant } from "./plugins/useDiscordSdk"
-import { Position, Session } from "~types/type.js"
+import { MemberState, Session } from "~types/type.js"
 
 export const useStore = defineStore("auth", {
   state: () => ({
@@ -10,8 +10,10 @@ export const useStore = defineStore("auth", {
       startedAt: 0,
       video: undefined,
     } as Session,
-    positions: {} as Record<string, Position>,
+    memberStates: {} as Record<string, MemberState>,
     _me: undefined as Participant | undefined,
+    stateOverride: {} as Partial<MemberState>,
+    stateOverrideUpdatedAt: 0,
     participants: [] as Participant[],
     view: "login" as "login" | "main" | "error",
   }),
@@ -28,9 +30,6 @@ export const useStore = defineStore("auth", {
       }
       return state._me
     },
-    myPosition(state) {
-      return state.positions[state._me?.id || ""]
-    },
   },
   actions: {
     async setToken(token: string) {
@@ -39,8 +38,8 @@ export const useStore = defineStore("auth", {
     async setSession(session: Session) {
       this.session = session
     },
-    async setPositions(positions: Record<string, Position>) {
-      this.positions = positions
+    async setMemberStates(memberState: Record<string, MemberState>) {
+      this.memberStates = memberState
     },
     async panic() {
       this.setView("error")
@@ -70,7 +69,18 @@ export const useStore = defineStore("auth", {
     getName(id: string) {
       const user = this.getUser(id)
       if (!user) return "Unknown"
-      return user.nickname || user.username || user.global_name || "Unknown"
+      return user.nickname || user.global_name || user.username || "Unknown"
+    },
+
+    resetStateOverride() {
+      this.stateOverride = {}
+    },
+    setStateOverride(state: Partial<MemberState>) {
+      this.stateOverride = {
+        ...this.stateOverride,
+        ...state,
+      }
+      this.stateOverrideUpdatedAt = Date.now()
     },
   },
 })

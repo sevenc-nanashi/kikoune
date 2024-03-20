@@ -17,9 +17,17 @@ export type Video = {
   thumbnailUrl: string
   length: number
 }
-export const positionSchema = z.object({
+export const memberStateSchema = z.object({
   x: z.number(),
   y: z.number(),
+  rotate: z.boolean(),
+  message: z.string(),
 })
+export const defaultMemberState: MemberState = {
+  x: 0,
+  y: 0,
+  rotate: false,
+  message: "",
+}
 
-export type Position = z.infer<typeof positionSchema>
+export type MemberState = z.infer<typeof memberStateSchema>

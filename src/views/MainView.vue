@@ -4,10 +4,11 @@ import consola from "consola"
 import NicoPlayer from "~/components/NicoPlayer.vue"
 import QueueList from "~/components/QueueList.vue"
 import NowPlaying from "~/components/NowPlaying.vue"
+import CafeController from "~/components/CafeController.vue"
 import CafeSpace from "~/components/CafeSpace.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
-import { Position, Session } from "~types/type.js"
+import { MemberState, Session, defaultMemberState } from "~shared/schema"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
@@ -17,9 +18,6 @@ const thumbnailUrl = computed(() => {
   const path = new URL(base).pathname
   return `/external/nicovideo-cdn-nimg-jp${path}`
 })
-
-const userX = ref(0)
-const userY = ref(0)
 
 const errorCount = ref(0)
 
@@ -32,11 +30,15 @@ const update = async () => {
     },
     body: JSON.stringify({
       userIds: store.participants.map((user) => user.id),
-      position: store.myPosition,
+      state: {
+        ...defaultMemberState,
+        ...store.memberStates[store.me.id],
+        ...store.stateOverride,
+      },
     }),
   })
   if (!res.ok) {
-    consola.error("Failed to update user position")
+    consola.error("Failed to sync")
     errorCount.value++
     if (errorCount.value > 3) {
       store.panic()
@@ -45,10 +47,14 @@ const update = async () => {
   }
   errorCount.value = 0
   const data: {
-    member: Record<string, Position>
+    memberStates: Record<string, MemberState>
     session: Session
   } = await res.json()
   store.setSession(data.session)
+  store.setMemberStates(data.memberStates)
+  if (Date.now() - store.stateOverrideUpdatedAt > 500) {
+    store.resetStateOverride()
+  }
 }
 
 const currentId = computed(() => store.session.video?.id ?? "")
@@ -69,15 +75,16 @@ onUnmounted(() => {
       pointerEvents: errorCount > 0 ? 'auto' : 'none',
     }"
   />
-  <div class="w-screen h-screen sm:relative root">
-    <div class="sm:relative flex top-section h-full">
-      <NicoPlayer class="h-screen w-screen sm:w-auto sm:h-full aspect-video" />
-      <QueueList class="hidden sm:flex h-full" />
+  <div class="w-screen h-screen xs:relative root">
+    <div class="xs:relative flex top-section h-full">
+      <NicoPlayer class="h-screen w-screen xs:w-auto xs:h-full aspect-video" />
+      <QueueList class="hidden xs:flex h-full" />
     </div>
-    <NowPlaying class="hidden sm:flex h-full" />
-    <CafeSpace class="cafe-space hidden sm:block" />
+    <NowPlaying class="hidden xs:flex h-full" />
+    <CafeSpace class="hidden xs:block" />
+    <CafeController class="hidden xs:flex" />
   </div>
-  <div class="background-container hidden sm:block">
+  <div class="background-container hidden xs:block">
     <div
       class="background"
       :style="{ backgroundImage: currentId && `url(${thumbnailUrl})` }"
@@ -100,7 +107,7 @@ $padding: 8px;
   }
 
   display: grid;
-  grid-template-rows: calc(50vh - 4.5rem) 4.5rem 1fr;
+  grid-template-rows: calc(45vh - 4.5rem) 4.5rem 1fr auto;
 }
 .top-section {
   gap: $padding;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import consola from "consola"
+import BuildInfo from "~/components/BuildInfo.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
 
@@ -48,7 +49,6 @@ const authorize = async () => {
     throw new Error("Failed to fetch me")
   }
   store.setMe(me)
-
   store.setView("main")
 }
 onMounted(async () => {
@@ -61,7 +61,9 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div class="w-screen h-screen place-items-center place-content-center grid">
+  <div
+    class="w-screen h-screen place-items-center place-content-center grid bg-gray-900"
+  >
     <div class="absolute inset-0 cursor-wait" />
     <h1 class="text-9xl font-extrabold">Kikoune</h1>
     <p class="text-2xl">

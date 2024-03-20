@@ -43,7 +43,7 @@ const onMessage = (event: MessageEvent) => {
   const data = event.data
   switch (data.eventName) {
     case "loadComplete": {
-      consola.log("Player load complete, playing")
+      consola.info("Player load complete, playing")
       player.value.contentWindow?.postMessage(
         {
           eventName: "play",
@@ -83,6 +83,9 @@ const onMessage = (event: MessageEvent) => {
     }
     case "playerMetadataChange": {
       const currentTime = Date.now() - store.session.startedAt - 2000
+      if (currentTime < 0) {
+        return
+      }
       if (
         !seekDone &&
         Math.abs(currentTime - data.data.currentTime) / 1000 < 1
@@ -120,7 +123,7 @@ onUnmounted(() => {
     />
     <template v-else>
       <h1 class="text-2xl">待機中...</h1>
-      <p class="hidden sm:block">右の欄から動画を再生できます。</p>
+      <p class="hidden xs:block">右の欄から動画を再生できます。</p>
     </template>
   </div>
 </template>

@@ -13,14 +13,14 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src-backend/*"],
-      "~types/*": ["./types/*"]
+      "~shared/*": ["./src-shared/*"],
     }
   },
   "include": [
     "vite.config.ts",
     "src-backend/**/*.ts",
     "src-backend/*.ts",
-    "types/**/*.ts",
-    "types/*.ts"
+    "src-shared/**/*.ts",
+    "src-shared/*.ts"
   ]
 }

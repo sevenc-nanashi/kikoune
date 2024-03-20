@@ -1,6 +1,6 @@
 import consola from "consola"
 import { Redis } from "ioredis"
-import { Position } from "~types/type.js"
+import { MemberState } from "~shared/schema"
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379"
 
@@ -26,26 +26,35 @@ export const createToken = async (userId: string, instanceId: string) => {
 export const getToken = async (userId: string) => {
   return redis.get(userToken(userId))
 }
-export const setMember = async (
+export const setMemberState = async (
   roomId: string,
   userId: string,
-  data: { position: Position }
+  state: MemberState
 ) => {
   await redis.set(
     `room:${roomId}:user:${userId}`,
-    JSON.stringify(data),
+    JSON.stringify(state),
     "EX",
     15
   )
 }
-export const getMembers = async (roomId: string, userIds: string[]) => {
-  const members = await Promise.all(
-    userIds.map(async (id) => {
-      const data = await redis.get(`room:${roomId}:user:${id}`)
-      return data ? JSON.parse(data) : undefined
-    })
-  )
-  return members.filter((m) => m) as { position: Position }[]
+export const getMemberStates = async (roomId: string, userIds: string[]) => {
+  const members = (
+    await Promise.all(
+      userIds.map(async (id) => {
+        const data = await redis.get(`room:${roomId}:user:${id}`)
+        return data ? [id, JSON.parse(data)] : undefined
+      })
+    )
+  ).filter(Boolean) as [string, MemberState][]
+  return Object.fromEntries(members)
+}
+export const getMemberState = async (roomId: string, userId: string) => {
+  const data = await redis.get(`room:${roomId}:user:${userId}`)
+  if (!data) {
+    throw new Error("Member does not exist")
+  }
+  return JSON.parse(data)
 }
 export const getSession = async (roomId: string): Promise<DbSession> => {
   const sessionRaw = await redis.get(`room:${roomId}:session`)
@@ -89,7 +98,7 @@ export const dequeueVideo = async (
   const videoId = session.queue.shift()
   session.startedAt = Date.now()
   session.video = videoId ?? null
-  consola.info(`[${roomId}] Dequeued video: ${videoId}`)
+  consola.info(`[${roomId}] Dequeued video: ${videoId?.videoId}`)
   await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 }
 export const cancelVideo = async (roomId: string, nonce: string) => {
@@ -110,4 +119,17 @@ export const getOrCreateSession = async (
   }
   consola.info(`Creating session: ${roomId}`)
   return createSession(roomId)
+}
+
+export const keepAliveMembers = async (roomId: string, userIds: string[]) => {
+  await Promise.all(
+    userIds.map((id) => redis.expire(`room:${roomId}:user:${id}`, 15))
+  )
+}
+export const skipVideo = async (roomId: string) => {
+  const session = await getSession(roomId)
+  if (!session.video) {
+    return
+  }
+  await dequeueVideo(roomId, session)
 }

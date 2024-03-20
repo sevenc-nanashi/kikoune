@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import consola from "consola"
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 import { v4 as uuid } from "uuid"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
@@ -25,6 +25,11 @@ const spawnPopup = (message: string, type: "error" | "info") => {
 }
 const temporaryAdded = ref<SessionVideo[]>([])
 const temporaryDeleted = ref<string[]>([])
+const queue = computed(() =>
+  store.session.queue
+    .filter((video) => !temporaryDeleted.value.includes(video.nonce))
+    .concat(temporaryAdded.value)
+)
 watch(
   () => store.session.queue,
   () => {
@@ -38,8 +43,8 @@ const onSubmit = async () => {
   if (!videoSourceInput.value) return
 
   const videoSource = videoSourceInput.value.value
-  const videoId = videoSource.match(/sm\d+/)
-  if (!videoId) {
+  const videoIds = videoSource.matchAll(/sm\d+/g)
+  if (!videoIds) {
     spawnPopup("無効な動画IDです。", "error")
     return
   }
@@ -48,31 +53,39 @@ const onSubmit = async () => {
   try {
     isSubmitting.value = true
 
-    const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${store.me.id} ${store.token}`,
-      },
-      body: JSON.stringify({
-        videoId: videoId[0],
-      }),
-    })
-    if (!res.ok) {
-      consola.error("Failed to queue video")
-      spawnPopup(`動画${videoId[0]}の追加に失敗しました。`, "error")
-      return
+    const videos: Video[] = []
+    for (const [videoId] of videoIds) {
+      const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${store.me.id} ${store.token}`,
+        },
+        body: JSON.stringify({
+          videoId: videoId,
+        }),
+      })
+      if (!res.ok) {
+        consola.error("Failed to queue video")
+        spawnPopup(`動画${videoId}の追加に失敗しました。`, "error")
+        return
+      }
+
+      videoSourceInput.value.value = ""
+      const { video }: { video: Video } = await res.json()
+      temporaryAdded.value.push({
+        ...video,
+        requestedBy: store.me.id,
+        nonce: uuid(),
+      })
+      videos.push(video)
     }
 
-    videoSourceInput.value.value = ""
-    const { video }: { video: Video } = await res.json()
-    temporaryAdded.value.push({
-      ...video,
-      requestedBy: store.me.id,
-      nonce: uuid(),
-    })
-
-    spawnPopup(`「${video.title}」を追加しました。`, "info")
+    if (videos.length === 1) {
+      spawnPopup(`「${videos[0].title}」を追加しました。`, "info")
+    } else {
+      spawnPopup(`${videos.length}件の動画を追加しました。`, "info")
+    }
   } finally {
     isSubmitting.value = false
   }
@@ -117,16 +130,12 @@ const openExternal = (url: string) => {
     <div
       class="flex-grow flex flex-col relative h-full overflow-x-hidden overflow-y-scroll gap-1"
       :class="{
-        'grid place-content-center': store.session.queue.length === 0,
+        'grid place-content-center': queue.length === 0,
       }"
     >
-      <p v-if="store.session.queue.length === 0" class="text-xl">
-        キューは空です。
-      </p>
+      <p v-if="queue.length === 0" class="text-xl">キューは空です。</p>
       <div
-        v-for="(video, i) in store.session.queue
-          .filter((video) => !temporaryDeleted.includes(video.nonce))
-          .concat(temporaryAdded)"
+        v-for="(video, i) in queue"
         :key="video.id"
         class="bg-black/25 flex gap-2"
       >
@@ -190,7 +199,7 @@ const openExternal = (url: string) => {
       />
       <TooltipIcon
         name="md-send"
-        class="h-full w-12 bg-blue-500 p-3"
+        class="h-full w-12 bg-black p-3"
         tooltip="送信"
       />
     </form>

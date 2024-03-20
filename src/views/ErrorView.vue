@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 <template>
   <div
-    class="w-screen h-screen relative place-items-center place-content-center grid bg-slate-900"
+    class="w-screen h-screen relative place-items-center place-content-center grid bg-red-950"
   >
     <h1 class="text-9xl font-extrabold">Kikoune</h1>
     <p class="text-2xl">

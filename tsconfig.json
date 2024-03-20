@@ -22,10 +22,16 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "~/*": ["./src/*"],
-      "~types/*": ["./types/*"]
+      "~shared/*": ["./src-shared/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/*.ts",
+    "src-shared/**/*.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }],
   "ts-node": {
     "esm": true

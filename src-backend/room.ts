@@ -5,7 +5,7 @@ import AsyncLock from "async-lock"
 import { z } from "zod"
 import * as db from "./db.js"
 import { fetchSession, getVideo } from "./nico.js"
-import { positionSchema } from "~types/type.js"
+import { defaultMemberState, memberStateSchema } from "~shared/schema.js"
 
 const app = new Hono<{
   Variables: { userId: string }
@@ -32,18 +32,23 @@ app.use(async (c, next) => {
 
 app.put(
   "/:id{[0-9a-f-]+?}/sync",
-  zValidator(
-    "json",
-    z.object({ position: positionSchema, userIds: z.array(z.string()) })
-  ),
+  zValidator("json", z.object({ userIds: z.array(z.string()) })),
   async (c) => {
     return await lock.acquire(c.req.param("id"), async () => {
       await db.keepAliveSession(c.req.param("id"))
       const data = c.req.valid("json")
-      await db.setMember(c.req.param("id"), c.get("userId"), {
-        position: data.position,
-      })
-      const members = await db.getMembers(c.req.param("id"), data.userIds)
+      await db.keepAliveMembers(c.req.param("id"), data.userIds)
+      const memberStates = await db.getMemberStates(
+        c.req.param("id"),
+        data.userIds
+      )
+      if (!memberStates[c.get("userId")]) {
+        await db.setMemberState(
+          c.req.param("id"),
+          c.get("userId"),
+          defaultMemberState
+        )
+      }
       const session = await db.getOrCreateSession(c.req.param("id"))
       const video = session.video ? await getVideo(session.video.videoId) : null
       if (
@@ -55,7 +60,10 @@ app.put(
           await db.dequeueVideo(c.req.param("id"), session)
         }
       }
-      return c.json({ members, session: await fetchSession(session) })
+      return c.json({
+        memberStates,
+        session: await fetchSession(session),
+      })
     })
   }
 )
@@ -80,6 +88,55 @@ app.post(
     })
 
     return c.json({ video })
+  }
+)
+
+app.put(
+  "/:id{[0-9a-f-]+?}/state",
+  zValidator("json", z.object({ state: memberStateSchema.partial() })),
+  async (c) => {
+    const data = c.req.valid("json")
+    await lock.acquire(c.req.param("id"), async () => {
+      const state = await db.getMemberState(c.req.param("id"), c.get("userId"))
+      state.x = data.state.x ?? state.x
+      state.y = data.state.y ?? state.y
+      state.rotate = data.state.rotate ?? state.rotate
+      state.message = data.state.message ?? state.message
+
+      await db.setMemberState(c.req.param("id"), c.get("userId"), state)
+    })
+
+    c.status(204)
+    return c.body(null)
+  }
+)
+app.post(
+  "/:id{[0-9a-f-]+?}/skip",
+  zValidator(
+    "json",
+    z.object({
+      nonce: z.string(),
+    })
+  ),
+  async (c) => {
+    return await lock.acquire(c.req.param("id"), async () => {
+      const session = await db.getOrCreateSession(c.req.param("id"))
+      if (!session.video) {
+        c.status(400)
+        return c.json({ error: "No video to skip" })
+      }
+      if (session.video.nonce !== c.req.valid("json").nonce) {
+        c.status(400)
+        return c.json({ error: "Invalid nonce" })
+      }
+      if (session.video.requestedBy !== c.get("userId")) {
+        c.status(403)
+        return c.json({ error: "Not the video owner" })
+      }
+      await db.skipVideo(c.req.param("id"))
+      c.status(204)
+      return c.body(null)
+    })
   }
 )
 
