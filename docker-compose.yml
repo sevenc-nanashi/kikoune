@@ -1,0 +1,11 @@
+version: "3"
+services:
+  redis:
+    image: "redis:latest"
+    profiles:
+      - "dev"
+      - "prod"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./data/redis:/data"

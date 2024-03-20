@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["es2021", "ESNext"],
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "outDir": "dist-backend",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src-backend/*"],
+      "~types/*": ["./types/*"]
+    }
+  },
+  "include": [
+    "vite.config.ts",
+    "src-backend/**/*.ts",
+    "src-backend/*.ts",
+    "types/**/*.ts",
+    "types/*.ts"
+  ]
+}
