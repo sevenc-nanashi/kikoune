@@ -11,6 +11,7 @@ import { zValidator } from "@hono/zod-validator"
 import * as db from "./db.js"
 import { env } from "./const.js"
 import room from "./room.js"
+import { discordScope } from "~shared/const.js"
 
 const discordToken = process.env.DISCORD_TOKEN
 if (!discordToken) {
@@ -62,7 +63,7 @@ app.post(
           client_id: env.discordId,
           client_secret: env.discordSecret,
           grant_type: "authorization_code",
-          scope: ["identify", "guilds"].join(" "),
+          scope: discordScope.join(" "),
           code: body.code,
         }),
       }

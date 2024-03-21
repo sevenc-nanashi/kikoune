@@ -4,7 +4,7 @@ import { computed, ref, watch } from "vue"
 import { v4 as uuid } from "uuid"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
-import { SessionVideo, Video } from "~types/type"
+import { SessionVideo, Video } from "~shared/schema"
 import TooltipIcon from "~/components/TooltipIcon.vue"
 
 const store = useStore()
@@ -43,8 +43,8 @@ const onSubmit = async () => {
   if (!videoSourceInput.value) return
 
   const videoSource = videoSourceInput.value.value
-  const videoIds = videoSource.matchAll(/sm\d+/g)
-  if (!videoIds) {
+  const videoIds = [...videoSource.matchAll(/(?:sm|so)\d+/g)]
+  if (!videoIds.length) {
     spawnPopup("無効な動画IDです。", "error")
     return
   }
@@ -109,13 +109,13 @@ const deleteVideo = async (video: SessionVideo) => {
     )
     if (!res.ok) {
       consola.error("Failed to delete video")
-      spawnPopup(`「${video.title}」の削除に失敗しました。`, "error")
+      spawnPopup(`「${video.title}」のキャンセルに失敗しました。`, "error")
       return
     }
 
     temporaryDeleted.value.push(video.nonce)
 
-    spawnPopup(`「${video.title}」を削除しました。`, "info")
+    spawnPopup(`「${video.title}」をキャンセルしました。`, "info")
   } finally {
     isSubmitting.value = false
   }
@@ -126,9 +126,9 @@ const openExternal = (url: string) => {
 }
 </script>
 <template>
-  <div class="bg-black/10 relative flex-grow flex flex-col">
+  <div class="bg-black/25 h-full w-full relative flex flex-col">
     <div
-      class="flex-grow flex flex-col relative h-full overflow-x-hidden overflow-y-scroll gap-1"
+      class="flex-grow flex flex-col relative gap-1"
       :class="{
         'grid place-content-center': queue.length === 0,
       }"
@@ -137,9 +137,9 @@ const openExternal = (url: string) => {
       <div
         v-for="(video, i) in queue"
         :key="video.id"
-        class="bg-black/25 flex gap-2"
+        class="bg-black/50 flex gap-2 relative"
       >
-        <div class="w-8 h-full bg-black/50 grid place-content-center">
+        <div class="w-8 bg-black grid place-content-center">
           {{ temporaryAdded.includes(video) ? "-" : i + 1 }}
         </div>
         <div class="flex p-2 gap-1 flex-col flex-grow">
@@ -160,7 +160,7 @@ const openExternal = (url: string) => {
         </div>
 
         <TooltipIcon
-          v-if="video.requestedBy === store.me.id"
+          v-if="store.isHost || video.requestedBy === store.me.id"
           class="self-center cursor-pointer h-[75%] aspect-square grid place-items-center p-3"
           name="md-delete"
           tooltip="削除"
@@ -174,7 +174,10 @@ const openExternal = (url: string) => {
         />
       </div>
     </div>
-    <form class="w-full flex relative" @submit.prevent="onSubmit">
+    <form
+      class="w-full flex sticky bottom-0 h-12 queue-form"
+      @submit.prevent="onSubmit"
+    >
       <div
         class="absolute inset-0 bg-slate-500/25 transition-opacity z-10"
         :style="{
@@ -195,12 +198,12 @@ const openExternal = (url: string) => {
       <input
         ref="videoSourceInput"
         class="bg-white p-2 text-slate-950 outline-none flex-grow"
-        placeholder="動画のID（sm123456789）またはURLを入力してください。"
+        placeholder="動画のID（sm123456789）/  URL（複数可）"
       />
-      <TooltipIcon
-        name="md-send"
-        class="h-full w-12 bg-black p-3"
-        tooltip="送信"
+      <input
+        type="submit"
+        class="h-full bg-black p-1 w-24 cursor-pointer active:bg-cyan-500"
+        label="追加"
       />
     </form>
   </div>

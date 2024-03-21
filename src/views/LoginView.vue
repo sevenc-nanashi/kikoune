@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
+import { onMounted, ref, watch } from "vue"
 import consola from "consola"
 import BuildInfo from "~/components/BuildInfo.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
+import { discordScope } from "~shared/const"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
@@ -15,7 +16,8 @@ const authorize = async () => {
     response_type: "code",
     state: "",
     prompt: "none",
-    scope: ["identify", "guilds"],
+    // @ts-expect-error 多分大丈夫
+    scope: discordScope,
   })
 
   const response = await fetch("/api/auth", {
@@ -29,9 +31,23 @@ const authorize = async () => {
     throw new Error("Failed to authenticate")
   }
   const body = await response.json()
-  await discordSdk.commands.authenticate({
-    access_token: body.discordAccessToken,
-  })
+  try {
+    await discordSdk.commands.authenticate({
+      access_token: body.discordAccessToken,
+    })
+  } catch (e) {
+    if (
+      !(
+        e &&
+        typeof e === "object" &&
+        "message" in e &&
+        e.message === "Already authenticated"
+      )
+    ) {
+      throw e
+    }
+    consola.info("Already authenticated")
+  }
 
   await store.setToken(body.kikouneAccessToken)
 
@@ -51,14 +67,18 @@ const authorize = async () => {
   store.setMe(me)
   store.setView("main")
 }
-onMounted(async () => {
-  try {
-    await authorize()
-  } catch (e) {
-    consola.error(e)
-    error.value = "ログインに失敗しました。"
-  }
-})
+watch(
+  () => store.view,
+  (view) => {
+    if (view === "login") {
+      authorize().catch((e) => {
+        consola.error(e)
+        error.value = "ログインに失敗しました。"
+      })
+    }
+  },
+  { immediate: true }
+)
 </script>
 <template>
   <div

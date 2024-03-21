@@ -11,13 +11,14 @@ const users = computed(() =>
   store.participants.filter((p) => store.getUser(p.id) !== undefined)
 )
 const container = ref<HTMLElement>()
+const capPosition = (pos: number) => Math.max(-1, Math.min(1, pos))
 const move = (e: MouseEvent) => {
   if (!container.value) return
   const containerRect = container.value.getBoundingClientRect()
   const cursorX = e.clientX - containerRect.left
   const cursorY = e.clientY - containerRect.top
-  const x = (cursorX / containerRect.width) * 2 - 1
-  const y = (cursorY / containerRect.height) * 2 - 1
+  const x = capPosition((cursorX / containerRect.width) * 2 - 1)
+  const y = capPosition((cursorY / containerRect.height) * 2 - 1)
 
   consola.info("Moving user", x, y)
 
@@ -33,11 +34,19 @@ const move = (e: MouseEvent) => {
 }
 </script>
 <template>
-  <div class="bg-black/25 relative" ref="container" @click="move">
+  <div ref="container" class="relative" @click="move">
     <CafeUser v-for="user in users" :id="user.id" :key="user.id" />
-    <div class="absolute inset-0 pointer-events-none opacity-50">
-      <div class="absolute top-1/2 left-0 right-0 h-[1px] bg-white" />
-      <div class="absolute left-1/2 top-0 bottom-0 w-[1px] bg-white" />
+    <div class="absolute inset-0 pointer-events-none">
+      <div
+        class="absolute top-0 left-0 w-[calc(50%_-_2px)] h-[calc(50%_-_2px)] bg-black/50"
+      />
+      <div
+        class="absolute top-0 right-0 w-1/2 h-[calc(50%_-_2px)] bg-black/50"
+      />
+      <div
+        class="absolute bottom-0 left-0 w-[calc(50%_-_2px)] h-1/2 bg-black/50"
+      />
+      <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-black/50" />
     </div>
   </div>
 </template>

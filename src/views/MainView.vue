@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue"
 import consola from "consola"
 import NicoPlayer from "~/components/NicoPlayer.vue"
-import QueueList from "~/components/QueueList.vue"
+import InfoPanel from "~/components/InfoPanel.vue"
 import NowPlaying from "~/components/NowPlaying.vue"
 import CafeController from "~/components/CafeController.vue"
 import CafeSpace from "~/components/CafeSpace.vue"
@@ -38,13 +38,14 @@ const update = async () => {
     }),
   })
   if (!res.ok) {
-    consola.error("Failed to sync")
+    consola.error(`Failed to sync, panic in ${3 - errorCount.value}`)
     errorCount.value++
     if (errorCount.value > 3) {
       store.panic()
     }
     return
   }
+  consola.info("Synced")
   errorCount.value = 0
   const data: {
     memberStates: Record<string, MemberState>
@@ -52,6 +53,7 @@ const update = async () => {
   } = await res.json()
   store.setSession(data.session)
   store.setMemberStates(data.memberStates)
+  store.resetIsHostOverride()
   if (Date.now() - store.stateOverrideUpdatedAt > 500) {
     store.resetStateOverride()
   }
@@ -78,7 +80,7 @@ onUnmounted(() => {
   <div class="w-screen h-screen xs:relative root">
     <div class="xs:relative flex top-section h-full">
       <NicoPlayer class="h-screen w-screen xs:w-auto xs:h-full aspect-video" />
-      <QueueList class="hidden xs:flex h-full" />
+      <InfoPanel class="hidden xs:flex h-full" />
     </div>
     <NowPlaying class="hidden xs:flex h-full" />
     <CafeSpace class="hidden xs:block" />
@@ -102,12 +104,16 @@ $padding: 8px;
 
   gap: $padding;
 
-  @media (max-width: 640px) {
+  @media (max-width: 375px) {
     padding: 0;
   }
 
   display: grid;
   grid-template-rows: calc(45vh - 4.5rem) 4.5rem 1fr auto;
+
+  @media (max-height: 480px) {
+    grid-template-rows: calc(45vh - 2rem) 2rem 1fr auto;
+  }
 }
 .top-section {
   gap: $padding;
@@ -127,6 +133,6 @@ $padding: 8px;
   transition: background 300ms;
   background-size: cover;
   background-position: center;
-  filter: blur(25px) brightness(0.5);
+  filter: blur(25px) brightness(0.8);
 }
 </style>

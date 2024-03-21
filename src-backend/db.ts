@@ -15,6 +15,7 @@ export type DbSession = {
   video: DbSessionVideo | null
   startedAt: number
   queue: DbSessionVideo[]
+  host: string
 }
 
 export const userToken = (userId: string) => `token:${userId}`
@@ -66,12 +67,16 @@ export const getSession = async (roomId: string): Promise<DbSession> => {
 export const keepAliveSession = async (roomId: string) => {
   await redis.expire(`room:${roomId}:session`, 60)
 }
-export const createSession = async (roomId: string): Promise<DbSession> => {
+export const createSession = async (
+  roomId: string,
+  host: string
+): Promise<DbSession> => {
   const startedAt = Date.now()
   const session = {
     video: null,
     startedAt,
     queue: [],
+    host,
   }
   await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 
@@ -111,14 +116,15 @@ export const cancelVideo = async (roomId: string, nonce: string) => {
   await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 }
 export const getOrCreateSession = async (
-  roomId: string
+  roomId: string,
+  host: string
 ): Promise<DbSession> => {
   const session = await getSession(roomId).catch(() => undefined)
   if (session) {
     return session
   }
-  consola.info(`Creating session: ${roomId}`)
-  return createSession(roomId)
+  consola.info(`Creating session: ${roomId} by ${host}`)
+  return createSession(roomId, host)
 }
 
 export const keepAliveMembers = async (roomId: string, userIds: string[]) => {
@@ -132,4 +138,9 @@ export const skipVideo = async (roomId: string) => {
     return
   }
   await dequeueVideo(roomId, session)
+}
+export const setHost = async (roomId: string, host: string) => {
+  const session = await getSession(roomId)
+  session.host = host
+  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 }

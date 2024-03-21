@@ -4,6 +4,7 @@ const props = defineProps<{
   name: string
   tooltip: string
   disabled?: boolean
+  offset?: string
 }>()
 const showTooltip = ref(false)
 </script>
@@ -14,10 +15,14 @@ const showTooltip = ref(false)
     @mouseleave="showTooltip = false"
   >
     <div
-      class="absolute w-max left-1/2 -translate-x-1/2 bg-black/75 text-white text-xs px-3 py-1 pointer-events-none transition-all"
+      class="absolute w-max left-1/2 bg-black/75 text-white text-xs px-3 py-1 pointer-events-none transition-all"
       :class="{
-        'opacity-0 top-0': !showTooltip,
-        'opacity-100 top-[-1rem]': showTooltip,
+        'opacity-0': !showTooltip,
+        'opacity-100': showTooltip,
+      }"
+      :style="{
+        transform:
+          'translate(calc(-50% + ' + (props.offset || '0px') + '), -100%)',
       }"
     >
       {{ props.tooltip }}

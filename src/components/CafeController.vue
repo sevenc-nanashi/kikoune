@@ -43,7 +43,7 @@ const onSubmit = () => {
     <button
       class="h-full px-4"
       :class="{
-        'bg-black active:bg-cyan-500': !rotate,
+        'bg-black/50 focus:bg-black hover:bg-black': !rotate,
         'bg-cyan-500': rotate,
       }"
       @click="switchRotate"
@@ -57,12 +57,12 @@ const onSubmit = () => {
       />
       <input
         type="submit"
-        class="h-full bg-black p-3 w-24 cursor-pointer active:bg-cyan-500"
-        label="吹き出し"
+        class="h-full bg-black/50 focus:bg-black hover:bg-black p-3 w-36 cursor-pointer active:bg-cyan-500"
+        value="吹き出し"
       />
     </form>
     <button
-      class="h-full bg-black px-4 active:bg-cyan-500"
+      class="h-full bg-black/50 focus:bg-black hover:bg-black px-4 active:bg-cyan-500"
       @click="clearMessage"
     >
       消す

@@ -7,6 +7,7 @@ export type SessionVideo = Video & {
 export type Session = {
   video: undefined | SessionVideo
   startedAt: number
+  host: string
   queue: SessionVideo[]
 }
 

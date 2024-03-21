@@ -47,9 +47,9 @@ const openProfile = () => {
 }
 </script>
 <template>
-  <div class="*:bg-black/25 gap-2 flex-row">
-    <div class="h-full p-2 flex-grow flex flex-row items-center">
-      <div class="my-auto flex-grow">
+  <div class="*:bg-black/75 gap-2 flex-row">
+    <div class="h-full p-2 flex-grow flex flex-row items-center info-container">
+      <div class="my-auto flex-grow text-section">
         <h2 class="text-xl font-bold">
           {{ store.session.video?.title ?? "Kikoune" }}
         </h2>
@@ -72,14 +72,14 @@ const openProfile = () => {
         class="my-auto flex flex-row items-center"
       >
         <TooltipIcon
-          v-if="store.session.video.requestedBy === store.me.id"
+          v-if="store.isHost || store.session.video.requestedBy === store.me.id"
           name="md-fastforward"
           tooltip="スキップ"
           :disabled="skipped"
           class="w-6 h-6 mr-2"
           @click="skipVideo"
         />
-        <span class="text-sm">
+        <span class="text-sm requester-name">
           {{ store.getName(store.session.video?.requestedBy) }}
         </span>
         <img
@@ -104,4 +104,22 @@ const openProfile = () => {
     </a>
   </div>
 </template>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@media (max-height: 480px) {
+  .requester-name {
+    display: none;
+  }
+  .text-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .info-container {
+    padding: 0 0.5rem;
+  }
+}
+</style>

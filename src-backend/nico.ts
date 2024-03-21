@@ -25,7 +25,9 @@ export const getVideo = async (id: string): Promise<Video> => {
     .split(":")
     .map(Number)
   return {
-    author: data.nicovideo_thumb_response.thumb.user_nickname,
+    author:
+      data.nicovideo_thumb_response.thumb.user_nickname ??
+      data.nicovideo_thumb_response.thumb.ch_name,
     id: data.nicovideo_thumb_response.thumb.video_id,
     length: min * 60 + sec,
     thumbnailUrl: data.nicovideo_thumb_response.thumb.thumbnail_url,
@@ -42,6 +44,7 @@ export const fetchSession = async (session: DbSession): Promise<Session> => {
         }
       : undefined,
     startedAt: session.startedAt,
+    host: session.host,
     queue: await Promise.all(
       session.queue.map(async (v) => ({
         ...(await getVideo(v.videoId)),

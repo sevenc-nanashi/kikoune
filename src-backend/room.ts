@@ -49,7 +49,10 @@ app.put(
           defaultMemberState
         )
       }
-      const session = await db.getOrCreateSession(c.req.param("id"))
+      const session = await db.getOrCreateSession(
+        c.req.param("id"),
+        c.get("userId")
+      )
       const video = session.video ? await getVideo(session.video.videoId) : null
       if (
         !video ||
@@ -120,7 +123,7 @@ app.post(
   ),
   async (c) => {
     return await lock.acquire(c.req.param("id"), async () => {
-      const session = await db.getOrCreateSession(c.req.param("id"))
+      const session = await db.getSession(c.req.param("id")).then(fetchSession)
       if (!session.video) {
         c.status(400)
         return c.json({ error: "No video to skip" })
@@ -129,11 +132,36 @@ app.post(
         c.status(400)
         return c.json({ error: "Invalid nonce" })
       }
-      if (session.video.requestedBy !== c.get("userId")) {
+      if (
+        session.video.requestedBy !== c.get("userId") &&
+        session.host !== c.get("userId")
+      ) {
         c.status(403)
-        return c.json({ error: "Not the video owner" })
+        return c.json({ error: "Forbidden" })
       }
       await db.skipVideo(c.req.param("id"))
+      c.status(204)
+      return c.body(null)
+    })
+  }
+)
+app.put(
+  "/:id{[0-9a-f-]+?}/host",
+  zValidator(
+    "json",
+    z.object({
+      id: z.string(),
+    })
+  ),
+  async (c) => {
+    return await lock.acquire(c.req.param("id"), async () => {
+      const session = await db.getSession(c.req.param("id"))
+      if (session.host !== c.get("userId")) {
+        c.status(403)
+        return c.json({ error: "Not the host" })
+      }
+      await db.setHost(c.req.param("id"), c.req.valid("json").id)
+
       c.status(204)
       return c.body(null)
     })
@@ -142,6 +170,19 @@ app.post(
 
 app.delete("/:id{[0-9a-f-]+?}/queue/:nonce{[0-9a-f-]+?}", async (c) => {
   await lock.acquire(c.req.param("id"), async () => {
+    const session = await db.getSession(c.req.param("id"))
+    const video = session.queue.find((v) => v.nonce === c.req.param("nonce"))
+    if (!video) {
+      c.status(400)
+      return c.json({ error: "Invalid nonce" })
+    }
+    if (
+      video?.requestedBy !== c.get("userId") &&
+      session.host !== c.get("userId")
+    ) {
+      c.status(403)
+      return c.json({ error: "Forbidden" })
+    }
     await db.cancelVideo(c.req.param("id"), c.req.param("nonce"))
   })
 

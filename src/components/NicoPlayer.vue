@@ -52,6 +52,26 @@ const onMessage = (event: MessageEvent) => {
         },
         location.origin
       )
+      // @ts-expect-error 実際は存在する
+      player.value.contentWindow?.eval(
+        (() => {
+          const observer = new MutationObserver(() => {
+            const anchors = document.querySelectorAll(
+              "a:not([target='_blank'])"
+            )
+
+            anchors.forEach((anchor) => {
+              anchor.setAttribute("target", "_blank")
+            })
+          })
+          observer.observe(document, {
+            childList: true,
+            subtree: true,
+          })
+        })
+          .toString()
+          .slice(12, -1)
+      )
       seekDone = false
       break
     }
