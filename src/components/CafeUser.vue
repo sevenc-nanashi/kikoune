@@ -5,6 +5,7 @@ import { MemberState, defaultMemberState } from "~shared/schema"
 
 const props = defineProps<{
   id: string
+  speaking: boolean
 }>()
 const store = useStore()
 const name = computed(() => store.getName(props.id))
@@ -29,7 +30,10 @@ const showTooltip = ref(false)
   >
     <img
       :src="avatarUrl"
-      class="absolute inset-0 rounded-full"
+      class="absolute inset-0 rounded-full outline-cyan-500 outline-4 outline-offset-4"
+      :class="{
+        outline: speaking,
+      }"
       :style="{
         animation: memberState.rotate ? 'spin 5s linear infinite' : 'none',
       }"
