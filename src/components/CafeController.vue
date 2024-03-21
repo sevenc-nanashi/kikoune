@@ -25,15 +25,17 @@ const switchRotate = () => {
 const rotate = computed(
   () => store.stateOverride.rotate ?? store.memberStates[store.me.id]?.rotate
 )
-const mobileSend = computed(
-  () =>
+const mobileSend = computed(() => {
+  if (!store.memberStates[store.me.id]) return true
+
+  return (
     message.value &&
-    store.memberStates[store.me.id] &&
     ((store.stateOverride.message ??
       store.memberStates[store.me.id].message) !== message.value.value ||
       (store.stateOverride.message ??
         store.memberStates[store.me.id].message) === "")
-)
+  )
+})
 const message = ref<HTMLInputElement>()
 const clearMessage = () => {
   if (!message.value) return
@@ -54,7 +56,7 @@ const onSubmit = () => {
 <template>
   <div class="w-full flex flex-row gap-2 bottom-0 sm:bottom-auto relative">
     <button
-      class="h-full aspect-square sm:aspect-auto sm:py-0 sm:px-4 absolute sm:relative right-2 bottom-[6.5rem] rounded-full sm:rounded-none sm:right-auto sm:bottom-auto drop-shadow-md sm:drop-shadow-none"
+      class="h-10 sm:h-full aspect-square sm:aspect-auto sm:py-0 sm:px-4 absolute sm:relative right-2 bottom-[6.5rem] rounded-full sm:rounded-none sm:right-auto sm:bottom-auto drop-shadow-md sm:drop-shadow-none"
       :class="{
         'bg-black sm:bg-black/50 focus:bg-black hover:bg-black': !rotate,
         'bg-cyan-500': rotate,
@@ -72,7 +74,7 @@ const onSubmit = () => {
       />
       <button
         type="submit"
-        class="absolute rounded-full aspect-square h-full bottom-14 right-2 block sm:hidden drop-shadow-md sm:drop-shadow-none"
+        class="h-10 absolute rounded-full aspect-square bottom-14 right-2 block sm:hidden drop-shadow-md sm:drop-shadow-none"
         :class="{
           'bg-black': mobileSend,
           'bg-cyan-500': !mobileSend,
