@@ -7,7 +7,7 @@ export default {
         sans: ["Noto Sans JP", "sans-serif"],
       },
       screens: {
-        xs: "375px",
+        xs: "350px",
       },
     },
   },

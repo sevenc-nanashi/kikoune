@@ -63,6 +63,12 @@ app.put(
           await db.dequeueVideo(c.req.param("id"), session)
         }
       }
+      if (!memberStates[session.host]) {
+        consola.info(
+          `[${c.req.param("id")}] Host is not in the room, moving to ${c.get("userId")}`
+        )
+        await db.setHost(c.req.param("id"), c.get("userId"))
+      }
       return c.json({
         memberStates,
         session: await fetchSession(session),

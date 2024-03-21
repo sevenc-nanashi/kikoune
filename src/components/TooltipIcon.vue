@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { ref } from "vue"
-const props = defineProps<{
-  name: string
-  tooltip: string
-  disabled?: boolean
-  offset?: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    name: string
+    tooltip: string
+    disabled?: boolean
+    offset?: string
+    direction?: "top" | "bottom"
+  }>(),
+  {
+    disabled: false,
+    offset: "0px",
+    direction: "top",
+  }
+)
 const showTooltip = ref(false)
 </script>
 <template>
@@ -21,8 +29,7 @@ const showTooltip = ref(false)
         'opacity-100': showTooltip,
       }"
       :style="{
-        transform:
-          'translate(calc(-50% + ' + (props.offset || '0px') + '), -100%)',
+        transform: `translate(calc(-50% + ${props.offset || '0px'}), ${props.direction === 'top' ? '-' : '+'}100%)`,
       }"
     >
       {{ props.tooltip }}

@@ -61,7 +61,7 @@ const openProfile = () => {
     <div
       class="h-full p-2 flex-grow flex flex-col sm:flex-row items-start sm:items-center info-container"
     >
-      <div class="my-auto flex-grow text-section">
+      <div class="my-auto flex-grow text-section" @click="openVideo">
         <h2 class="text-xl font-bold">
           {{ store.session.video?.title ?? "Kikoune" }}
         </h2>

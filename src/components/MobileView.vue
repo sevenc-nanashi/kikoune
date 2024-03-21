@@ -27,17 +27,17 @@ const changeTab = () => {
 </script>
 <template>
   <div
-    class="absolute inset-0 z-10 hidden"
+    class="absolute inset-0 z-10 hidden flex-col"
     :class="{
-      'xs:max-sm:block': selectedTab !== 'main',
+      'xs:max-sm:flex': selectedTab !== 'main',
     }"
   >
     <div
-      class="w-full h-16 relative flex bg-black p-2 font-bold text-xl flex-row items-end justify-start"
+      class="w-full relative flex bg-black p-2 font-bold text-2xl flex-row items-end justify-start"
     >
       {{ tabNames[selectedTab] }}
     </div>
-    <div class="absolute top-16 left-0 right-0 bottom-0 bg-black/75">
+    <div class="flex-grow relative w-full bg-black/75">
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else-if="selectedTab === 'about'" />

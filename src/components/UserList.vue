@@ -81,57 +81,56 @@ const orderedMembers = computed(() => {
 })
 </script>
 <template>
-  <div class="bg-black/25 min-h-full w-full relative flex flex-col">
-    <div class="flex-grow flex flex-col relative gap-1">
-      <div
-        v-for="member in orderedMembers"
-        :key="member.id"
-        class="bg-black/50 p-2 flex gap-2 relative items-center"
-      >
-        <img
-          class="rounded-full h-8 mr-1 inline"
-          :src="store.getAvatarUrl(member.id)"
-        />
-        <div class="text-md">{{ store.getName(member.id) }}</div>
-        <TooltipIcon
-          v-if="host && host.id === member.id"
-          name="md-star"
-          tooltip="ホスト"
-        />
-        <div class="flex-grow" />
+  <div class="bg-black/25 min-h-full w-full relative flex flex-col gap-1">
+    <div
+      v-for="member in orderedMembers"
+      :key="member.id"
+      class="bg-black/50 p-2 flex gap-2 relative items-center"
+    >
+      <img
+        class="rounded-full h-8 mr-1 inline"
+        :src="store.getAvatarUrl(member.id)"
+      />
+      <div class="text-md">{{ store.getName(member.id) }}</div>
+      <TooltipIcon
+        v-if="host && host.id === member.id"
+        name="md-star"
+        tooltip="ホスト"
+        direction="bottom"
+      />
+      <div class="flex-grow" />
 
-        <TooltipIcon
-          v-if="host && moveHostConfirm === member.id"
-          :disabled="isSubmitting"
-          name="md-check"
-          tooltip="確認"
-          @click="moveHost(member)"
-        />
-        <TooltipIcon
-          v-if="host && moveHostConfirm === member.id"
-          :disabled="isSubmitting"
-          name="md-close"
-          offset="-2rem"
-          tooltip="キャンセル"
-          @click="moveHostConfirm = undefined"
-        />
-        <TooltipIcon
-          v-if="
-            host &&
-            moveHostConfirm !== member.id &&
-            host.id === store.me.id &&
-            host.id !== member.id
-          "
-          :disabled="isSubmitting"
-          name="md-star-outline"
-          offset="-2rem"
-          tooltip="ホストを移動"
-          @click="moveHostConfirm = member.id"
-        />
-      </div>
+      <TooltipIcon
+        v-if="host && moveHostConfirm === member.id"
+        :disabled="isSubmitting"
+        name="md-check"
+        tooltip="確認"
+        @click="moveHost(member)"
+      />
+      <TooltipIcon
+        v-if="host && moveHostConfirm === member.id"
+        :disabled="isSubmitting"
+        name="md-close"
+        offset="-2rem"
+        tooltip="キャンセル"
+        @click="moveHostConfirm = undefined"
+      />
+      <TooltipIcon
+        v-if="
+          host &&
+          moveHostConfirm !== member.id &&
+          host.id === store.me.id &&
+          host.id !== member.id
+        "
+        :disabled="isSubmitting"
+        name="md-staroutline"
+        offset="-2rem"
+        tooltip="ホストを移動"
+        @click="moveHostConfirm = member.id"
+      />
     </div>
     <div
-      class="w-full sticky bottom-0 h-12 > top-[-100%] left-0 bg-black transition-opacity pointer-events-none grid place-content-center"
+      class="w-full sticky bottom-0 py-2 left-0 bg-black transition-opacity grid place-content-center"
       :class="{
         'text-red-500': popupType === 'error',
         'text-green-500': popupType === 'info',

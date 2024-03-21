@@ -126,7 +126,7 @@ const openExternal = (url: string) => {
 }
 </script>
 <template>
-  <div class="bg-black/25 h-full w-full relative flex flex-col">
+  <div class="bg-black/25 min-h-full w-full relative flex flex-col">
     <div
       class="flex-grow flex flex-col relative gap-1"
       :class="{
@@ -206,7 +206,7 @@ const openExternal = (url: string) => {
         }"
       />
       <div
-        class="absolute w-full h-full top-[-100%] left-0 bg-black transition-opacity pointer-events-none grid place-content-center"
+        class="absolute w-full h-full py-2 top-[-100%] left-0 bg-black transition-opacity pointer-events-none grid place-content-center"
         :class="{
           'text-red-500': popupType === 'error',
           'text-green-500': popupType === 'info',
