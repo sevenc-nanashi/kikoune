@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import consola from "consola"
 import { v4 as uuid } from "uuid"
-import { computed, ref, onMounted, onUnmounted } from "vue"
+import { computed, ref, onMounted, onUnmounted, watch } from "vue"
 import { useStore } from "~/store"
 
 const store = useStore()
@@ -33,6 +33,16 @@ const src = computed(
 )
 
 let seekDone = false
+let willSeek = false
+watch(
+  () => nonce,
+  () => {
+    consola.info("Nonce changed, resetting seek flags")
+    seekDone = false
+    willSeek = false
+  },
+  { immediate: true }
+)
 const onMessage = (event: MessageEvent) => {
   if (event.origin !== location.origin) {
     return
@@ -72,45 +82,34 @@ const onMessage = (event: MessageEvent) => {
           .toString()
           .slice(12, -1)
       )
-      seekDone = false
       break
     }
-    case "playerStatusChange": {
-      consola.info(`Status changed to ${data.data.playerStatus}`)
-      if (data.data.playerStatus !== 2) {
-        return
-      }
-      if (seekDone) {
-        return
-      }
-      const currentTime = Date.now() - store.session.startedAt - 2000
-      if (currentTime < 0) {
-        return
-      }
-      consola.info(`sending seek: ${currentTime}`)
-      player.value.contentWindow?.postMessage(
-        {
-          eventName: "seek",
-          data: {
-            time: currentTime,
-          },
-          playerId: playerNonce,
-          sourceConnectorType: 1,
-        },
-        location.origin
+    case "statusChange": {
+      consola.info(
+        `Status changed to ${data.data.playerStatus} / ${data.data.seekStatus}`
       )
+      if (data.data.playerStatus === 2) {
+        if (!willSeek) {
+          consola.info("Flagged willSeek")
+        }
+
+        willSeek = true
+      }
       break
     }
     case "playerMetadataChange": {
-      const currentTime = Date.now() - store.session.startedAt - 2000
-      if (currentTime < 0) {
-        return
-      }
-      if (
-        !seekDone &&
-        Math.abs(currentTime - data.data.currentTime) / 1000 < 1
-      ) {
-        consola.info(`Seek done: ${data.data.currentTime}`)
+      if (data.data.isVideoMetaDataLoaded && !seekDone && willSeek) {
+        const targetTime = Date.now() - store.session.startedAt
+        consola.info("Seeking to", targetTime)
+        player.value.contentWindow?.postMessage(
+          {
+            eventName: "seek",
+            sourceConnectorType: 1,
+            playerId: playerNonce,
+            data: { time: targetTime },
+          },
+          location.origin
+        )
         seekDone = true
       }
       break

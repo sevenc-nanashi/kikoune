@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue"
+import { ref, watch } from "vue"
 import consola from "consola"
 import { Common } from "@discord/embedded-app-sdk"
 import BuildInfo from "~/components/BuildInfo.vue"
@@ -97,7 +97,7 @@ watch(
       Developed by
       <span class="text-[#48b0d5]">Nanashi.</span>
     </p>
-    <hr class="border-b-[1px] border-white w-full my-5" />
+    <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
     <p v-if="error" class="text-2xl text-red-500">{{ error }}</p>
     <p v-else class="text-xl sm:text-2xl">ログイン中...</p>
     <BuildInfo />
