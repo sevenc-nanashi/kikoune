@@ -123,7 +123,7 @@ const orderedMembers = computed(() => {
             host.id !== member.id
           "
           :disabled="isSubmitting"
-          name="md-star"
+          name="md-star-outline"
           offset="-2rem"
           tooltip="ホストを移動"
           @click="moveHostConfirm = member.id"

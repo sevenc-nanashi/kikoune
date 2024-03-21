@@ -48,7 +48,19 @@ const openProfile = () => {
 </script>
 <template>
   <div class="*:bg-black/75 gap-2 flex-row">
-    <div class="h-full p-2 flex-grow flex flex-row items-center info-container">
+    <div
+      class="h-full aspect-square bg-slate-500 relative rounded overflow-hidden hidden sm:block"
+    >
+      <div
+        class="absolute inset-[-16%] bg-cover bg-center"
+        :style="{
+          backgroundImage: `url('${store.thumbnailUrl}')`,
+        }"
+      />
+    </div>
+    <div
+      class="h-full p-2 flex-grow flex flex-col sm:flex-row items-start sm:items-center info-container"
+    >
       <div class="my-auto flex-grow text-section">
         <h2 class="text-xl font-bold">
           {{ store.session.video?.title ?? "Kikoune" }}
@@ -69,7 +81,7 @@ const openProfile = () => {
       </div>
       <div
         v-if="store.session.video"
-        class="my-auto flex flex-row items-center"
+        class="w-full sm:w-auto flex flex-row items-center"
       >
         <TooltipIcon
           v-if="store.isHost || store.session.video.requestedBy === store.me.id"
@@ -79,6 +91,7 @@ const openProfile = () => {
           class="w-6 h-6 mr-2"
           @click="skipVideo"
         />
+        <div class="flex-grow sm:hidden" />
         <span class="text-sm requester-name">
           {{ store.getName(store.session.video?.requestedBy) }}
         </span>
@@ -89,7 +102,7 @@ const openProfile = () => {
       </div>
     </div>
     <a
-      class="h-full aspect-square grid place-items-center transition-colors"
+      class="h-full aspect-square place-items-center transition-colors hidden sm:grid"
       :class="{
         'hover:bg-black cursor-pointer': store.session.video,
         'cursor-not-allowed': !store.session.video,

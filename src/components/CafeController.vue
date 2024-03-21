@@ -22,9 +22,18 @@ const switchRotate = () => {
     rotate: !rotate.value,
   })
 }
-const rotate = computed(() => {
-  return store.stateOverride.rotate ?? store.memberStates[store.me.id]?.rotate
-})
+const rotate = computed(
+  () => store.stateOverride.rotate ?? store.memberStates[store.me.id]?.rotate
+)
+const mobileSend = computed(
+  () =>
+    message.value &&
+    store.memberStates[store.me.id] &&
+    ((store.stateOverride.message ??
+      store.memberStates[store.me.id].message) !== message.value.value ||
+      (store.stateOverride.message ??
+        store.memberStates[store.me.id].message) === "")
+)
 const message = ref<HTMLInputElement>()
 const clearMessage = () => {
   if (!message.value) return
@@ -34,35 +43,53 @@ const clearMessage = () => {
 }
 const onSubmit = () => {
   if (!message.value?.value) return
+  if (window.innerWidth < 640 && !mobileSend.value) {
+    clearMessage()
+    return
+  }
   updateState({ message: message.value.value })
   store.setStateOverride({ message: message.value.value })
 }
 </script>
 <template>
-  <div class="w-full flex flex-row gap-2 relative">
+  <div class="w-full flex flex-row gap-2 bottom-0 sm:bottom-auto relative">
     <button
-      class="h-full px-4"
+      class="h-full aspect-square sm:aspect-auto sm:py-0 sm:px-4 absolute sm:relative right-2 bottom-[6.5rem] rounded-full sm:rounded-none sm:right-auto sm:bottom-auto drop-shadow-md sm:drop-shadow-none"
       :class="{
-        'bg-black/50 focus:bg-black hover:bg-black': !rotate,
+        'bg-black sm:bg-black/50 focus:bg-black hover:bg-black': !rotate,
         'bg-cyan-500': rotate,
       }"
       @click="switchRotate"
     >
-      回る
+      <span class="hidden sm:inline">回る</span>
+      <v-icon class="sm:hidden inline" name="md-refresh" />
     </button>
     <form class="flex-grow flex flex-row gap-2" @submit.prevent="onSubmit">
       <input
         ref="message"
-        class="bg-white p-2 text-slate-950 outline-none flex-grow"
+        placeholder="吹き出しの内容を入力..."
+        class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none sm:placeholder-transparent"
       />
-      <input
+      <button
         type="submit"
-        class="h-full bg-black/50 focus:bg-black hover:bg-black p-3 w-36 cursor-pointer active:bg-cyan-500"
-        value="吹き出し"
-      />
+        class="absolute rounded-full aspect-square h-full bottom-14 right-2 block sm:hidden drop-shadow-md sm:drop-shadow-none"
+        :class="{
+          'bg-black': mobileSend,
+          'bg-cyan-500': !mobileSend,
+        }"
+      >
+        <v-icon v-if="mobileSend" name="md-message" />
+        <v-icon v-else name="md-close" />
+      </button>
+      <button
+        type="submit"
+        class="h-full bg-black/50 focus:bg-black hover:bg-black p-3 w-36 cursor-pointer active:bg-cyan-500 hidden sm:block"
+      >
+        吹き出し
+      </button>
     </form>
     <button
-      class="h-full bg-black/50 focus:bg-black hover:bg-black px-4 active:bg-cyan-500"
+      class="h-full bg-black/50 focus:bg-black hover:bg-black px-4 active:bg-cyan-500 hidden sm:block"
       @click="clearMessage"
     >
       消す

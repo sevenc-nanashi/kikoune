@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import consola from "consola"
 import NicoPlayer from "~/components/NicoPlayer.vue"
 import InfoPanel from "~/components/InfoPanel.vue"
 import NowPlaying from "~/components/NowPlaying.vue"
 import CafeController from "~/components/CafeController.vue"
 import CafeSpace from "~/components/CafeSpace.vue"
+import MobileView from "~/components/MobileView.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
 import { MemberState, Session, defaultMemberState } from "~shared/schema"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
-const thumbnailUrl = computed(() => {
-  const base = store.session.video?.thumbnailUrl
-  if (!base) return ""
-  const path = new URL(base).pathname
-  return `/external/nicovideo-cdn-nimg-jp${path}`
-})
 
 const errorCount = ref(0)
 
@@ -68,6 +63,31 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(interval)
 })
+
+watch(
+  () => store.session.video,
+  async () => {
+    discordSdk.commands.setActivity({
+      activity: store.session.video
+        ? {
+            state: `\u{1f464} ${Object.values(store.memberStates).length} | 回 ${
+              Object.values(store.memberStates).filter((s) => s.rotate).length
+            }`,
+            details: `\u266a ${store.session.video.title}`,
+            assets: {
+              large_image: store.session.video.thumbnailUrl,
+              large_text: `${store.session.video.title} - ${store.session.video.author}`,
+            },
+            timestamps: {
+              start: store.session.startedAt,
+            },
+          }
+        : {
+            state: "選曲中...",
+          },
+    })
+  }
+)
 </script>
 <template>
   <div
@@ -78,18 +98,23 @@ onUnmounted(() => {
     }"
   />
   <div class="w-screen h-screen xs:relative root">
-    <div class="xs:relative flex top-section h-full">
-      <NicoPlayer class="h-screen w-screen xs:w-auto xs:h-full aspect-video" />
-      <InfoPanel class="hidden xs:flex h-full" />
+    <div
+      class="xs:relative flex top-section h-full justify-center sm:justify-normal"
+    >
+      <NicoPlayer
+        class="h-screen w-screen xs:max-sm:w-full sm:w-auto xs:h-full aspect-video"
+      />
+      <InfoPanel class="hidden sm:flex h-full" />
     </div>
     <NowPlaying class="hidden xs:flex h-full" />
     <CafeSpace class="hidden xs:block" />
-    <CafeController class="hidden xs:flex" />
+    <CafeController class="hidden xs:flex z-10" />
+    <MobileView class="hidden xs:max-sm:block z-10" />
   </div>
   <div class="background-container hidden xs:block">
     <div
       class="background"
-      :style="{ backgroundImage: currentId && `url(${thumbnailUrl})` }"
+      :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
       :class="{ 'bg-slate-500': !currentId }"
     />
   </div>
@@ -111,7 +136,10 @@ $padding: 8px;
   display: grid;
   grid-template-rows: calc(45vh - 4.5rem) 4.5rem 1fr auto;
 
-  @media (max-height: 480px) {
+  @media (max-width: 640px) {
+    grid-template-rows: auto auto 1fr auto;
+  }
+  @media (max-height: 480px) and (min-width: 640px) {
     grid-template-rows: calc(45vh - 2rem) 2rem 1fr auto;
   }
 }

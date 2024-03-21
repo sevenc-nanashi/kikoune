@@ -37,6 +37,12 @@ export const useStore = defineStore("auth", {
         ? state.isHostOverride
         : state._me?.id === state.session.host
     },
+    thumbnailUrl(state) {
+      const base = state.session.video?.thumbnailUrl
+      if (!base) return ""
+      const path = new URL(base).pathname
+      return `/external/nicovideo-cdn-nimg-jp${path}`
+    },
   },
   actions: {
     async setToken(token: string) {

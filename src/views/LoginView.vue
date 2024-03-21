@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue"
 import consola from "consola"
+import { Common } from "@discord/embedded-app-sdk"
 import BuildInfo from "~/components/BuildInfo.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
@@ -55,6 +56,12 @@ const authorize = async () => {
   discordSdk.subscribe("ACTIVITY_INSTANCE_PARTICIPANTS_UPDATE", (event) => {
     store.setParticipants(event.participants)
   })
+  discordSdk.commands.setOrientationLockState({
+    lock_state: Common.OrientationLockStateTypeObject.PORTRAIT,
+    picture_in_picture_lock_state:
+      Common.OrientationLockStateTypeObject.LANDSCAPE,
+    grid_lock_state: Common.OrientationLockStateTypeObject.LANDSCAPE,
+  })
   const participants = await discordSdk.commands
     .getInstanceConnectedParticipants()
     .then((res) => res.participants)
@@ -85,14 +92,14 @@ watch(
     class="w-screen h-screen place-items-center place-content-center grid bg-gray-900"
   >
     <div class="absolute inset-0 cursor-wait" />
-    <h1 class="text-9xl font-extrabold">Kikoune</h1>
-    <p class="text-2xl">
+    <h1 class="text-5xl sm:text-9xl font-extrabold">Kikoune</h1>
+    <p class="text-xl sm:text-2xl">
       Developed by
       <span class="text-[#48b0d5]">Nanashi.</span>
     </p>
     <hr class="border-b-[1px] border-white w-full my-5" />
     <p v-if="error" class="text-2xl text-red-500">{{ error }}</p>
-    <p v-else class="text-2xl">ログイン中...</p>
+    <p v-else class="text-xl sm:text-2xl">ログイン中...</p>
     <BuildInfo />
   </div>
 </template>

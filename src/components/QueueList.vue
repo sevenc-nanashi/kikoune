@@ -142,10 +142,10 @@ const openExternal = (url: string) => {
         <div class="w-8 bg-black grid place-content-center">
           {{ temporaryAdded.includes(video) ? "-" : i + 1 }}
         </div>
-        <div class="flex p-2 gap-1 flex-col flex-grow">
-          <div class="flex flex-row items-end relative">
+        <div class="flex p-2 gap-2 sm:gap-1 flex-col flex-grow">
+          <div class="flex flex-col sm:flex-row sm:items-end relative">
             <div class="text-md">{{ video.title }}</div>
-            <div class="pl-4 font-light text-xs">{{ video.author }}</div>
+            <div class="sm:pl-4 font-light text-xs">{{ video.author }}</div>
           </div>
           <div class="text-xs flex flex-row items-center">
             <img
@@ -157,25 +157,45 @@ const openExternal = (url: string) => {
             }}</span
             >さんのリクエスト
           </div>
+
+          <div class="flex sm:hidden flex-row gap-2">
+            <TooltipIcon
+              v-if="store.isHost || video.requestedBy === store.me.id"
+              class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+              name="md-delete"
+              tooltip="削除"
+              @click="deleteVideo(video)"
+            />
+            <TooltipIcon
+              class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+              name="md-openinnew"
+              tooltip="開く"
+              @click="
+                openExternal(`https://www.nicovideo.jp/watch/${video.id}`)
+              "
+            />
+          </div>
         </div>
 
-        <TooltipIcon
-          v-if="store.isHost || video.requestedBy === store.me.id"
-          class="self-center cursor-pointer h-[75%] aspect-square grid place-items-center p-3"
-          name="md-delete"
-          tooltip="削除"
-          @click="deleteVideo(video)"
-        />
-        <TooltipIcon
-          class="self-center cursor-pointer h-[75%] aspect-square grid place-items-center p-3"
-          name="md-openinnew"
-          tooltip="開く"
-          @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
-        />
+        <div class="flex-row hidden sm:flex">
+          <TooltipIcon
+            v-if="store.isHost || video.requestedBy === store.me.id"
+            class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
+            name="md-delete"
+            tooltip="削除"
+            @click="deleteVideo(video)"
+          />
+          <TooltipIcon
+            class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
+            name="md-openinnew"
+            tooltip="開く"
+            @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
+          />
+        </div>
       </div>
     </div>
     <form
-      class="w-full flex sticky bottom-0 h-12 queue-form"
+      class="w-full flex sticky bottom-0 h-12 md:h-8 queue-form"
       @submit.prevent="onSubmit"
     >
       <div
@@ -197,12 +217,12 @@ const openExternal = (url: string) => {
       </div>
       <input
         ref="videoSourceInput"
-        class="bg-white p-2 text-slate-950 outline-none flex-grow"
+        class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none w-[calc(100%_-_4rem)] sm:w-auto"
         placeholder="動画のID（sm123456789）/  URL（複数可）"
       />
       <input
         type="submit"
-        class="h-full bg-black p-1 w-24 cursor-pointer active:bg-cyan-500"
+        class="h-full bg-black px-4 sm:p-1 w-16 cursor-pointer active:bg-cyan-500 rounded-none"
         label="追加"
       />
     </form>
