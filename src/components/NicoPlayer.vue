@@ -35,14 +35,14 @@ const src = computed(
     })}`
 )
 
-let status = ref<"load" | "presync" | "sync" | "play">("load")
+let status = ref<"init" | "preload" | "load" | "presync" | "sync" | "play">("init")
 
 let lastStatus = 0
 watch(
   nonce,
   () => {
     consola.info("Nonce changed, resetting status")
-    status.value = "load"
+    status.value = "init"
   },
   { immediate: true }
 )
@@ -125,6 +125,7 @@ const onMessage = (event: MessageEvent) => {
           .toString()
           .slice(12, -1)
       )
+      status.value = "preload"
       break
     }
     case "navigate": {
@@ -142,6 +143,9 @@ const onMessage = (event: MessageEvent) => {
         `Status changed to ${data.data.playerStatus} / ${data.data.seekStatus}`
       )
       lastStatus = data.data.playerStatus
+      if (data.data.playerStatus === 2 && status.value === "preload") {
+        status.value = "load"
+      }
       if (data.data.playerStatus === 3 && status.value === "presync") {
         status.value = "sync"
       }

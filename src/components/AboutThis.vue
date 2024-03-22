@@ -21,7 +21,15 @@ const onTitleClick = () => {
 </script>
 <template>
   <div class="min-h-full w-full bg-black/50 p-2">
-    <h1 class="font-bold text-xl" @click="onTitleClick">Kikoune</h1>
+    <h1
+      class="font-bold text-xl"
+      :class="{
+        'text-cyan-500': store.debug,
+      }"
+      @click="onTitleClick"
+    >
+      Kikoune
+    </h1>
     <p>Kikoune は、ニコニコ動画の動画を同時視聴できるアクティビティです。</p>
     <ul class="pt-2">
       <li>
@@ -51,7 +59,7 @@ const onTitleClick = () => {
       <li>
         ビルド：
         <a
-          class="text-cyan-500 hover:underline cursor-pointer"
+          class="text-cyan-500 hover:underline cursor-pointer font-mono"
           @click="
             openExternal(
               `https://github.com/sevenc-nanashi/kikoune/tree/${sha}`

@@ -16,11 +16,6 @@ watch(
   }
 )
 
-const openVideoIfMobile = () => {
-  if (window.innerWidth < 640) {
-    openVideo()
-  }
-}
 const openVideo = () => {
   if (store.session.video) {
     discordSdk.commands.openExternalLink({
@@ -66,7 +61,7 @@ const openProfile = () => {
     <div
       class="h-full p-2 flex-grow flex flex-col sm:flex-row items-start sm:items-center info-container"
     >
-      <div class="my-auto flex-grow text-section" @click="openVideoIfMobile">
+      <div class="my-auto flex-grow text-section">
         <h2 class="text-xl font-bold">
           {{ store.session.video?.title ?? "Kikoune" }}
         </h2>
@@ -86,8 +81,15 @@ const openProfile = () => {
       </div>
       <div
         v-if="store.session.video"
-        class="w-full sm:w-auto flex flex-row items-center"
+        class="w-full sm:w-auto xs:max-sm:pt-2 flex flex-row items-center"
       >
+        <TooltipIcon
+          name="md-openinnew"
+          tooltip="ブラウザで開く"
+          offset="2rem"
+          class="w-6 h-6 mr-2 hidden xs:max-sm:block"
+          @click="openVideo"
+        />
         <TooltipIcon
           v-if="store.isHost || store.session.video.requestedBy === store.me.id"
           name="md-fastforward"

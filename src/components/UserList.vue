@@ -82,7 +82,7 @@ const orderedMembers = computed(() => {
 </script>
 <template>
   <div
-    class="bg-black/25 h-screen sm:h-auto min-h-full w-full relative flex flex-col gap-1 overflow-y-scroll sm:overflow-y-auto pb-8 sm:pb-0"
+    class="bg-black/25 h-screen sm:h-auto min-h-full w-full relative flex flex-col gap-1 overflow-y-scroll sm:overflow-y-auto pt-2 pb-8 sm:pb-0"
   >
     <div
       v-for="member in orderedMembers"

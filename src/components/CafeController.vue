@@ -55,7 +55,9 @@ const onSubmit = () => {
 }
 </script>
 <template>
-  <div class="w-full flex flex-row gap-2 bottom-0 sm:bottom-auto relative">
+  <div
+    class="w-full flex xs:max-sm:z-20 flex-row gap-2 bottom-0 sm:bottom-auto relative"
+  >
     <button
       class="h-10 sm:h-full aspect-square sm:aspect-auto sm:py-0 sm:px-4 absolute sm:relative right-2 bottom-[6.5rem] rounded-full sm:rounded-none sm:right-auto sm:bottom-auto drop-shadow-md sm:drop-shadow-none"
       :class="{
