@@ -18,6 +18,8 @@ export const useStore = defineStore("auth", {
     participants: [] as Participant[],
     view: "login" as "login" | "main" | "error",
     isHostOverride: undefined as boolean | undefined,
+    debug: false,
+    delay: 0,
   }),
   getters: {
     token(state) {
@@ -100,6 +102,12 @@ export const useStore = defineStore("auth", {
         ...state,
       }
       this.stateOverrideUpdatedAt = Date.now()
+    },
+    setDebug(debug: boolean) {
+      this.debug = debug
+    },
+    setDelay(delay: number) {
+      this.delay = delay
     },
   },
 })

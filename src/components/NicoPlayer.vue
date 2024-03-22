@@ -35,20 +35,34 @@ const src = computed(
     })}`
 )
 
-let firstSeekDone = false
-let mainSeekDone = false
-let willSeek = false
+let status = ref<"load" | "presync" | "sync" | "play">("load")
+
 let lastStatus = 0
 watch(
   nonce,
   () => {
-    consola.info("Nonce changed, resetting seek flags")
-    firstSeekDone = false
-    mainSeekDone = false
-    willSeek = false
+    consola.info("Nonce changed, resetting status")
+    status.value = "load"
   },
   { immediate: true }
 )
+const serverTime = ref(0)
+let updateInterval: ReturnType<typeof setInterval> | undefined = undefined
+watch(
+  () => store.debug,
+  (debug) => {
+    if (debug) {
+      updateInterval = setInterval(() => {
+        serverTime.value =
+          Date.now() - store.session.startedAt - buffer + store.delay
+      }, 100)
+    }
+  },
+  { immediate: true }
+)
+onUnmounted(() => {
+  clearInterval(updateInterval)
+})
 const onMessage = (event: MessageEvent) => {
   if (event.origin !== location.origin) {
     return
@@ -128,28 +142,23 @@ const onMessage = (event: MessageEvent) => {
         `Status changed to ${data.data.playerStatus} / ${data.data.seekStatus}`
       )
       lastStatus = data.data.playerStatus
-      if (data.data.playerStatus === 2) {
-        if (!willSeek) {
-          consola.info("Flagged willSeek")
-        }
-
-        willSeek = true
+      if (data.data.playerStatus === 3 && status.value === "presync") {
+        status.value = "sync"
       }
       break
     }
     case "playerMetadataChange": {
-      const targetTime = Date.now() - store.session.startedAt - buffer
+      const targetTime =
+        Date.now() - store.session.startedAt - buffer + store.delay
       if (targetTime < 0) {
         return
       }
       if (
+        data.data.isVideoMetaDataLoaded &&
         data.data.maximumBuffered > targetTime &&
-        !mainSeekDone &&
-        firstSeekDone &&
+        status.value === "sync" &&
         lastStatus === 2
       ) {
-        const isIphone = navigator.userAgent.match(/iPhone/i)
-        const isAndroid = navigator.userAgent.match(/Android/i)
         consola.info(`Seeking to ${targetTime} to sync`)
         player.value.contentWindow?.postMessage(
           {
@@ -158,19 +167,14 @@ const onMessage = (event: MessageEvent) => {
             playerId: playerNonce,
 
             data: {
-              // TODO: 環境に合わせてチューニングするようにする
-              time: isIphone
-                ? targetTime + 2500
-                : isAndroid
-                  ? targetTime + 1500
-                  : targetTime,
+              time: targetTime,
             },
           },
           location.origin
         )
-        mainSeekDone = true
+        status.value = "play"
       }
-      if (data.data.isVideoMetaDataLoaded && !firstSeekDone && willSeek) {
+      if (data.data.isVideoMetaDataLoaded && status.value === "load") {
         consola.info(`Seeking to ${targetTime} to load video`)
         player.value.contentWindow?.postMessage(
           {
@@ -181,7 +185,7 @@ const onMessage = (event: MessageEvent) => {
           },
           location.origin
         )
-        firstSeekDone = true
+        status.value = "presync"
       }
       break
     }
@@ -204,6 +208,14 @@ onUnmounted(() => {
       'bg-slate-500 place-items-center place-content-center grid': !videoId,
     }"
   >
+    <div
+      v-if="store.debug"
+      class="absolute top-0 right-0 p-2 bg-white/50 text-black text-xs z-10"
+    >
+      Server time: {{ serverTime }}<br />
+      Time delay: {{ store.delay }}<br />
+      Status: {{ status }}
+    </div>
     <iframe
       v-if="videoId"
       ref="player"
@@ -211,6 +223,9 @@ onUnmounted(() => {
       :src
       class="block absolute w-full h-full bg-black"
     />
+    <template v-else-if="store.session.startedAt === 0">
+      <h1 class="text-2xl">同期中...</h1>
+    </template>
     <template v-else>
       <h1 class="text-2xl">待機中...</h1>
       <p class="hidden sm:block">右の欄から動画を再生できます。</p>

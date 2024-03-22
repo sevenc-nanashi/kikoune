@@ -1,16 +1,27 @@
 <script setup lang="ts">
+import consola from "consola"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
+import { useStore } from "~/store"
 
+const store = useStore()
 const sha = import.meta.env.VITE_COMMIT
 
 const discordSdk = useDiscordSdk()
 const openExternal = (url: string) => {
   discordSdk.commands.openExternalLink({ url })
 }
+let debugCount = 0
+const onTitleClick = () => {
+  debugCount++
+  if (debugCount >= 10) {
+    consola.info("Debug mode enabled")
+    store.setDebug(true)
+  }
+}
 </script>
 <template>
   <div class="min-h-full w-full bg-black/50 p-2">
-    <h1 class="font-bold text-xl">Kikoune</h1>
+    <h1 class="font-bold text-xl" @click="onTitleClick">Kikoune</h1>
     <p>Kikoune は、ニコニコ動画の動画を同時視聴できるアクティビティです。</p>
     <ul class="pt-2">
       <li>

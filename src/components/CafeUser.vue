@@ -20,7 +20,11 @@ const showTooltip = ref(false)
 </script>
 <template>
   <div
-    class="w-12 h-12 absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300 ease-out cafe-user"
+    class="w-12 h-12 absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out cafe-user"
+    :class="{
+      'z-10': store.me.id !== props.id,
+      'z-20': store.me.id === props.id,
+    }"
     :style="{
       left: `${50 + (memberState.x || 0) * 50}%`,
       top: `${50 + (memberState.y || 0) * 50}%`,
@@ -45,7 +49,7 @@ const showTooltip = ref(false)
       {{ memberState.message }}
     </p>
     <p
-      class="absolute bottom-[-1rem] left-0 right-0 text-center text-xs text-white drop-shadow-sm"
+      class="absolute bottom-[-1rem] left-0 right-0 text-center text-xs text-white drop-shadow-xl"
       :class="{
         'opacity-0 pointer-events-none': !showTooltip,
         'opacity-100 pointer-events-auto': showTooltip,

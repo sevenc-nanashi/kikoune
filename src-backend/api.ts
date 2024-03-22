@@ -83,5 +83,8 @@ app.post(
     return c.json({ userId: user.id, discordAccessToken, kikouneAccessToken })
   }
 )
+app.get("/time", async (c) => {
+  return c.json({ time: Date.now() })
+})
 
 export default app

@@ -71,6 +71,12 @@ const authorize = async () => {
     throw new Error("Failed to fetch me")
   }
   store.setMe(me)
+
+  const currentTime = Date.now()
+  const { time } = await fetch("/api/time").then((res) => res.json())
+  const requestTime = Date.now() - currentTime
+  store.setDelay(time - currentTime - requestTime)
+
   store.setView("main")
 }
 watch(
@@ -88,7 +94,7 @@ watch(
 </script>
 <template>
   <div
-    class="w-screen h-screen place-items-center place-content-center grid bg-gray-900"
+    class="w-screen h-screen place-items-center place-content-center grid bg-gray-900 z-100"
   >
     <div class="absolute inset-0 cursor-wait" />
     <h1 class="text-5xl sm:text-9xl font-extrabold">Kikoune</h1>
