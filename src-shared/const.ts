@@ -6,3 +6,4 @@ export const discordScope = [
 ] as const
 
 export const buffer = 5000
+export const maxMessageLength = 50

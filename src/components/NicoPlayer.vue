@@ -130,9 +130,9 @@ const onMessage = (event: MessageEvent) => {
     case "navigate": {
       let url: string = data.data.url
       if (url.includes(location.origin)) {
-        url = url.replace(location.origin + "/external", "")
+        url = url.replace(location.origin + "/external/", "")
         const dummyHost = url.split("/")[0]
-        url = "https://" + url.replace(dummyHost, dummyHost.replace(/\./g, "-"))
+        url = "https://" + url.replace(dummyHost, dummyHost.replace(/-/g, "."))
       }
       discordSdk.commands.openExternalLink({ url })
       break

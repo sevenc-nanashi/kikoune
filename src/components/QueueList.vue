@@ -2,6 +2,7 @@
 import consola from "consola"
 import { computed, ref, watch } from "vue"
 import { v4 as uuid } from "uuid"
+import Draggable from "vuedraggable"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
 import { SessionVideo, Video } from "~shared/schema"
@@ -23,16 +24,34 @@ const spawnPopup = (message: string, type: "error" | "info") => {
     popupCount.value--
   }, 5000)
 }
+const temporaryOrder = ref<string[] | undefined>(undefined)
 const temporaryAdded = ref<SessionVideo[]>([])
 const temporaryDeleted = ref<string[]>([])
-const queue = computed(() =>
-  store.session.queue
-    .filter((video) => !temporaryDeleted.value.includes(video.nonce))
-    .concat(temporaryAdded.value)
-)
+const reorderedItems = ref<string[]>([])
+const reorderedCount = ref(0)
+const highlightReordered = computed(() => reorderedCount.value > 0)
+const queue = computed({
+  get: () =>
+    (temporaryOrder.value
+      ? temporaryOrder.value.flatMap((nonce) => {
+          const video = store.session.queue.find(
+            (video) => video.nonce === nonce
+          )
+          return video ? [video] : []
+        })
+      : store.session.queue
+    )
+      .filter((video) => !temporaryDeleted.value.includes(video.nonce))
+      .concat(temporaryAdded.value),
+  set: (value: SessionVideo[]) => {
+    temporaryOrder.value = value.map((video) => video.nonce)
+    sendReorder()
+  },
+})
 watch(
   () => store.session.queue,
   () => {
+    temporaryOrder.value = undefined
     temporaryAdded.value = []
     temporaryDeleted.value = []
   }
@@ -124,50 +143,118 @@ const deleteVideo = async (video: SessionVideo) => {
 const openExternal = (url: string) => {
   discordSdk.commands.openExternalLink({ url })
 }
+const setReordered = (event: { newIndex: number; oldIndex: number }) => {
+  const earlierIndex =
+    (event.oldIndex < event.newIndex ? event.oldIndex : event.newIndex) - 1
+  const laterIndex =
+    (event.oldIndex < event.newIndex ? event.newIndex : event.oldIndex) - 1
+  reorderedItems.value = queue.value
+    .slice(earlierIndex, laterIndex + 1)
+    .map((video) => video.nonce)
+  consola.info(`Reordered ${earlierIndex} ... ${laterIndex}`)
+
+  reorderedCount.value++
+  setTimeout(() => {
+    reorderedCount.value--
+  }, 1000)
+}
+const sendReorder = async () => {
+  if (temporaryOrder.value) {
+    consola.info("Sending reorder", temporaryOrder.value)
+    const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.me.id} ${store.token}`,
+      },
+      body: JSON.stringify({
+        order: temporaryOrder.value,
+      }),
+    })
+    if (!res.ok) {
+      consola.error("Failed to reorder")
+      spawnPopup("順番の変更に失敗しました。", "error")
+    }
+  }
+}
 </script>
 <template>
   <div class="bg-black/25 min-h-full w-full relative flex flex-col">
-    <div
-      class="flex-grow flex flex-col relative gap-1 h-screen pb-32 sm:pb-0 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
-      :class="{
-        'grid place-content-center': queue.length === 0,
-      }"
+    <div v-if="queue.length === 0" class="grid place-content-center flex-grow">
+      <p class="text-xl">キューは空です。</p>
+    </div>
+    <Draggable
+      v-else
+      v-model="queue"
+      item-key="nonce"
+      handle=".handle"
+      class="flex-grow flex flex-col relative gap-1 h-screen pt-2 xs:max-sm:pb-32 pb-2 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
+      @sort="setReordered"
     >
-      <p v-if="queue.length === 0" class="text-xl">キューは空です。</p>
-      <div
-        v-for="(video, i) in queue"
-        :key="video.id"
-        class="bg-black/50 flex gap-2 relative"
-      >
-        <div class="w-8 bg-black grid place-content-center">
-          {{ temporaryAdded.includes(video) ? "-" : i + 1 }}
-        </div>
-        <div class="flex p-2 gap-2 sm:gap-1 flex-col flex-grow">
-          <div class="flex flex-col sm:flex-row sm:items-end relative">
-            <div class="text-md">{{ video.title }}</div>
-            <div class="sm:pl-4 font-light text-xs">{{ video.author }}</div>
+      <template v-if="store.isHost" #header>
+        <p class="pl-2">数字をドラッグして順番を変更できます。</p>
+      </template>
+      <template #item="{ element: video, index: i }">
+        <div class="bg-black/50 flex gap-2 relative">
+          <div
+            class="w-8 bg-black grid place-content-center transition-colors duration-200"
+            :class="{
+              'handle cursor-grab':
+                !temporaryAdded.includes(video) && store.isHost,
+              'text-opacity-50': temporaryAdded.includes(video),
+              '!bg-cyan-900':
+                !temporaryAdded.includes(video) &&
+                highlightReordered &&
+                reorderedItems.includes(video.nonce),
+            }"
+          >
+            {{ temporaryAdded.includes(video) ? "-" : i + 1 }}
           </div>
-          <div class="text-xs flex flex-row items-center">
-            <img
-              class="rounded-full h-5 mr-1 inline"
-              :src="store.getAvatarUrl(video.requestedBy)"
-            />
-            <span class="text-cyan-500">{{
-              store.getName(video.requestedBy) ?? "（不明）"
-            }}</span
-            >さんのリクエスト
+          <div class="flex p-2 gap-2 sm:gap-1 flex-col flex-grow">
+            <div class="flex flex-col sm:flex-row sm:items-end relative">
+              <div class="text-md">{{ video.title }}</div>
+              <div class="sm:pl-4 font-light text-xs">{{ video.author }}</div>
+            </div>
+            <div class="text-xs flex flex-row items-center">
+              <img
+                class="rounded-full h-5 mr-1 inline"
+                :src="store.getAvatarUrl(video.requestedBy)"
+              />
+              <span class="text-cyan-500">{{
+                store.getName(video.requestedBy)
+              }}</span
+              >さんのリクエスト
+            </div>
+
+            <div class="flex sm:hidden flex-row gap-2">
+              <TooltipIcon
+                v-if="store.isHost || video.requestedBy === store.me.id"
+                class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+                name="md-delete"
+                tooltip="削除"
+                @click="deleteVideo(video)"
+              />
+              <TooltipIcon
+                class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+                name="md-openinnew"
+                tooltip="開く"
+                @click="
+                  openExternal(`https://www.nicovideo.jp/watch/${video.id}`)
+                "
+              />
+            </div>
           </div>
 
-          <div class="flex sm:hidden flex-row gap-2">
+          <div class="flex-row hidden sm:flex pr-2">
             <TooltipIcon
               v-if="store.isHost || video.requestedBy === store.me.id"
-              class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+              class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
               name="md-delete"
               tooltip="削除"
               @click="deleteVideo(video)"
             />
             <TooltipIcon
-              class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+              class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
               name="md-openinnew"
               tooltip="開く"
               @click="
@@ -176,24 +263,8 @@ const openExternal = (url: string) => {
             />
           </div>
         </div>
-
-        <div class="flex-row hidden sm:flex">
-          <TooltipIcon
-            v-if="store.isHost || video.requestedBy === store.me.id"
-            class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
-            name="md-delete"
-            tooltip="削除"
-            @click="deleteVideo(video)"
-          />
-          <TooltipIcon
-            class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
-            name="md-openinnew"
-            tooltip="開く"
-            @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
-          />
-        </div>
-      </div>
-    </div>
+      </template>
+    </Draggable>
     <form
       class="w-full flex sticky bottom-0 h-12 md:h-8 queue-form"
       @submit.prevent="onSubmit"

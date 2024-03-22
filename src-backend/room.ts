@@ -6,7 +6,7 @@ import { z } from "zod"
 import * as db from "./db.js"
 import { fetchSession, getVideo } from "./nico.js"
 import { defaultMemberState, memberStateSchema } from "~shared/schema.js"
-import { buffer } from "~shared/const.js"
+import { buffer, maxMessageLength } from "~shared/const.js"
 
 const app = new Hono<{
   Variables: { userId: string }
@@ -112,6 +112,9 @@ app.put(
       state.y = data.state.y ?? state.y
       state.rotate = data.state.rotate ?? state.rotate
       state.message = data.state.message ?? state.message
+      if (state.message.length > maxMessageLength) {
+        state.message = state.message.slice(0, maxMessageLength)
+      }
 
       await db.setMemberState(c.req.param("id"), c.get("userId"), state)
     })
@@ -176,7 +179,7 @@ app.put(
 )
 
 app.delete("/:id{[0-9a-f-]+?}/queue/:nonce{[0-9a-f-]+?}", async (c) => {
-  await lock.acquire(c.req.param("id"), async () => {
+  return await lock.acquire(c.req.param("id"), async () => {
     const session = await db.getSession(c.req.param("id"))
     const video = session.queue.find((v) => v.nonce === c.req.param("nonce"))
     if (!video) {
@@ -191,10 +194,28 @@ app.delete("/:id{[0-9a-f-]+?}/queue/:nonce{[0-9a-f-]+?}", async (c) => {
       return c.json({ error: "Forbidden" })
     }
     await db.cancelVideo(c.req.param("id"), c.req.param("nonce"))
-  })
 
-  c.status(204)
-  return c.body(null)
+    c.status(204)
+    return c.body(null)
+  })
 })
+app.put(
+  "/:id{[0-9a-f-]+?}/queue",
+  zValidator("json", z.object({ order: z.array(z.string()) })),
+  async (c) => {
+    return await lock.acquire(c.req.param("id"), async () => {
+      const session = await db.getSession(c.req.param("id"))
+      if (session.host !== c.get("userId")) {
+        c.status(403)
+        return c.json({ error: "Not the host" })
+      }
+      const order = c.req.valid("json").order
+      await db.reorderQueue(c.req.param("id"), order)
+
+      c.status(204)
+      return c.body(null)
+    })
+  }
+)
 
 export default app

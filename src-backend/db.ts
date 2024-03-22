@@ -144,3 +144,15 @@ export const setHost = async (roomId: string, host: string) => {
   session.host = host
   await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 }
+
+export const reorderQueue = async (roomId: string, queue: string[]) => {
+  const session = await getSession(roomId)
+  const reorderedQueue = queue
+    .map((id) => session.queue.find((v) => v.nonce === id))
+    .filter(Boolean) as DbSessionVideo[]
+  const missed = session.queue.filter((v) => !queue.includes(v.nonce))
+
+  session.queue = reorderedQueue.concat(missed)
+
+  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+}

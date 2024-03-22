@@ -12,6 +12,7 @@ const users = computed(() =>
 )
 const container = ref<HTMLElement>()
 const capPosition = (pos: number) => Math.max(-1, Math.min(1, pos))
+
 const move = (e: MouseEvent) => {
   if (!container.value) return
   const containerRect = container.value.getBoundingClientRect()

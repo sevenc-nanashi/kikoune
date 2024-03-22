@@ -2,6 +2,7 @@
 import { computed, ref } from "vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
+import { maxMessageLength } from "~shared/const"
 import { MemberState } from "~shared/schema"
 
 const store = useStore()
@@ -69,11 +70,13 @@ const onSubmit = () => {
     <form class="flex-grow flex flex-row gap-2" @submit.prevent="onSubmit">
       <input
         ref="message"
+        :maxlength="maxMessageLength"
         placeholder="吹き出しの内容を入力..."
         class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none sm:placeholder-transparent"
       />
       <button
         type="submit"
+        :maxlength="maxMessageLength"
         class="h-10 absolute rounded-full aspect-square bottom-14 right-2 block sm:hidden drop-shadow-md sm:drop-shadow-none"
         :class="{
           'bg-black': mobileSend,
