@@ -7,11 +7,13 @@
     "dev": "run-p dev:*",
     "dev:frontend": "vite",
     "dev:backend": "nodemon --watch src-backend --ext ts,json --exec run-s build:backend run:backend",
+    "build": "run-s build:*",
     "build:backend": "tsc -p tsconfig.node.json && tsc-alias -p tsconfig.node.json",
     "build:frontend": "vue-tsc && vite build",
     "run:backend": "node -r dotenv/config dist-backend/src-backend/index.js",
     "preview": "vite preview",
-    "lint": "eslint --ext .ts,.vue src"
+    "lint": "eslint --ext .ts,.vue src",
+    "typecheck": "tsc --noEmit && vue-tsc --noEmit"
   },
   "dependencies": {
     "@discord/embedded-app-sdk": "^1.0.2",
@@ -29,7 +31,6 @@
     "node-fetch": "^3.3.2",
     "oh-vue-icons": "1.0.0-rc3",
     "pinia": "^2.1.7",
-    "qs": "6.12.0",
     "tsconfig-paths": "^4.2.0",
     "uuid": "9.0.1",
     "vue": "^3.4.21",
