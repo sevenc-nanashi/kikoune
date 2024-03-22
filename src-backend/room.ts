@@ -6,6 +6,7 @@ import { z } from "zod"
 import * as db from "./db.js"
 import { fetchSession, getVideo } from "./nico.js"
 import { defaultMemberState, memberStateSchema } from "~shared/schema.js"
+import { buffer } from "~shared/const.js"
 
 const app = new Hono<{
   Variables: { userId: string }
@@ -56,7 +57,7 @@ app.put(
       const video = session.video ? await getVideo(session.video.videoId) : null
       if (
         !video ||
-        session.startedAt + (video.length + 3) * 1000 < Date.now()
+        session.startedAt + video.length * 1000 + (buffer + 2000) < Date.now()
       ) {
         if (!(!session.video && session.queue.length === 0)) {
           consola.info(`[${c.req.param("id")}] Dequeueing video`)

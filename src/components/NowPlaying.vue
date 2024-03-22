@@ -16,6 +16,11 @@ watch(
   }
 )
 
+const openVideoIfMobile = () => {
+  if (window.innerWidth < 640) {
+    openVideo()
+  }
+}
 const openVideo = () => {
   if (store.session.video) {
     discordSdk.commands.openExternalLink({
@@ -61,7 +66,7 @@ const openProfile = () => {
     <div
       class="h-full p-2 flex-grow flex flex-col sm:flex-row items-start sm:items-center info-container"
     >
-      <div class="my-auto flex-grow text-section" @click="openVideo">
+      <div class="my-auto flex-grow text-section" @click="openVideoIfMobile">
         <h2 class="text-xl font-bold">
           {{ store.session.video?.title ?? "Kikoune" }}
         </h2>

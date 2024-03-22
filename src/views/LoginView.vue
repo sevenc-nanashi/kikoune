@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { watch } from "vue"
 import consola from "consola"
 import { Common } from "@discord/embedded-app-sdk"
 import BuildInfo from "~/components/BuildInfo.vue"
@@ -9,7 +9,6 @@ import { discordScope } from "~shared/const"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
-const error = ref<string | undefined>(undefined)
 const authorize = async () => {
   await discordSdk.ready()
   const { code } = await discordSdk.commands.authorize({
@@ -80,7 +79,7 @@ watch(
     if (view === "login") {
       authorize().catch((e) => {
         consola.error(e)
-        error.value = "ログインに失敗しました。"
+        store.panic()
       })
     }
   },
@@ -98,8 +97,7 @@ watch(
       <span class="text-[#48b0d5]">Nanashi.</span>
     </p>
     <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
-    <p v-if="error" class="text-2xl text-red-500">{{ error }}</p>
-    <p v-else class="text-xl sm:text-2xl">ログイン中...</p>
+    <p class="text-xl sm:text-2xl">ログイン中...</p>
     <BuildInfo />
   </div>
 </template>

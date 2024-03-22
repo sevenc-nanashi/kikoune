@@ -24,7 +24,7 @@ export const getVideo = async (id: string): Promise<Video> => {
   const [min, sec] = data.nicovideo_thumb_response.thumb.length
     .split(":")
     .map(Number)
-  return {
+  const video = {
     author:
       data.nicovideo_thumb_response.thumb.user_nickname ??
       data.nicovideo_thumb_response.thumb.ch_name,
@@ -33,6 +33,8 @@ export const getVideo = async (id: string): Promise<Video> => {
     thumbnailUrl: data.nicovideo_thumb_response.thumb.thumbnail_url,
     title: data.nicovideo_thumb_response.thumb.title,
   }
+  videoCache.set(id, video)
+  return video
 }
 
 export const fetchSession = async (session: DbSession): Promise<Session> => {

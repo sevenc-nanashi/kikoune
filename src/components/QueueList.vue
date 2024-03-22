@@ -128,7 +128,7 @@ const openExternal = (url: string) => {
 <template>
   <div class="bg-black/25 min-h-full w-full relative flex flex-col">
     <div
-      class="flex-grow flex flex-col relative gap-1"
+      class="flex-grow flex flex-col relative gap-1 h-screen pb-32 sm:pb-0 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
       :class="{
         'grid place-content-center': queue.length === 0,
       }"
