@@ -39,7 +39,8 @@ const showTooltip = ref(false)
         outline: speaking,
       }"
       :style="{
-        animation: memberState.rotate ? 'spin 5s linear infinite' : 'none',
+        animation:
+          memberState.rotate || speaking ? 'spin 5s linear infinite' : 'none',
       }"
     />
     <p
