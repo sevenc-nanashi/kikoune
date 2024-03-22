@@ -35,9 +35,10 @@ const src = computed(
     })}`
 )
 
-let status = ref<"init" | "preload" | "load" | "presync" | "sync" | "play">("init")
+let status = ref<"init" | "preload" | "load" | "presync" | "sync" | "play">(
+  "init"
+)
 
-let lastStatus = 0
 watch(
   nonce,
   () => {
@@ -82,7 +83,6 @@ const onMessage = (event: MessageEvent) => {
         },
         location.origin
       )
-      lastStatus = 1
       // @ts-expect-error 実際は存在する
       player.value.contentWindow?.eval(
         (() => {
@@ -142,7 +142,6 @@ const onMessage = (event: MessageEvent) => {
       consola.info(
         `Status changed to ${data.data.playerStatus} / ${data.data.seekStatus}`
       )
-      lastStatus = data.data.playerStatus
       if (data.data.playerStatus === 2 && status.value === "preload") {
         status.value = "load"
       }
@@ -160,8 +159,7 @@ const onMessage = (event: MessageEvent) => {
       if (
         data.data.isVideoMetaDataLoaded &&
         data.data.maximumBuffered > targetTime &&
-        status.value === "sync" &&
-        lastStatus === 2
+        status.value === "sync"
       ) {
         consola.info(`Seeking to ${targetTime} to sync`)
         player.value.contentWindow?.postMessage(
