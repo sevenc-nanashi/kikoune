@@ -237,6 +237,7 @@ onUnmounted(() => {
     class="relative aspect-video"
     :class="{
       'bg-slate-500 place-items-center place-content-center grid': !videoId,
+      'bg-black': status === 'play',
     }"
   >
     <div
@@ -253,7 +254,7 @@ onUnmounted(() => {
       ref="player"
       :key="nonce"
       :src
-      class="block absolute w-full h-full bg-black"
+      class="block absolute w-full h-full"
     />
     <template v-else-if="store.session.startedAt === 0">
       <h1 class="text-2xl">同期中...</h1>

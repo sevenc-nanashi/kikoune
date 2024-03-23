@@ -7,13 +7,13 @@ import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
 import { SessionVideo, Video } from "~shared/schema"
 import TooltipIcon from "~/components/TooltipIcon.vue"
+import { toExternal } from "~/lib/external"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
 const log = consola.withTag("QueueList")
 
 const isSubmitting = ref(false)
-const videoSourceInput = ref<HTMLInputElement>()
 const popup = ref<string | undefined>()
 const popupType = ref<"error" | "info">("error")
 const popupCount = ref(0)
@@ -58,23 +58,100 @@ watch(
   }
 )
 
-const onSubmit = async () => {
-  if (isSubmitting.value) return
-  if (!videoSourceInput.value) return
+const videoIdPattern = /(?:sm|so)\d+/g
 
-  const videoSource = videoSourceInput.value.value
-  const videoIds = [...videoSource.matchAll(/(?:sm|so)\d+/g)]
-  if (!videoIds.length) {
-    spawnPopup("無効な動画IDです。", "error")
-    return
+const videoSource = ref<string>("")
+const buttonState = computed<"submit" | "search" | "close">(() => {
+  if (
+    searchResult.value.length > 0 &&
+    (searchQuery.value === videoSource.value || videoSource.value === "")
+  ) {
+    return "close"
+  } else if (!videoSource.value) {
+    return "search"
+  } else if (videoSource.value.match(videoIdPattern)) {
+    return "submit"
+  } else {
+    return "search"
   }
-  log.info("Adding video", videoSource)
+})
+const onSubmit = async () => {
+  if (buttonState.value === "close") {
+    searchResult.value = []
+    searchQuery.value = ""
+    return
+  } else if (videoSource.value === "") {
+    return
+  } else if (buttonState.value === "search") {
+    searchVideo()
+  } else {
+    const videoIds = [...videoSource.value.matchAll(videoIdPattern)]
+    if (!videoIds.length) {
+      spawnPopup("無効な動画IDです。", "error")
+      return
+    }
 
+    addToQueue(videoIds.map((match) => match[0]))
+  }
+}
+const searchResult = ref<
+  {
+    contentId: string
+    title: string
+    thumbnailUrl: string
+  }[]
+>([])
+const searchQuery = ref("")
+const searchVideo = async () => {
+  if (isSubmitting.value) return
+  try {
+    isSubmitting.value = true
+    const param = new URLSearchParams({
+      q: videoSource.value,
+      targets: "title,description,tags",
+      fields: "contentId,title,thumbnailUrl",
+      _sort: "-viewCounter",
+      _limit: "10",
+    })
+    log.info(`Searching videos with ${param}`)
+    const resp = await fetch(
+      `/external/snapshot-search-nicovideo-jp/api/v2/snapshot/video/contents/search?${param}`,
+      {
+        headers: {
+          "User-Agent": "Kikoune",
+        },
+      }
+    ).then((res) => res.json())
+    if (resp.meta.status !== 200) {
+      log.error("Failed to search videos")
+      spawnPopup("動画の検索に失敗しました。", "error")
+      return
+    }
+    if (resp.data.length === 0) {
+      spawnPopup("該当する動画が見つかりませんでした。", "error")
+      return
+    }
+    searchQuery.value = videoSource.value
+    searchResult.value = resp.data
+  } finally {
+    isSubmitting.value = false
+  }
+}
+const confirmSearch = async (contentId: string) => {
+  addToQueue([contentId]).then(() => {
+    searchResult.value = []
+    searchQuery.value = ""
+  })
+}
+const addToQueue = async (videoIds: string[]) => {
+  if (isSubmitting.value) return
+
+  log.info("Adding video", videoIds)
   try {
     isSubmitting.value = true
 
     const videos: Video[] = []
-    for (const [videoId] of videoIds) {
+    for (const videoId of videoIds) {
       const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
         method: "POST",
         headers: {
@@ -91,7 +168,7 @@ const onSubmit = async () => {
         return
       }
 
-      videoSourceInput.value.value = ""
+      videoSource.value = ""
       const { video }: { video: Video } = await res.json()
       temporaryAdded.value.push({
         ...video,
@@ -181,7 +258,40 @@ const sendReorder = async () => {
 </script>
 <template>
   <div class="bg-black/25 h-full w-full relative flex flex-col">
-    <div v-if="queue.length === 0" class="grid place-content-center flex-grow">
+    <div
+      v-if="searchResult.length > 0"
+      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll"
+    >
+      <p class="text-xl">「{{ searchQuery }}」の検索結果</p>
+      <div
+        v-if="isSubmitting"
+        class="bg-slate-500/25 absolute inset-0 cursor-wait z-10"
+      />
+      <div
+        v-for="(video, i) in searchResult"
+        :key="i"
+        class="flex flex-row gap-1 relative"
+      >
+        <div class="w-16 h-16 rounded-md overflow-hidden relative">
+          <div
+            class="bg-cover bg-center absolute inset-[-1rem]"
+            :style="{
+              backgroundImage: `url(${toExternal(video.thumbnailUrl)})`,
+            }"
+          />
+        </div>
+        <div
+          class="flex bg-black/50 hover:bg-black cursor-pointer items-center w-[calc(100%_-_4.25rem)] p-2"
+          @click="confirmSearch(video.contentId)"
+        >
+          <div class="text-md">{{ video.title }}</div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-else-if="queue.length === 0"
+      class="grid place-content-center flex-grow"
+    >
       <p class="text-xl">キューは空です。</p>
     </div>
     <Draggable
@@ -189,7 +299,7 @@ const sendReorder = async () => {
       v-model="queue"
       item-key="nonce"
       handle=".handle"
-      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
+      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll overflow-x-hidden"
       @sort="setReordered"
     >
       <template v-if="store.isHost" #header>
@@ -266,6 +376,17 @@ const sendReorder = async () => {
         </div>
       </template>
     </Draggable>
+
+    <div
+      class="absolute w-full p-2 h-16 bottom-8 left-0 bg-black transition-opacity pointer-events-none grid place-content-center"
+      :class="{
+        'text-red-500': popupType === 'error',
+        'text-green-500': popupType === 'info',
+      }"
+      :style="{ opacity: popupCount > 0 ? 1 : 0 }"
+    >
+      {{ popup }}
+    </div>
     <form
       class="w-full flex h-8 queue-form relative z-50"
       @submit.prevent="onSubmit"
@@ -277,26 +398,23 @@ const sendReorder = async () => {
           opacity: isSubmitting ? 1 : 0,
         }"
       />
-      <div
-        class="absolute w-full h-full py-2 top-[-100%] left-0 bg-black transition-opacity pointer-events-none grid place-content-center"
-        :class="{
-          'text-red-500': popupType === 'error',
-          'text-green-500': popupType === 'info',
-        }"
-        :style="{ opacity: popupCount > 0 ? 1 : 0 }"
-      >
-        {{ popup }}
-      </div>
       <input
-        ref="videoSourceInput"
+        v-model="videoSource"
         class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none w-[calc(100%_-_4rem)] sm:w-auto"
-        placeholder="動画のID（sm123456789）/  URL（複数可）"
+        placeholder="キーワード / ID / URL（複数可）"
       />
-      <input
+      <button
         type="submit"
         class="h-full bg-black px-4 sm:p-1 w-16 cursor-pointer active:bg-cyan-500 rounded-none"
-        label="追加"
-      />
+      >
+        {{
+          buttonState === "search"
+            ? "検索"
+            : buttonState === "submit"
+              ? "追加"
+              : "戻る"
+        }}
+      </button>
     </form>
   </div>
 </template>

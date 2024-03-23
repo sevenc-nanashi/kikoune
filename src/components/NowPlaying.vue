@@ -105,7 +105,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune")
           {{ store.getName(store.session.video.requestedBy) }}
         </span>
         <img
-          class="rounded-full w-6 h-6"
+          class="rounded-full ml-1 w-6 h-6"
           :src="store.getAvatarUrl(store.session.video.requestedBy)"
         />
       </div>
