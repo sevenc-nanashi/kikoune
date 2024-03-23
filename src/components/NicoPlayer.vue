@@ -19,7 +19,7 @@ const src = computed(
       playerId: playerNonce,
       noRelatedVideo: "0",
       autoplay: "1",
-      mute: "0",
+      mute: "1",
       defaultNoComment: "0",
       noLinkToNiconico: "0",
       noController: "0",
@@ -64,6 +64,7 @@ watch(
 onUnmounted(() => {
   clearInterval(updateInterval)
 })
+const lastMuted = ref(false)
 const onMessage = (event: MessageEvent) => {
   if (event.origin !== location.origin) {
     return
@@ -78,6 +79,17 @@ const onMessage = (event: MessageEvent) => {
       player.value.contentWindow?.postMessage(
         {
           eventName: "play",
+          sourceConnectorType: 1,
+          playerId: playerNonce,
+        },
+        location.origin
+      )
+      player.value.contentWindow?.postMessage(
+        {
+          eventName: "mute",
+          data: {
+            mute: true,
+          },
           sourceConnectorType: 1,
           playerId: playerNonce,
         },
@@ -174,6 +186,18 @@ const onMessage = (event: MessageEvent) => {
           },
           location.origin
         )
+
+        player.value.contentWindow?.postMessage(
+          {
+            eventName: "mute",
+            sourceConnectorType: 1,
+            data: {
+              mute: lastMuted.value,
+            },
+            playerId: playerNonce,
+          },
+          location.origin
+        )
         status.value = "play"
       }
       if (data.data.isVideoMetaDataLoaded && status.value === "load") {
@@ -188,6 +212,9 @@ const onMessage = (event: MessageEvent) => {
           location.origin
         )
         status.value = "presync"
+      }
+      if (status.value === "play") {
+        lastMuted.value = data.data.muted
       }
       break
     }
@@ -216,7 +243,8 @@ onUnmounted(() => {
     >
       Server time: {{ serverTime }}<br />
       Time delay: {{ store.delay }}<br />
-      Status: {{ status }}
+      Status: {{ status }}<br />
+      Muted: {{ lastMuted }}
     </div>
     <iframe
       v-if="videoId"
