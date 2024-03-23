@@ -91,7 +91,8 @@ watch(
             state: "選曲中...",
           },
     })
-  }
+  },
+  { immediate: true }
 )
 </script>
 <template>
