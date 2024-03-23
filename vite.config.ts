@@ -15,6 +15,9 @@ export default defineConfig(async () => {
     server: {
       port: 1103,
     },
+    preview: {
+      port: 1103,
+    },
     resolve: {
       alias: {
         "~": "/src",

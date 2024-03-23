@@ -86,17 +86,7 @@ const onMessage = (event: MessageEvent) => {
         },
         location.origin
       )
-      player.value.contentWindow?.postMessage(
-        {
-          eventName: "mute",
-          data: {
-            mute: true,
-          },
-          sourceConnectorType: 1,
-          playerId: playerNonce,
-        },
-        location.origin
-      )
+      status.value = "preload"
       // @ts-expect-error 実際は存在する
       player.value.contentWindow?.eval(
         (() => {
@@ -139,7 +129,6 @@ const onMessage = (event: MessageEvent) => {
           .toString()
           .slice(12, -1)
       )
-      status.value = "preload"
       break
     }
     case "navigate": {
