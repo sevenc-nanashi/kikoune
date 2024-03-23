@@ -10,8 +10,9 @@
     "build": "run-s build:*",
     "build:backend": "tsc -p tsconfig.node.json && tsc-alias -p tsconfig.node.json",
     "build:frontend": "vue-tsc && vite build",
-    "run:backend": "node -r dotenv/config dist-backend/src-backend/index.js",
-    "preview": "vite preview",
+    "start": "run-p start:*",
+    "start:frontend": "vite preview",
+    "start:backend": "node -r dotenv/config dist-backend/src-backend/index.js",
     "lint": "eslint --ext .ts,.vue src",
     "typecheck": "tsc --noEmit && vue-tsc --noEmit"
   },
