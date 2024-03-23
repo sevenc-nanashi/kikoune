@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import consola from "consola"
+import consola from "consola/browser"
 import { v4 as uuid } from "uuid"
 import { computed, ref, onMounted, onUnmounted, watch } from "vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
@@ -8,6 +8,8 @@ import { buffer } from "~shared/const"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
+const log = consola.withTag("NicoPlayer")
+
 const player = ref<HTMLIFrameElement | undefined>(undefined)
 const playerNonce = uuid()
 const videoId = computed(() => store.session.video?.id)
@@ -42,7 +44,7 @@ let status = ref<"init" | "preload" | "load" | "presync" | "sync" | "play">(
 watch(
   nonce,
   () => {
-    consola.info("Nonce changed, resetting status")
+    log.info("Nonce changed, resetting status")
     status.value = "init"
   },
   { immediate: true }
@@ -75,7 +77,7 @@ const onMessage = (event: MessageEvent) => {
   const data = event.data
   switch (data.eventName) {
     case "loadComplete": {
-      consola.info("Player load complete, playing")
+      log.info("Player load complete, playing")
       player.value.contentWindow?.postMessage(
         {
           eventName: "play",
@@ -151,7 +153,7 @@ const onMessage = (event: MessageEvent) => {
       break
     }
     case "statusChange": {
-      consola.info(
+      log.info(
         `Status changed to ${data.data.playerStatus} / ${data.data.seekStatus}`
       )
       if (data.data.playerStatus === 2 && status.value === "preload") {
@@ -173,7 +175,7 @@ const onMessage = (event: MessageEvent) => {
         data.data.maximumBuffered > targetTime &&
         status.value === "sync"
       ) {
-        consola.info(`Seeking to ${targetTime} to sync`)
+        log.info(`Seeking to ${targetTime} to sync`)
         player.value.contentWindow?.postMessage(
           {
             eventName: "seek",
@@ -201,7 +203,7 @@ const onMessage = (event: MessageEvent) => {
         status.value = "play"
       }
       if (data.data.isVideoMetaDataLoaded && status.value === "load") {
-        consola.info(`Seeking to ${targetTime} to load video`)
+        log.info(`Seeking to ${targetTime} to load video`)
         player.value.contentWindow?.postMessage(
           {
             eventName: "seek",
@@ -219,7 +221,7 @@ const onMessage = (event: MessageEvent) => {
       break
     }
     default: {
-      // consola.log("Discarding message", data)
+      // log.log("Discarding message", data)
     }
   }
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch } from "vue"
-import consola from "consola"
+import consola from "consola/browser"
 import { Common } from "@discord/embedded-app-sdk"
 import BuildInfo from "~/components/BuildInfo.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
@@ -9,8 +9,12 @@ import { discordScope } from "~shared/const"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
+const log = consola.withTag("LoginView")
+
 const authorize = async () => {
+  log.info("Waiting for Discord SDK to be ready")
   await discordSdk.ready()
+  log.info("Authorizing with Discord")
   const { code } = await discordSdk.commands.authorize({
     client_id: import.meta.env.VITE_DISCORD_ID,
     response_type: "code",
@@ -20,6 +24,7 @@ const authorize = async () => {
     scope: discordScope,
   })
 
+  log.info("Requesting authentication")
   const response = await fetch("/api/auth", {
     method: "POST",
     headers: {
@@ -46,12 +51,12 @@ const authorize = async () => {
     ) {
       throw e
     }
-    consola.info("Already authenticated")
+    log.info("Already authenticated")
   }
 
   await store.setToken(body.kikouneAccessToken)
 
-  consola.info("Fetching participants")
+  log.info("Fetching participants")
   discordSdk.subscribe("ACTIVITY_INSTANCE_PARTICIPANTS_UPDATE", (event) => {
     store.setParticipants(event.participants)
   })
@@ -64,7 +69,6 @@ const authorize = async () => {
   const participants = await discordSdk.commands
     .getInstanceConnectedParticipants()
     .then((res) => res.participants)
-  consola.info("Fetched participants", participants)
   store.setParticipants(participants)
   const me = participants.find((user) => user.id === body.userId)
   if (!me) {
@@ -72,19 +76,24 @@ const authorize = async () => {
   }
   store.setMe(me)
 
+  log.info("Fetching time")
   const currentTime = Date.now()
   const { time } = await fetch("/api/time").then((res) => res.json())
   const requestTime = Date.now() - currentTime
   store.setDelay(time - currentTime - requestTime)
+  log.info(
+    `Ready. Delay: ${store.delay}ms, Participants: ${participants.length}`
+  )
 
   store.setView("main")
 }
+
 watch(
   () => store.view,
   (view) => {
     if (view === "login") {
       authorize().catch((e) => {
-        consola.error(e)
+        log.error(e)
         store.panic()
       })
     }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import consola from "consola"
+import consola from "consola/browser"
 import { computed, ref, watch } from "vue"
 import { Participant, useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
@@ -7,6 +7,7 @@ import TooltipIcon from "~/components/TooltipIcon.vue"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
+const log = consola.withTag("UserList")
 
 const isSubmitting = ref(false)
 const popup = ref<string | undefined>()
@@ -31,7 +32,7 @@ watch(
 
 const moveHost = async (member: Participant) => {
   if (isSubmitting.value) return
-  consola.info("Moving host", member.id)
+  log.info("Moving host", member.id)
 
   try {
     isSubmitting.value = true
@@ -48,7 +49,7 @@ const moveHost = async (member: Participant) => {
       }),
     })
     if (!res.ok) {
-      consola.error("Failed to delete video")
+      log.error("Failed to delete video")
       spawnPopup(`ホストを移動できませんでした。`, "error")
       return
     }
@@ -82,7 +83,7 @@ const orderedMembers = computed(() => {
 </script>
 <template>
   <div
-    class="bg-black/25 h-screen sm:h-auto min-h-full w-full relative flex flex-col gap-1 overflow-y-scroll sm:overflow-y-auto pt-2 pb-8 sm:pb-0"
+    class="bg-black/25 h-screen sm:h-auto min-h-full w-full relative flex flex-col gap-1 overflow-y-scroll sm:overflow-y-auto pt-1 pb-8 sm:pb-0"
   >
     <div
       v-for="member in orderedMembers"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import consola from "consola"
+import consola from "consola/browser"
 import { ref, watch } from "vue"
 import TooltipIcon from "./TooltipIcon.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
@@ -7,6 +7,7 @@ import { useStore } from "~/store"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
+const log = consola.withTag("NowPlaying")
 
 const skipped = ref(false)
 watch(
@@ -36,7 +37,7 @@ const skipVideo = async () => {
     }),
   })
   if (!resp.ok) {
-    consola.error("Failed to skip video")
+    log.error("Failed to skip video")
     skipped.value = false
   }
 }

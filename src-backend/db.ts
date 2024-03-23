@@ -1,6 +1,8 @@
-import consola from "consola"
+import consola from "consola/basic"
 import { Redis } from "ioredis"
 import { MemberState } from "~shared/schema"
+
+const log = consola.withTag("db")
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379"
 
@@ -103,7 +105,7 @@ export const dequeueVideo = async (
   const videoId = session.queue.shift()
   session.startedAt = Date.now()
   session.video = videoId ?? null
-  consola.info(`[${roomId}] Dequeued video: ${videoId?.videoId}`)
+  log.info(`[${roomId}] Dequeued video: ${videoId?.videoId}`)
   await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
 }
 export const cancelVideo = async (roomId: string, nonce: string) => {
@@ -123,7 +125,7 @@ export const getOrCreateSession = async (
   if (session) {
     return session
   }
-  consola.info(`Creating session: ${roomId} by ${host}`)
+  log.info(`Creating session: ${roomId} by ${host}`)
   return createSession(roomId, host)
 }
 

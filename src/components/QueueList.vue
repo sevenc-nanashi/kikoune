@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import consola from "consola"
+import consola from "consola/browser"
 import { computed, ref, watch } from "vue"
 import { v4 as uuid } from "uuid"
 import Draggable from "vuedraggable"
@@ -10,6 +10,7 @@ import TooltipIcon from "~/components/TooltipIcon.vue"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
+const log = consola.withTag("QueueList")
 
 const isSubmitting = ref(false)
 const videoSourceInput = ref<HTMLInputElement>()
@@ -67,7 +68,7 @@ const onSubmit = async () => {
     spawnPopup("無効な動画IDです。", "error")
     return
   }
-  consola.info("Adding video", videoSource)
+  log.info("Adding video", videoSource)
 
   try {
     isSubmitting.value = true
@@ -85,7 +86,7 @@ const onSubmit = async () => {
         }),
       })
       if (!res.ok) {
-        consola.error("Failed to queue video")
+        log.error("Failed to queue video")
         spawnPopup(`動画${videoId}の追加に失敗しました。`, "error")
         return
       }
@@ -111,7 +112,7 @@ const onSubmit = async () => {
 }
 const deleteVideo = async (video: SessionVideo) => {
   if (isSubmitting.value) return
-  consola.info("Deleting video", video.id)
+  log.info("Deleting video", video.id)
 
   try {
     isSubmitting.value = true
@@ -127,7 +128,7 @@ const deleteVideo = async (video: SessionVideo) => {
       }
     )
     if (!res.ok) {
-      consola.error("Failed to delete video")
+      log.error("Failed to delete video")
       spawnPopup(`「${video.title}」のキャンセルに失敗しました。`, "error")
       return
     }
@@ -151,7 +152,7 @@ const setReordered = (event: { newIndex: number; oldIndex: number }) => {
   reorderedItems.value = queue.value
     .slice(earlierIndex, laterIndex + 1)
     .map((video) => video.nonce)
-  consola.info(`Reordered ${earlierIndex} ... ${laterIndex}`)
+  log.info(`Reordered ${earlierIndex} ... ${laterIndex}`)
 
   reorderedCount.value++
   setTimeout(() => {
@@ -160,7 +161,7 @@ const setReordered = (event: { newIndex: number; oldIndex: number }) => {
 }
 const sendReorder = async () => {
   if (temporaryOrder.value) {
-    consola.info("Sending reorder", temporaryOrder.value)
+    log.info("Sending reorder", temporaryOrder.value)
     const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
       method: "PUT",
       headers: {
@@ -172,14 +173,14 @@ const sendReorder = async () => {
       }),
     })
     if (!res.ok) {
-      consola.error("Failed to reorder")
+      log.error("Failed to reorder")
       spawnPopup("順番の変更に失敗しました。", "error")
     }
   }
 }
 </script>
 <template>
-  <div class="bg-black/25 min-h-full w-full relative flex flex-col">
+  <div class="bg-black/25 h-full w-full relative flex flex-col">
     <div v-if="queue.length === 0" class="grid place-content-center flex-grow">
       <p class="text-xl">キューは空です。</p>
     </div>
@@ -188,7 +189,7 @@ const sendReorder = async () => {
       v-model="queue"
       item-key="nonce"
       handle=".handle"
-      class="flex-grow flex flex-col relative gap-1 h-screen pt-2 xs:max-sm:pb-32 pb-2 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
+      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-32 pb-2 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
       @sort="setReordered"
     >
       <template v-if="store.isHost" #header>
@@ -265,10 +266,7 @@ const sendReorder = async () => {
         </div>
       </template>
     </Draggable>
-    <form
-      class="w-full flex sticky bottom-0 h-12 md:h-8 queue-form"
-      @submit.prevent="onSubmit"
-    >
+    <form class="w-full flex h-12 md:h-8 queue-form" @submit.prevent="onSubmit">
       <div
         class="absolute inset-0 bg-slate-500/25 transition-opacity z-10"
         :style="{

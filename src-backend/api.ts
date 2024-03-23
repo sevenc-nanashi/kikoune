@@ -5,13 +5,15 @@ import {
   RESTGetAPIUserResult,
   RESTPostOAuth2AccessTokenResult,
 } from "discord-api-types/v10"
-import consola from "consola"
+import consola from "consola/basic"
 import { z } from "zod"
 import { zValidator } from "@hono/zod-validator"
 import * as db from "./db.js"
 import { env } from "./const.js"
 import room from "./room.js"
 import { discordScope } from "~shared/const.js"
+
+const log = consola.withTag("api")
 
 const discordToken = process.env.DISCORD_TOKEN
 if (!discordToken) {
@@ -34,7 +36,7 @@ const fetchWithRateLimit = async (
   if (response.status === 429) {
     const retryAfter =
       Number(response.headers.get("x-ratelimit-retry-after")) * 1000
-    consola.info("Rate limited, retrying after", retryAfter)
+    log.info("Rate limited, retrying after", retryAfter)
     await new Promise((resolve) => setTimeout(resolve, retryAfter))
     return fetchWithRateLimit(url, init)
   }
@@ -79,7 +81,7 @@ app.post(
       },
     }).then((res) => res.json())) as RESTGetAPIUserResult
     const kikouneAccessToken = await db.createToken(user.id, body.instanceId)
-    consola.info(`User authenticated: ${user.id} in ${body.instanceId}`)
+    log.info(`User authenticated: ${user.id} in ${body.instanceId}`)
     return c.json({ userId: user.id, discordAccessToken, kikouneAccessToken })
   }
 )

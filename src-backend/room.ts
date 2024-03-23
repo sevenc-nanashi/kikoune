@@ -1,5 +1,5 @@
 import { Hono } from "hono"
-import consola from "consola"
+import consola from "consola/basic"
 import { zValidator } from "@hono/zod-validator"
 import AsyncLock from "async-lock"
 import { z } from "zod"
@@ -12,6 +12,7 @@ const app = new Hono<{
   Variables: { userId: string }
 }>()
 const lock = new AsyncLock()
+const log = consola.withTag("room")
 
 app.use(async (c, next) => {
   const auth = c.req.header("authorization")
@@ -24,7 +25,7 @@ app.use(async (c, next) => {
   const userToken = await db.getToken(id)
   if (userToken !== token || !userToken) {
     c.status(401)
-    consola.info("Unauthorized", id, token, userToken)
+    log.info("Unauthorized", id, token, userToken)
     return c.json({ error: "Unauthorized" })
   }
   c.set("userId", id)
@@ -44,11 +45,13 @@ app.put(
         data.userIds
       )
       if (!memberStates[c.get("userId")]) {
-        await db.setMemberState(
-          c.req.param("id"),
-          c.get("userId"),
-          defaultMemberState
-        )
+        const newState = {
+          ...defaultMemberState,
+          x: Math.random() * 2 - 1,
+          y: Math.random() * 2 - 1,
+        }
+        await db.setMemberState(c.req.param("id"), c.get("userId"), newState)
+        memberStates[c.get("userId")] = newState
       }
       const session = await db.getOrCreateSession(
         c.req.param("id"),
@@ -60,12 +63,12 @@ app.put(
         session.startedAt + video.length * 1000 + (buffer + 2000) < Date.now()
       ) {
         if (!(!session.video && session.queue.length === 0)) {
-          consola.info(`[${c.req.param("id")}] Dequeueing video`)
+          log.info(`[${c.req.param("id")}] Dequeueing video`)
           await db.dequeueVideo(c.req.param("id"), session)
         }
       }
       if (!memberStates[session.host]) {
-        consola.info(
+        log.info(
           `[${c.req.param("id")}] Host is not in the room, moving to ${c.get("userId")}`
         )
         await db.setHost(c.req.param("id"), c.get("userId"))

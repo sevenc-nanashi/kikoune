@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from "vue"
-import consola from "consola"
+import consola from "consola/browser"
 import NicoPlayer from "~/components/NicoPlayer.vue"
 import InfoPanel from "~/components/InfoPanel.vue"
 import NowPlaying from "~/components/NowPlaying.vue"
@@ -13,6 +13,7 @@ import { MemberState, Session, defaultMemberState } from "~shared/schema"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
+const log = consola.withTag("MainView")
 
 const errorCount = ref(0)
 
@@ -33,14 +34,14 @@ const update = async () => {
     }),
   })
   if (!res.ok) {
-    consola.error(`Failed to sync, panic in ${3 - errorCount.value}`)
+    log.error(`Failed to sync, panic in ${3 - errorCount.value}`)
     errorCount.value++
     if (errorCount.value > 3) {
       store.panic()
     }
     return
   }
-  consola.info("Synced")
+  log.info("Synced")
   errorCount.value = 0
   const data: {
     memberStates: Record<string, MemberState>
@@ -97,8 +98,8 @@ watch(
   <div
     class="bg-white/25 absolute inset-0 place-items-center place-content-center grid transition-opacity z-20"
     :style="{
-      opacity: errorCount > 0 ? 1 : 0,
-      pointerEvents: errorCount > 0 ? 'auto' : 'none',
+      opacity: errorCount > 1 ? 1 : 0,
+      pointerEvents: errorCount > 1 ? 'auto' : 'none',
     }"
   />
   <div class="w-screen h-screen xs:relative root">

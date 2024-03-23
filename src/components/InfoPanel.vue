@@ -25,7 +25,7 @@ const selectedTab = ref<keyof typeof tabs>("queue")
         {{ tabs[tab as keyof typeof tabs] }}
       </button>
     </nav>
-    <div class="h-[calc(100%_-_2rem)] overflow-x-hidden overflow-y-scroll">
+    <div class="h-[calc(100%_-_2rem)] overflow-x-hidden">
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else />

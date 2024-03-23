@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue"
-import consola from "consola"
+import consola from "consola/browser"
 import CafeUser from "./CafeUser.vue"
 import { useStore } from "~/store"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
+const log = consola.withTag("CafeSpace")
+
 const users = computed(() =>
   store.participants.filter((p) => store.getUser(p.id) !== undefined)
 )
@@ -21,7 +23,7 @@ const move = (e: MouseEvent) => {
   const x = capPosition((cursorX / containerRect.width) * 2 - 1)
   const y = capPosition((cursorY / containerRect.height) * 2 - 1)
 
-  consola.info("Moving user", x, y)
+  log.info("Moving user", x, y)
 
   fetch(`/api/room/${discordSdk.instanceId}/state`, {
     method: "PUT",
@@ -37,7 +39,7 @@ const move = (e: MouseEvent) => {
 const speakingData = ref<Record<string, boolean>>({})
 
 const onSpeakingUpdate = (value: boolean) => (data: { user_id: string }) => {
-  consola.info(`Speaking ${value ? "start" : "stop"}`, data.user_id)
+  log.info(`Speaking ${value ? "start" : "stop"}`, data.user_id)
   speakingData.value = {
     ...speakingData.value,
     [data.user_id]: value,
