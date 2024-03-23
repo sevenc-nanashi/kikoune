@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import consola from "consola/browser"
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 import TooltipIcon from "./TooltipIcon.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
@@ -46,6 +46,7 @@ const openProfile = () => {
     url: "https://sevenc7c.com",
   })
 }
+const title = computed(() => store.session.video?.title ?? "Kikoune")
 </script>
 <template>
   <div class="*:bg-black/75 gap-2 flex-row">
@@ -64,11 +65,11 @@ const openProfile = () => {
     >
       <div class="my-auto flex-grow text-section">
         <h2 class="text-xl font-bold">
-          {{ store.session.video?.title ?? "Kikoune" }}
+          {{ title }}
         </h2>
         <p class="text-md">
           <template v-if="store.session.video">
-            {{ store.session.video?.author }}
+            {{ store.session.video.author }}
           </template>
           <template v-else>
             Developed by
@@ -101,7 +102,7 @@ const openProfile = () => {
         />
         <div class="flex-grow sm:hidden" />
         <span class="text-sm requester-name">
-          {{ store.getName(store.session.video?.requestedBy) }}
+          {{ store.getName(store.session.video.requestedBy) }}
         </span>
         <img
           class="rounded-full w-6 h-6"
