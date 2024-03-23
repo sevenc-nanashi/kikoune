@@ -40,7 +40,12 @@ const replaceToExternal = (src: string) =>
 app.get("/nico-embed/:id", async (c) => {
   const id = c.req.param("id")
   const html = await fetch(
-    `https://embed.nicovideo.jp/watch/${id}?${c.req.raw.url.split("?")[1]}`
+    `https://embed.nicovideo.jp/watch/${id}?${c.req.raw.url.split("?")[1]}`,
+    {
+      headers: {
+        "Accept-Language": "ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7",
+      },
+    }
   ).then((res) => res.text())
   return c.html(replaceToExternal(html))
 })

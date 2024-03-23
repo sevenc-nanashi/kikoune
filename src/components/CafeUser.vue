@@ -60,16 +60,6 @@ const showTooltip = ref(false)
     </p>
   </div>
 </template>
-<style lang="scss">
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>
 <style scoped lang="scss">
 @media (min-height: 600px) {
   .cafe-user {
