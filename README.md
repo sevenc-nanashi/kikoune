@@ -5,6 +5,9 @@ DiscordのActivityで動く、Kiite Cafe風にニコニコ動画を同時再生�
 ## コマンド
 
 ```bash
+# Redis起動
+docker-compose up -d redis
+
 # 開発サーバー起動
 pnpm dev
 
