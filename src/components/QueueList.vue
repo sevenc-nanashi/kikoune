@@ -189,7 +189,7 @@ const sendReorder = async () => {
       v-model="queue"
       item-key="nonce"
       handle=".handle"
-      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-32 pb-2 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
+      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-x-hidden overflow-y-scroll sm:overflow-y-auto"
       @sort="setReordered"
     >
       <template v-if="store.isHost" #header>
@@ -266,9 +266,12 @@ const sendReorder = async () => {
         </div>
       </template>
     </Draggable>
-    <form class="w-full flex h-12 md:h-8 queue-form" @submit.prevent="onSubmit">
+    <form
+      class="w-full flex h-8 queue-form relative z-50"
+      @submit.prevent="onSubmit"
+    >
       <div
-        class="absolute inset-0 bg-slate-500/25 transition-opacity z-10"
+        class="absolute inset-0 bg-slate-500/25 transition-opacity z-50"
         :style="{
           pointerEvents: isSubmitting ? 'auto' : 'none',
           opacity: isSubmitting ? 1 : 0,

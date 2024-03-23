@@ -33,11 +33,11 @@ const changeTab = () => {
     }"
   >
     <div
-      class="w-full relative flex bg-black p-2 font-bold text-2xl flex-row items-end justify-start"
+      class="w-full relative flex bg-black h-16 font-bold text-2xl flex-row items-end justify-start"
     >
       {{ tabNames[selectedTab] }}
     </div>
-    <div class="flex-grow relative w-full bg-black/75">
+    <div class="h-[calc(100vh_-_4rem)] relative w-full bg-black/75">
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else-if="selectedTab === 'about'" />
