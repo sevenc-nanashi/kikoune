@@ -67,7 +67,7 @@ const onSubmit = () => {
       @click="switchRotate"
     >
       <span class="hidden sm:inline">回る</span>
-      <v-icon class="sm:hidden inline" name="md-refresh" />
+      <v-icon class="sm:!hidden inline" name="md-refresh" />
     </button>
     <form class="flex-grow flex flex-row gap-2" @submit.prevent="onSubmit">
       <input
