@@ -15,6 +15,7 @@ import {
   MdPeople,
   MdInfo,
   MdHome,
+  MdBuild,
 } from "oh-vue-icons/icons"
 import { discordSdkPlugin } from "./plugins/useDiscordSdk"
 import App from "./App.vue"
@@ -33,7 +34,8 @@ addIcons(
   MdQueuemusic,
   MdPeople,
   MdInfo,
-  MdHome
+  MdHome,
+  MdBuild
 )
 
 const pinia = createPinia()

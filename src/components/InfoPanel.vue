@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import QueueList from "./QueueList.vue"
 import UserList from "./UserList.vue"
 import AboutThis from "./AboutThis.vue"
-
-const tabs = {
-  queue: "キュー",
-  users: "ユーザー",
-  about: "このアプリについて",
-} as const
-const selectedTab = ref<keyof typeof tabs>("queue")
+import DebugInfo from "./DebugInfo.vue"
+import { useStore } from "~/store"
+const store = useStore()
+const tabs = computed(() =>
+  store.debug
+    ? ({
+        queue: "キュー",
+        users: "ユーザー",
+        about: "このアプリについて",
+        debug: "デバッグ",
+      } as const)
+    : ({
+        queue: "キュー",
+        users: "ユーザー",
+        about: "このアプリについて",
+      } as const)
+)
+const selectedTab = ref<keyof typeof tabs.value>("queue")
 </script>
 <template>
   <div class="min-h-full w-full relative flex flex-col">
@@ -28,7 +39,8 @@ const selectedTab = ref<keyof typeof tabs>("queue")
     <div class="h-[calc(100%_-_2rem)] overflow-x-hidden">
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
-      <AboutThis v-else />
+      <AboutThis v-else-if="selectedTab === 'about'" />
+      <DebugInfo v-else-if="selectedTab === 'debug'" />
     </div>
   </div>
 </template>

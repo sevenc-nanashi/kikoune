@@ -22,7 +22,7 @@ export type DbSession = {
 
 export const userToken = (userId: string) => `token:${userId}`
 export const createToken = async (userId: string, instanceId: string) => {
-  const token = crypto.randomUUID() + "-" + instanceId
+  const token = crypto.randomUUID() + ":" + instanceId
   await redis.set(userToken(userId), token)
   return token
 }
@@ -34,18 +34,16 @@ export const setMemberState = async (
   userId: string,
   state: MemberState
 ) => {
-  await redis.set(
-    `room:${roomId}:user:${userId}`,
-    JSON.stringify(state),
-    "EX",
-    15
-  )
+  await redis.set(roomUser(roomId, userId), JSON.stringify(state), "EX", 15)
 }
+const roomUser = (roomId: string, userId: string) =>
+  `room:${roomId}:user:${userId}`
+const roomSession = (roomId: string) => `room:${roomId}:session`
 export const getMemberStates = async (roomId: string, userIds: string[]) => {
   const members = (
     await Promise.all(
       userIds.map(async (id) => {
-        const data = await redis.get(`room:${roomId}:user:${id}`)
+        const data = await redis.get(roomUser(roomId, id))
         return data ? [id, JSON.parse(data)] : undefined
       })
     )
@@ -53,21 +51,21 @@ export const getMemberStates = async (roomId: string, userIds: string[]) => {
   return Object.fromEntries(members)
 }
 export const getMemberState = async (roomId: string, userId: string) => {
-  const data = await redis.get(`room:${roomId}:user:${userId}`)
+  const data = await redis.get(roomUser(roomId, userId))
   if (!data) {
     throw new Error("Member does not exist")
   }
   return JSON.parse(data)
 }
 export const getSession = async (roomId: string): Promise<DbSession> => {
-  const sessionRaw = await redis.get(`room:${roomId}:session`)
+  const sessionRaw = await redis.get(roomSession(roomId))
   if (!sessionRaw) {
     throw new Error("Session does not exist")
   }
   return JSON.parse(sessionRaw)
 }
 export const keepAliveSession = async (roomId: string) => {
-  await redis.expire(`room:${roomId}:session`, 60)
+  await redis.expire(roomSession(roomId), 60)
 }
 export const createSession = async (
   roomId: string,
@@ -80,7 +78,7 @@ export const createSession = async (
     queue: [],
     host,
   }
-  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 
   return session
 }
@@ -89,14 +87,14 @@ export const enqueueVideo = async (
   videoId: string,
   userId: string
 ) => {
-  const sessionRaw = await redis.get(`room:${roomId}:session`)
+  const sessionRaw = await redis.get(roomSession(roomId))
   if (!sessionRaw) {
     throw new Error("Session does not exist")
   }
   const nonce = crypto.randomUUID()
   const session: DbSession = JSON.parse(sessionRaw)
   session.queue.push({ videoId, requestedBy: userId, nonce })
-  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 }
 export const dequeueVideo = async (
   roomId: string,
@@ -106,16 +104,16 @@ export const dequeueVideo = async (
   session.startedAt = Date.now()
   session.video = videoId ?? null
   log.info(`[${roomId}] Dequeued video: ${videoId?.videoId}`)
-  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 }
 export const cancelVideo = async (roomId: string, nonce: string) => {
-  const sessionRaw = await redis.get(`room:${roomId}:session`)
+  const sessionRaw = await redis.get(roomSession(roomId))
   if (!sessionRaw) {
     throw new Error("Session does not exist")
   }
   const session: DbSession = JSON.parse(sessionRaw)
   session.queue = session.queue.filter((v) => v.nonce !== nonce)
-  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 }
 export const getOrCreateSession = async (
   roomId: string,
@@ -130,9 +128,7 @@ export const getOrCreateSession = async (
 }
 
 export const keepAliveMembers = async (roomId: string, userIds: string[]) => {
-  await Promise.all(
-    userIds.map((id) => redis.expire(`room:${roomId}:user:${id}`, 15))
-  )
+  await Promise.all(userIds.map((id) => redis.expire(roomUser(roomId, id), 15)))
 }
 export const skipVideo = async (roomId: string) => {
   const session = await getSession(roomId)
@@ -144,7 +140,7 @@ export const skipVideo = async (roomId: string) => {
 export const setHost = async (roomId: string, host: string) => {
   const session = await getSession(roomId)
   session.host = host
-  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 }
 
 export const reorderQueue = async (roomId: string, queue: string[]) => {
@@ -156,5 +152,5 @@ export const reorderQueue = async (roomId: string, queue: string[]) => {
 
   session.queue = reorderedQueue.concat(missed)
 
-  await redis.set(`room:${roomId}:session`, JSON.stringify(session), "EX", 60)
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 }

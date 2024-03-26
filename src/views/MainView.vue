@@ -59,10 +59,13 @@ const currentId = computed(() => store.session.video?.id ?? "")
 let interval: ReturnType<typeof setInterval>
 let initialTimeout: ReturnType<typeof setTimeout>
 onMounted(() => {
-  initialTimeout = setTimeout(() => {
-    update()
-    interval = setInterval(update, 5000)
-  }, Date.now() % 5000)
+  initialTimeout = setTimeout(
+    () => {
+      update()
+      interval = setInterval(update, 5000)
+    },
+    5000 ^ Date.now() % 5000
+  )
 })
 onUnmounted(() => {
   clearInterval(interval)

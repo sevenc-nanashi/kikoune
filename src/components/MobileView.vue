@@ -1,25 +1,40 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import QueueList from "./QueueList.vue"
 import UserList from "./UserList.vue"
 import AboutThis from "./AboutThis.vue"
+import { useStore } from "~/store"
+import DebugInfo from "./DebugInfo.vue"
 
-const tabs = {
-  main: "md-home",
-  queue: "md-queuemusic",
-  users: "md-people",
-  about: "md-info",
-} as const
+const store = useStore()
+
+const tabs = computed(() =>
+  store.debug
+    ? ({
+        main: "md-home",
+        queue: "md-queuemusic",
+        users: "md-people",
+        about: "md-info",
+        debug: "md-build",
+      } as const)
+    : ({
+        main: "md-home",
+        queue: "md-queuemusic",
+        users: "md-people",
+        about: "md-info",
+      } as const)
+)
 const tabNames = {
   main: "ホーム",
   queue: "キュー",
   users: "ユーザー",
   about: "このアプリについて",
+  debug: "デバッグ",
 } as const
 
-const selectedTab = ref<keyof typeof tabs>("main")
+const selectedTab = ref<keyof typeof tabs.value>("main")
 const changeTab = () => {
-  const keys = Object.keys(tabs) as (keyof typeof tabs)[]
+  const keys = Object.keys(tabs.value) as (keyof typeof tabs.value)[]
   const currentIndex = keys.indexOf(selectedTab.value)
   const nextIndex = (currentIndex + 1) % keys.length
   selectedTab.value = keys[nextIndex]
@@ -41,6 +56,7 @@ const changeTab = () => {
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else-if="selectedTab === 'about'" />
+      <DebugInfo v-else-if="selectedTab === 'debug'" />
     </div>
   </div>
   <div class="absolute inset-0 root z-50 pointer-events-none" v-bind="$attrs">
