@@ -15,7 +15,7 @@ const formattedSession = computed(() => JSON.stringify(store.$state, null, 2))
     <div>
       <div>セッション：</div>
       <textarea
-        class="font-mono w-full h-64 text-black"
+        class="font-mono w-full h-64 text-black text-xs"
         readonly
         :value="formattedSession"
       />
