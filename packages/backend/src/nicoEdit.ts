@@ -1,5 +1,4 @@
 import { Hono } from "hono"
-import fetch from "node-fetch"
 import { host } from "./const.js"
 
 const app = new Hono()

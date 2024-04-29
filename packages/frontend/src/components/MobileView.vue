@@ -3,8 +3,8 @@ import { computed, ref } from "vue"
 import QueueList from "./QueueList.vue"
 import UserList from "./UserList.vue"
 import AboutThis from "./AboutThis.vue"
-import { useStore } from "~/store"
 import DebugInfo from "./DebugInfo.vue"
+import { useStore } from "~/store"
 
 const store = useStore()
 

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
+import { MemberState, Session } from "@kikoune/shared"
 import { Participant } from "./plugins/useDiscordSdk"
-import { MemberState, Session } from "~shared/schema.js"
 
 export const useStore = defineStore("auth", {
   state: () => ({

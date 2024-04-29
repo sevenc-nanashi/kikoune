@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve"
+  },
+  "extends": "@kikoune/shared/tsconfig.base.json"
+}

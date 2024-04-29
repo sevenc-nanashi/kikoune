@@ -1,12 +1,12 @@
 import { Hono } from "hono"
-import consola from "consola/basic"
+import consola from "consola"
 import { zValidator } from "@hono/zod-validator"
 import AsyncLock from "async-lock"
 import { z } from "zod"
+import { buffer, maxMessageLength } from "@kikoune/shared"
+import { defaultMemberState, memberStateSchema } from "@kikoune/shared"
 import * as db from "./db.js"
 import { fetchSession, getVideo } from "./nico.js"
-import { defaultMemberState, memberStateSchema } from "~shared/schema.js"
-import { buffer, maxMessageLength } from "~shared/const.js"
 
 const app = new Hono<{
   Variables: { userId: string }

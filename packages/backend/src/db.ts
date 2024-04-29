@@ -1,6 +1,6 @@
-import consola from "consola/basic"
+import consola from "consola"
 import { Redis } from "ioredis"
-import { MemberState } from "~shared/schema"
+import { MemberState } from "@kikoune/shared"
 
 const log = consola.withTag("db")
 

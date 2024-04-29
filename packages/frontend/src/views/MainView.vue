@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import consola from "consola/browser"
+import { MemberState, Session, defaultMemberState } from "@kikoune/shared"
 import NicoPlayer from "~/components/NicoPlayer.vue"
 import InfoPanel from "~/components/InfoPanel.vue"
 import NowPlaying from "~/components/NowPlaying.vue"
@@ -9,7 +10,6 @@ import CafeSpace from "~/components/CafeSpace.vue"
 import MobileView from "~/components/MobileView.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
-import { MemberState, Session, defaultMemberState } from "~shared/schema"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()

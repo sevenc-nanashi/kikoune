@@ -5,13 +5,13 @@ import {
   RESTGetAPIUserResult,
   RESTPostOAuth2AccessTokenResult,
 } from "discord-api-types/v10"
-import consola from "consola/basic"
+import consola from "consola"
 import { z } from "zod"
 import { zValidator } from "@hono/zod-validator"
+import { discordScope } from "@kikoune/shared"
 import * as db from "./db.js"
 import { env } from "./const.js"
 import room from "./room.js"
-import { discordScope } from "~shared/const.js"
 
 const log = consola.withTag("api")
 

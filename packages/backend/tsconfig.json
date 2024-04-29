@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "types": ["node"]
+  },
+  "extends": "@kikoune/shared/tsconfig.base.json"
+}

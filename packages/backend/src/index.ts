@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server"
 import { Hono } from "hono"
 import { logger } from "hono/logger"
-import consola from "consola/basic"
+import consola from "consola"
 
 import nicoEdit from "./nicoEdit.js"
 import api from "./api.js"

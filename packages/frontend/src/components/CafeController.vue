@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
+import { maxMessageLength } from "@kikoune/shared"
+import { MemberState } from "@kikoune/shared"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
-import { maxMessageLength } from "~shared/const"
-import { MemberState } from "~shared/schema"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()

@@ -2,10 +2,10 @@
 import { watch } from "vue"
 import consola from "consola/browser"
 import { Common } from "@discord/embedded-app-sdk"
+import { discordScope } from "@kikoune/shared"
 import BuildInfo from "~/components/BuildInfo.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
-import { discordScope } from "~shared/const"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()

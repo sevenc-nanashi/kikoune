@@ -1,8 +1,7 @@
-import fetch from "node-fetch"
+import { Session, Video } from "@kikoune/shared"
 import { XMLParser } from "fast-xml-parser"
 import ExpiryMap from "expiry-map"
 import { DbSession } from "./db.js"
-import { Session, Video } from "~shared/schema"
 
 const videoCache = new ExpiryMap<string, Video>(1000 * 60 * 60)
 

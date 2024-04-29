@@ -2,9 +2,9 @@
 import consola from "consola/browser"
 import { v4 as uuid } from "uuid"
 import { computed, ref, onMounted, onUnmounted, watch } from "vue"
+import { buffer } from "@kikoune/shared"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
-import { buffer } from "~shared/const"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
