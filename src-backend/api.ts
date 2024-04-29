@@ -15,10 +15,6 @@ import { discordScope } from "~shared/const.js"
 
 const log = consola.withTag("api")
 
-const discordToken = process.env.DISCORD_TOKEN
-if (!discordToken) {
-  throw new Error("Discord token is not set")
-}
 const app = new Hono()
 const route = (route: string) => {
   if (route.includes("..")) {
