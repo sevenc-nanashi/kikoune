@@ -9,6 +9,7 @@ export type Session = {
   startedAt: number
   host: string
   queue: SessionVideo[]
+  setting: SessionSetting
 }
 
 export type Video = {
@@ -30,5 +31,21 @@ export const defaultMemberState: MemberState = {
   rotate: false,
   message: "",
 }
+
+export const sessionSettingSchema = z.object({
+  queueLimit: z.number().int().min(1),
+  queueLocked: z.boolean(),
+  queueHidden: z.boolean(),
+  random: z.boolean(),
+})
+
+export const defaultSessionSetting: SessionSetting = {
+  queueLimit: 100,
+  queueLocked: false,
+  queueHidden: false,
+  random: false,
+}
+
+export type SessionSetting = z.infer<typeof sessionSettingSchema>
 
 export type MemberState = z.infer<typeof memberStateSchema>

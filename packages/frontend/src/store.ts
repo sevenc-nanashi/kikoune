@@ -1,5 +1,10 @@
 import { defineStore } from "pinia"
-import { MemberState, Session } from "@kikoune/shared"
+import {
+  MemberState,
+  SessionSetting,
+  Session,
+  defaultSessionSetting,
+} from "@kikoune/shared"
 import { Participant } from "./plugins/useDiscordSdk"
 
 export const useStore = defineStore("auth", {
@@ -10,11 +15,14 @@ export const useStore = defineStore("auth", {
       startedAt: 0,
       host: "",
       video: undefined,
+      setting: defaultSessionSetting,
     } as Session,
     memberStates: {} as Record<string, MemberState>,
     _me: undefined as Participant | undefined,
     stateOverride: {} as Partial<MemberState>,
     stateOverrideUpdatedAt: 0,
+    settingOverride: {} as Partial<SessionSetting>,
+
     participants: [] as Participant[],
     view: "login" as "login" | "main" | "error",
     isHostOverride: undefined as boolean | undefined,
@@ -44,6 +52,20 @@ export const useStore = defineStore("auth", {
       if (!base) return ""
       const path = new URL(base).pathname
       return `/external/nicovideo-cdn-nimg-jp${path}`
+    },
+    sessionSetting(state) {
+      return {
+        ...state.session.setting,
+        ...state.settingOverride,
+      }
+    },
+
+    canQueue(state): boolean {
+      return (
+        this.isHost ||
+        (state.session.queue.length < this.sessionSetting.queueLimit &&
+          !this.sessionSetting.queueLocked)
+      )
     },
   },
   actions: {
@@ -108,6 +130,15 @@ export const useStore = defineStore("auth", {
     },
     setDelay(delay: number) {
       this.delay = delay
+    },
+    setSettingOverride(setting: Partial<SessionSetting>) {
+      this.settingOverride = {
+        ...this.settingOverride,
+        ...setting,
+      }
+    },
+    resetSettingOverride() {
+      this.settingOverride = {}
     },
   },
 })

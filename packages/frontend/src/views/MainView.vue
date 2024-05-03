@@ -50,6 +50,7 @@ const update = async () => {
   store.setSession(data.session)
   store.setMemberStates(data.memberStates)
   store.resetIsHostOverride()
+  store.resetSettingOverride()
   if (Date.now() - store.stateOverrideUpdatedAt > 500) {
     store.resetStateOverride()
   }

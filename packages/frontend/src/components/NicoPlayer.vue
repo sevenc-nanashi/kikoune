@@ -250,8 +250,12 @@ onUnmounted(() => {
     </template>
     <template v-else>
       <h1 class="text-2xl">待機中...</h1>
-      <p class="hidden sm:block">右の欄から動画を再生できます。</p>
-      <p class="hidden xs:max-sm:block">キュー画面から動画を再生できます。</p>
+      <p v-if="store.canQueue" class="hidden sm:block">
+        右の欄から動画を再生できます。
+      </p>
+      <p v-if="store.canQueue" class="hidden xs:max-sm:block">
+        キュー画面から動画を再生できます。
+      </p>
     </template>
   </div>
 </template>

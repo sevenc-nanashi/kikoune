@@ -1,6 +1,10 @@
 import consola from "consola"
 import { Redis } from "ioredis"
-import { MemberState } from "@kikoune/shared"
+import {
+  MemberState,
+  SessionSetting,
+  defaultSessionSetting,
+} from "@kikoune/shared"
 
 const log = consola.withTag("db")
 
@@ -18,6 +22,7 @@ export type DbSession = {
   startedAt: number
   queue: DbSessionVideo[]
   host: string
+  setting: SessionSetting
 }
 
 export const userToken = (userId: string) => `token:${userId}`
@@ -77,6 +82,7 @@ export const createSession = async (
     startedAt,
     queue: [],
     host,
+    setting: defaultSessionSetting,
   }
   await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 
@@ -100,7 +106,16 @@ export const dequeueVideo = async (
   roomId: string,
   session: DbSession
 ): Promise<void> => {
-  const videoId = session.queue.shift()
+  let videoId: DbSessionVideo | undefined
+
+  if (session.setting.random) {
+    videoId = session.queue.splice(
+      Math.floor(Math.random() * session.queue.length),
+      1
+    )[0]
+  } else {
+    videoId = session.queue.shift()
+  }
   session.startedAt = Date.now()
   session.video = videoId ?? null
   log.info(`[${roomId}] Dequeued video: ${videoId?.videoId}`)
@@ -152,5 +167,11 @@ export const reorderQueue = async (roomId: string, queue: string[]) => {
 
   session.queue = reorderedQueue.concat(missed)
 
+  await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
+}
+
+export const setSetting = async (roomId: string, setting: SessionSetting) => {
+  const session = await getSession(roomId)
+  session.setting = setting
   await redis.set(roomSession(roomId), JSON.stringify(session), "EX", 60)
 }

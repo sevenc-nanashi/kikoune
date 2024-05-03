@@ -4,6 +4,7 @@ import QueueList from "./QueueList.vue"
 import UserList from "./UserList.vue"
 import AboutThis from "./AboutThis.vue"
 import DebugInfo from "./DebugInfo.vue"
+import SessionSetting from "./SessionSetting.vue"
 import { useStore } from "~/store"
 
 const store = useStore()
@@ -25,21 +26,24 @@ watch(
   { immediate: true }
 )
 
-const tabs = computed(() =>
-  store.debug
-    ? ({
-        queue: "キュー",
-        users: "ユーザー",
-        about: "このアプリについて",
-        debug: "デバッグ",
-      } as const)
-    : ({
-        queue: "キュー",
-        users: "ユーザー",
-        about: "このアプリについて",
-      } as const)
-)
-const selectedTab = ref<keyof typeof tabs.value>("queue")
+const tabs = computed(() => {
+  const ret: Record<string, string> = {
+    queue: "キュー",
+    users: "ユーザー",
+    about: "このアプリについて",
+  }
+  if (store.isHost) {
+    ret.sessionSetting = "部屋の設定"
+  }
+  if (store.debug) {
+    ret.debug = "デバッグ"
+  }
+
+  return ret
+})
+
+type PanelName = "queue" | "users" | "about" | "sessionSetting" | "debug"
+const selectedTab = ref<PanelName>("queue")
 </script>
 <template>
   <div class="min-h-full w-full relative flex flex-col">
@@ -51,7 +55,7 @@ const selectedTab = ref<keyof typeof tabs.value>("queue")
         :class="{
           'opacity-50': tab !== selectedTab,
         }"
-        @click="selectedTab = tab as keyof typeof tabs"
+        @click="selectedTab = tab as PanelName"
       >
         {{ tabs[tab as keyof typeof tabs] }}
       </button>
@@ -79,6 +83,7 @@ const selectedTab = ref<keyof typeof tabs.value>("queue")
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else-if="selectedTab === 'about'" />
+      <SessionSetting v-else-if="selectedTab === 'sessionSetting'" />
       <DebugInfo v-else-if="selectedTab === 'debug'" />
     </div>
   </div>

@@ -3,7 +3,12 @@ import consola from "consola"
 import { zValidator } from "@hono/zod-validator"
 import AsyncLock from "async-lock"
 import { z } from "zod"
-import { buffer, maxMessageLength } from "@kikoune/shared"
+import {
+  SessionSetting,
+  buffer,
+  maxMessageLength,
+  sessionSettingSchema,
+} from "@kikoune/shared"
 import { defaultMemberState, memberStateSchema } from "@kikoune/shared"
 import * as db from "./db.js"
 import { fetchSession, getVideo } from "./nico.js"
@@ -85,6 +90,15 @@ app.post(
   "/:id{[0-9a-f-]+?}/queue",
   zValidator("json", z.object({ videoId: z.string() })),
   async (c) => {
+    const session = await db.getSession(c.req.param("id")).then(fetchSession)
+    const canQueue =
+      session.host === c.get("userId") ||
+      (session.queue.length < session.setting.queueLimit &&
+        !session.setting.queueLocked)
+    if (!canQueue) {
+      c.status(403)
+      return c.json({ error: "Queue is locked" })
+    }
     let video
     try {
       video = await getVideo(c.req.valid("json").videoId)
@@ -214,6 +228,29 @@ app.put(
       }
       const order = c.req.valid("json").order
       await db.reorderQueue(c.req.param("id"), order)
+
+      c.status(204)
+      return c.body(null)
+    })
+  }
+)
+
+app.put(
+  "/:id{[0-9a-f-]+?}/setting",
+  zValidator("json", sessionSettingSchema.partial()),
+  async (c) => {
+    return await lock.acquire(c.req.param("id"), async () => {
+      const session = await db.getSession(c.req.param("id"))
+      if (session.host !== c.get("userId")) {
+        c.status(403)
+        return c.json({ error: "Not the host" })
+      }
+      const newSetting = c.req.valid("json")
+      const setting: SessionSetting = {
+        ...session.setting,
+        ...newSetting,
+      }
+      await db.setSetting(c.req.param("id"), setting)
 
       c.status(204)
       return c.body(null)

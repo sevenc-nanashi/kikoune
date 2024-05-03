@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "dotenv -- turbo dev",
     "build": "turbo build",
     "start": "dotenv -- turbo start",
     "lint": "eslint --ext .ts,.vue packages",

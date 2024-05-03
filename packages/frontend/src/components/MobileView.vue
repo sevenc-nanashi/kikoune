@@ -4,37 +4,43 @@ import QueueList from "./QueueList.vue"
 import UserList from "./UserList.vue"
 import AboutThis from "./AboutThis.vue"
 import DebugInfo from "./DebugInfo.vue"
+import SessionSetting from "./SessionSetting.vue"
+import { PanelName as DesktopPanelName } from "./InfoPanel.vue"
 import { useStore } from "~/store"
 
 const store = useStore()
 
-const tabs = computed(() =>
-  store.debug
-    ? ({
-        main: "md-home",
-        queue: "md-queuemusic",
-        users: "md-people",
-        about: "md-info",
-        debug: "md-build",
-      } as const)
-    : ({
-        main: "md-home",
-        queue: "md-queuemusic",
-        users: "md-people",
-        about: "md-info",
-      } as const)
-)
-const tabNames = {
+const tabs = computed(() => {
+  const ret: Record<string, string> = {
+    main: "md-home",
+    queue: "md-queuemusic",
+    users: "md-people",
+    about: "md-info",
+  }
+  if (store.isHost) {
+    ret.sessionSetting = "md-settings"
+  }
+  if (store.debug) {
+    ret.debug = "md-bugreport"
+  }
+
+  return ret
+})
+
+type PanelName = DesktopPanelName | "main"
+
+const tabNames: Record<PanelName, string> = {
   main: "ホーム",
   queue: "キュー",
   users: "ユーザー",
   about: "このアプリについて",
+  sessionSetting: "部屋の設定",
   debug: "デバッグ",
 } as const
 
-const selectedTab = ref<keyof typeof tabs.value>("main")
+const selectedTab = ref<PanelName>("main")
 const changeTab = () => {
-  const keys = Object.keys(tabs.value) as (keyof typeof tabs.value)[]
+  const keys = Object.keys(tabs.value) as PanelName[]
   const currentIndex = keys.indexOf(selectedTab.value)
   const nextIndex = (currentIndex + 1) % keys.length
   selectedTab.value = keys[nextIndex]
@@ -56,6 +62,7 @@ const changeTab = () => {
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else-if="selectedTab === 'about'" />
+      <SessionSetting v-else-if="selectedTab === 'sessionSetting'" />
       <DebugInfo v-else-if="selectedTab === 'debug'" />
     </div>
   </div>

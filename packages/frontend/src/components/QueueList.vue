@@ -255,6 +255,15 @@ const sendReorder = async () => {
     }
   }
 }
+const placeholder = computed(() => {
+  if (store.canQueue) {
+    return "キーワード / ID / URL（複数可）"
+  } else if (store.session.queue.length >= store.sessionSetting.queueLimit) {
+    return `キューの上限（${store.sessionSetting.queueLimit}曲）に達しました。`
+  } else {
+    return "ホスト以外はキューに追加できません。"
+  }
+})
 </script>
 <template>
   <div class="bg-black/25 h-full w-full relative flex flex-col">
@@ -294,15 +303,21 @@ const sendReorder = async () => {
     >
       <p class="text-xl">キューは空です。</p>
     </div>
+    <div
+      v-else-if="!store.isHost && store.sessionSetting.queueHidden"
+      class="grid place-content-center flex-grow"
+    >
+      <p class="text-xl">キューは非表示にされています。</p>
+    </div>
     <Draggable
       v-else
       v-model="queue"
       item-key="nonce"
-      handle=".handle"
+      :handle="store.sessionSetting.random ? '.__disabled__' : '.handle'"
       class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll overflow-x-hidden"
       @sort="setReordered"
     >
-      <template v-if="store.isHost" #header>
+      <template v-if="store.isHost && !store.sessionSetting.random" #header>
         <p class="pl-2">数字をドラッグして順番を変更できます。</p>
       </template>
       <template #item="{ element: video, index: i }">
@@ -311,7 +326,9 @@ const sendReorder = async () => {
             class="w-8 bg-black grid place-content-center transition-colors duration-200"
             :class="{
               'handle cursor-grab':
-                !temporaryAdded.includes(video) && store.isHost,
+                !temporaryAdded.includes(video) &&
+                store.isHost &&
+                !store.sessionSetting.random,
               'text-opacity-50': temporaryAdded.includes(video),
               '!bg-cyan-900':
                 !temporaryAdded.includes(video) &&
@@ -319,7 +336,13 @@ const sendReorder = async () => {
                 reorderedItems.includes(video.nonce),
             }"
           >
-            {{ temporaryAdded.includes(video) ? "-" : i + 1 }}
+            {{
+              temporaryAdded.includes(video)
+                ? "-"
+                : store.sessionSetting.random
+                  ? "?"
+                  : i + 1
+            }}
           </div>
           <div class="flex p-2 gap-2 sm:gap-1 flex-col flex-grow">
             <div class="flex flex-col sm:flex-row sm:items-end relative">
@@ -400,12 +423,21 @@ const sendReorder = async () => {
       />
       <input
         v-model="videoSource"
+        :disabled="!store.canQueue"
         class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none w-[calc(100%_-_4rem)] sm:w-auto"
-        placeholder="キーワード / ID / URL（複数可）"
+        :class="{
+          'cursor-not-allowed opacity-50': !store.canQueue,
+        }"
+        :placeholder
       />
       <button
+        :disabled="!store.canQueue"
         type="submit"
-        class="h-full bg-black px-4 sm:p-1 w-16 cursor-pointer active:bg-cyan-500 rounded-none"
+        class="h-full bg-black px-4 sm:p-1 w-16 rounded-none"
+        :class="{
+          'cursor-pointer active:bg-cyan-500': store.canQueue,
+          'opacity-50 cursor-not-allowed': !store.canQueue,
+        }"
       >
         {{
           buttonState === "search"

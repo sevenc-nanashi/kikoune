@@ -46,6 +46,7 @@ export const fetchSession = async (session: DbSession): Promise<Session> => {
       : undefined,
     startedAt: session.startedAt,
     host: session.host,
+    setting: session.setting,
     queue: await Promise.all(
       session.queue.map(async (v) => ({
         ...(await getVideo(v.videoId)),

@@ -6,7 +6,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
   "extends": "@kikoune/shared/tsconfig.base.json"
 }
