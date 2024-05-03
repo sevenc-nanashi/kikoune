@@ -136,6 +136,11 @@ $padding: 8px;
   padding-right: calc(var(--sair) + $padding);
   padding-bottom: calc(var(--saib) + $padding);
 
+  width: calc(100vw / var(--zoom-scale));
+  height: calc(100vh / var(--zoom-scale));
+  transform-origin: top left;
+  transform: scale(var(--zoom-scale));
+
   gap: $padding;
 
   @media (max-width: 375px) {
@@ -143,7 +148,7 @@ $padding: 8px;
   }
 
   display: grid;
-  grid-template-rows: calc(45vh - 4.5rem) 4.5rem 1fr auto;
+  grid-template-rows: calc(45% - 4.5rem) 4.5rem 1fr auto;
 
   @media (max-width: 640px) {
     grid-template-rows: auto auto 1fr auto;

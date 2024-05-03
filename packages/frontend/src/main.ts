@@ -16,6 +16,8 @@ import {
   MdInfo,
   MdHome,
   MdBuild,
+  MdZoomin,
+  MdZoomout,
 } from "oh-vue-icons/icons"
 import { discordSdkPlugin } from "./plugins/useDiscordSdk"
 import App from "./App.vue"
@@ -35,7 +37,9 @@ addIcons(
   MdPeople,
   MdInfo,
   MdHome,
-  MdBuild
+  MdBuild,
+  MdZoomin,
+  MdZoomout
 )
 
 const pinia = createPinia()
