@@ -107,7 +107,7 @@ watch(
       pointerEvents: errorCount > 1 ? 'auto' : 'none',
     }"
   />
-  <div class="w-screen h-screen xs:relative root">
+  <div class="xs:relative root">
     <div
       class="xs:relative flex top-section h-full justify-center sm:justify-normal"
     >

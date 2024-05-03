@@ -100,6 +100,11 @@ watch(
   },
   { immediate: true }
 )
+
+const isBrowser = !(
+  navigator.userAgent.includes("Mobile") ||
+  navigator.userAgent.includes("discord")
+)
 </script>
 <template>
   <div
@@ -113,6 +118,9 @@ watch(
     </p>
     <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
     <p class="text-xl sm:text-2xl">ログイン中...</p>
+    <p v-if="isBrowser" class="text-xl">
+      アプリ版から参加することを推奨します。
+    </p>
     <BuildInfo />
   </div>
 </template>

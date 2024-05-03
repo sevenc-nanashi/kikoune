@@ -42,11 +42,11 @@ const tabs = computed(() => {
   return ret
 })
 
-type PanelName = "queue" | "users" | "about" | "sessionSetting" | "debug"
+export type PanelName = "queue" | "users" | "about" | "sessionSetting" | "debug"
 const selectedTab = ref<PanelName>("queue")
 </script>
 <template>
-  <div class="min-h-full w-full relative flex flex-col">
+  <div class="min-h-full relative flex flex-col flex-grow">
     <nav class="bg-black h-8 px-2 flex flex-row items-center">
       <button
         v-for="tab in Object.keys(tabs)"

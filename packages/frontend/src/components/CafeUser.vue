@@ -44,7 +44,7 @@ const showTooltip = ref(false)
       }"
     />
     <p
-      v-if="memberState.message"
+      v-if="memberState.message && memberState.message.trim()"
       class="absolute top-[-0.5rem] -translate-y-full w-48 break-words left-1/2 -translate-x-1/2 text-center text-sm p-1 text-slate-950 rounded border-[1px] border-cyan-500 bg-cyan-100 drop-shadow-md transition-all"
     >
       {{ memberState.message }}
