@@ -96,6 +96,7 @@ const queueLimit = computed({
   }
   input {
     @apply ml-2;
+    @apply cursor-pointer;
   }
   p {
     @apply text-xs mt-1;
