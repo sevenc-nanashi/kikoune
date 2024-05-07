@@ -136,24 +136,30 @@ $padding: 8px;
   padding-left: calc(var(--sail) + $padding);
   padding-right: calc(var(--sair) + $padding);
   padding-bottom: calc(var(--saib) + $padding);
+  gap: $padding;
 
   width: calc(100vw / var(--zoom-scale));
   height: calc(100vh / var(--zoom-scale));
   transform-origin: top left;
   transform: scale(var(--zoom-scale));
 
-  gap: $padding;
-
+  // ミニプレイヤー
   @media (max-width: 375px) {
     padding: 0;
+
+    width: 100vw;
+    height: 100vh;
+    transform: none;
   }
 
   display: grid;
   grid-template-rows: calc(45% - 4.5rem) 4.5rem 1fr auto;
 
+  // スマホ
   @media (max-width: 640px) {
     grid-template-rows: auto auto 1fr auto;
   }
+  // PC
   @media (max-height: 480px) and (min-width: 640px) {
     grid-template-rows: calc(45vh - 2rem) 2rem 1fr auto;
   }
