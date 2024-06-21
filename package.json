@@ -2,6 +2,7 @@
   "name": "kikoune",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "pnpm@9.2.0",
   "type": "module",
   "scripts": {
     "dev": "dotenv -- turbo dev",
