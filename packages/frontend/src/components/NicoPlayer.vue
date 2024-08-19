@@ -16,7 +16,7 @@ const videoId = computed(() => store.session.video?.id)
 const nonce = computed(() => store.session.video?.nonce)
 const src = computed(
   () =>
-    `/nico/nico-embed/${videoId.value}?${new URLSearchParams({
+    `/.proxy/nico/nico-embed/${videoId.value}?${new URLSearchParams({
       jsapi: "1",
       playerId: playerNonce,
       noRelatedVideo: "0",

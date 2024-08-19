@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Noto Sans JP", "sans-serif"],
+        sans: ["Zen Kaku Gothic New", "sans-serif"],
       },
       screens: {
         xs: "350px",

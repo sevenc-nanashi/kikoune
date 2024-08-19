@@ -11,7 +11,7 @@ const store = useStore()
 const zoomScale = ref(1)
 
 const zoomIn = () => {
-  zoomScale.value = Math.min(1.0, zoomScale.value + 0.05)
+  zoomScale.value = Math.min(1.5, zoomScale.value + 0.05)
 }
 
 const zoomOut = () => {
@@ -65,7 +65,7 @@ const selectedTab = ref<PanelName>("queue")
       <!-- メモ：*100してroundしないと小数点誤差でバグる -->
       <button
         class="ml-2"
-        :disabled="Math.round(zoomScale * 100) === 100"
+        :disabled="Math.round(zoomScale * 100) === 150"
         @click="zoomIn"
       >
         <v-icon name="md-zoomin" />

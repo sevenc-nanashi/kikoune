@@ -38,7 +38,7 @@ app.use(async (c, next) => {
 })
 
 app.put(
-  "/:id{[0-9a-f-]+?}/sync",
+  "/:id{[0-9a-z-]+?}/sync",
   zValidator("json", z.object({ userIds: z.array(z.string()) })),
   async (c) => {
     return await lock.acquire(c.req.param("id"), async () => {
@@ -87,7 +87,7 @@ app.put(
 )
 
 app.post(
-  "/:id{[0-9a-f-]+?}/queue",
+  "/:id{[0-9a-z-]+?}/queue",
   zValidator("json", z.object({ videoId: z.string() })),
   async (c) => {
     const session = await db.getSession(c.req.param("id")).then(fetchSession)
@@ -119,7 +119,7 @@ app.post(
 )
 
 app.put(
-  "/:id{[0-9a-f-]+?}/state",
+  "/:id{[0-9a-z-]+?}/state",
   zValidator("json", z.object({ state: memberStateSchema.partial() })),
   async (c) => {
     const data = c.req.valid("json")
@@ -141,7 +141,7 @@ app.put(
   }
 )
 app.post(
-  "/:id{[0-9a-f-]+?}/skip",
+  "/:id{[0-9a-z-]+?}/skip",
   zValidator(
     "json",
     z.object({
@@ -173,7 +173,7 @@ app.post(
   }
 )
 app.put(
-  "/:id{[0-9a-f-]+?}/host",
+  "/:id{[0-9a-z-]+?}/host",
   zValidator(
     "json",
     z.object({
@@ -195,7 +195,7 @@ app.put(
   }
 )
 
-app.delete("/:id{[0-9a-f-]+?}/queue/:nonce{[0-9a-f-]+?}", async (c) => {
+app.delete("/:id{[0-9a-z-]+?}/queue/:nonce{[0-9a-z-]+?}", async (c) => {
   return await lock.acquire(c.req.param("id"), async () => {
     const session = await db.getSession(c.req.param("id"))
     const video = session.queue.find((v) => v.nonce === c.req.param("nonce"))
@@ -217,7 +217,7 @@ app.delete("/:id{[0-9a-f-]+?}/queue/:nonce{[0-9a-f-]+?}", async (c) => {
   })
 })
 app.put(
-  "/:id{[0-9a-f-]+?}/queue",
+  "/:id{[0-9a-z-]+?}/queue",
   zValidator("json", z.object({ order: z.array(z.string()) })),
   async (c) => {
     return await lock.acquire(c.req.param("id"), async () => {
@@ -236,7 +236,7 @@ app.put(
 )
 
 app.put(
-  "/:id{[0-9a-f-]+?}/setting",
+  "/:id{[0-9a-z-]+?}/setting",
   zValidator("json", sessionSettingSchema.partial()),
   async (c) => {
     return await lock.acquire(c.req.param("id"), async () => {

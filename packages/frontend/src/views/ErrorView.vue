@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import BuildInfo from "~/components/BuildInfo.vue"
+</script>
 <template>
   <div
     class="w-screen h-screen relative place-items-center place-content-center grid bg-red-950"

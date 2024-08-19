@@ -34,7 +34,9 @@ const update = async () => {
     }),
   })
   if (!res.ok) {
-    log.error(`Failed to sync, panic in ${3 - errorCount.value}`)
+    log.error(
+      `Failed to sync (${res.status}), panic in ${3 - errorCount.value}`
+    )
     errorCount.value++
     if (errorCount.value > 3) {
       store.panic()
@@ -143,6 +145,9 @@ $padding: 8px;
   transform-origin: top left;
   transform: scale(var(--zoom-scale));
 
+  display: grid;
+  grid-template-rows: calc(45% - 4.5rem) 4.5rem 1fr auto;
+
   // ミニプレイヤー
   @media (max-width: 375px) {
     padding: 0;
@@ -151,9 +156,6 @@ $padding: 8px;
     height: 100vh;
     transform: none;
   }
-
-  display: grid;
-  grid-template-rows: calc(45% - 4.5rem) 4.5rem 1fr auto;
 
   // スマホ
   @media (max-width: 640px) {

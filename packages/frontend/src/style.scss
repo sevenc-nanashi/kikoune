@@ -1,4 +1,4 @@
-@import "@fontsource/noto-sans-jp";
+@import "@fontsource/zen-kaku-gothic-new";
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -12,6 +12,7 @@
   --sail: var(--discord-safe-area-inset-left, env(safe-area-inset-left));
   --sair: var(--discord-safe-area-inset-right, env(safe-area-inset-right));
   overflow: hidden;
+  accent-color: theme("colors.cyan.500");
 }
 
 #app {

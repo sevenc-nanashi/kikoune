@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TooltipProvider } from "radix-vue"
 import { useStore } from "./store"
 import LoginView from "./views/LoginView.vue"
 import MainView from "./views/MainView.vue"
@@ -8,15 +9,17 @@ const store = useStore()
 </script>
 
 <template>
-  <LoginView
-    class="transition-opacity absolute inset-0 duration-1000"
-    :style="{
-      opacity: store.$state.view === 'login' ? 1 : 0,
-      pointerEvents: store.$state.view === 'login' ? 'auto' : 'none',
-    }"
-  />
-  <MainView v-if="store.$state.view === 'main'" />
-  <ErrorView v-else-if="store.$state.view === 'error'" />
+  <TooltipProvider :delay-duration="250">
+    <LoginView
+      class="transition-opacity absolute inset-0 duration-1000"
+      :style="{
+        opacity: store.$state.view === 'login' ? 1 : 0,
+        pointerEvents: store.$state.view === 'login' ? 'auto' : 'none',
+      }"
+    />
+    <MainView v-if="store.$state.view === 'main'" />
+    <ErrorView v-else-if="store.$state.view === 'error'" />
+  </TooltipProvider>
 </template>
 
 <style scoped>

@@ -14,6 +14,16 @@ export default defineConfig(async () => {
     plugins: [vue()],
     server: {
       port: 1103,
+      proxy: {
+        "/api": {
+          target: "http://localhost:1104",
+          changeOrigin: true,
+        },
+        "/nico": {
+          target: "http://localhost:1104",
+          changeOrigin: true,
+        },
+      },
     },
     preview: {
       port: 1103,

@@ -11,10 +11,10 @@ const replaceToExternal = (src: string) =>
       /https?:\/\/assets\.embed\.res\.nimg\.jp\/js\/(.+?).js/g,
       "/nico/watch/$1"
     )
-    .replace("https://stella.nicovideo.jp", "/nico/stella")
+    .replace("https://stella.nicovideo.jp", "/.proxy/nico/stella")
     .replace(
       /https?:\/\/res\.ads\.nicovideo.jp/g,
-      "/external/res-ads-nicovideo-jp"
+      "/.proxy/external/res-ads-nicovideo-jp"
     )
     .replace(/\/users/g, "/../../nico/users")
     .replace(/\/v1\/watch\/(?!non)/g, "/../../nico/v1-watch/")
@@ -25,15 +25,15 @@ const replaceToExternal = (src: string) =>
     .replace(
       /https?:(?:\/\/|\\\/\\\/)([^/]+?)\.nicovideo\.jp/g,
       (_match, p1) =>
-        host + "/external/" + p1.replaceAll(".", "-") + "-nicovideo-jp"
+        host + "/.proxy/external/" + p1.replaceAll(".", "-") + "-nicovideo-jp"
     )
     .replace(
       /https?:(?:\/\/|\\\/\\\/)([^/]+?)\.cdn\.nimg\.jp/g,
-      host + "/external/$1-cdn-nimg-jp"
+      host + "/.proxy/external/$1-cdn-nimg-jp"
     )
     .replace(
       /https?:\/\/assets\.embed\.res\.nimg\.jp/g,
-      "/external/assets-embed-res-nimg-jp"
+      "/.proxy/external/assets-embed-res-nimg-jp"
     )
 
 app.get("/nico-embed/:id", async (c) => {
@@ -57,7 +57,7 @@ app.get("/watch/:id{.+}", async (c) => {
   c.header("Content-Type", "application/javascript")
   return c.text(
     replaceToExternal(js)
-      .replace(/\/api\/watch/g, "/nico/api-watch")
+      .replace(/\/api\/watch/g, "/.proxy/nico/api-watch")
       .replace(/\/v1\/recommend\?/g, "/../../nico/nvapi-recommend?")
   )
 })
@@ -110,7 +110,7 @@ app.post("/v1-watch/:id/:rest{.+}", async (c) => {
     JSON.parse(
       json.replace(
         /https?:\/\/delivery\.domand\.nicovideo\.jp\/hlsext\/(.+?)\.m3u8/g,
-        host + "/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
+        host + "/.proxy/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
       )
     )
   )
@@ -135,22 +135,25 @@ app.get("/delivery-domand-nicovideo-jp/:rest{.+}", async (c) => {
     withParams(`https://delivery.domand.nicovideo.jp/${rest}`, c.req.query())
   )
   for (const [key, value] of res.headers.entries()) {
+    if (key.toLowerCase() === "transfer-encoding") continue
+
     c.header(key, value)
   }
   return c.body(
     (await res.text())
       .replace(
         /https:\/\/asset\.domand\.nicovideo\.jp/g,
-        host + "/external/asset-domand-nicovideo-jp"
+        host + "/.proxy/external/asset-domand-nicovideo-jp"
       )
       .replace(
         /https:\/\/delivery\.domand\.nicovideo\.jp\/hlsext\/(.+?)\.m3u8/g,
-        host + "/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
+        host + "/.proxy/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
       )
       .replace(
         /https:\/\/delivery\.domand\.nicovideo\.jp/g,
-        host + "/external/delivery-domand-nicovideo-jp"
-      )
+        host + "/.proxy/external/delivery-domand-nicovideo-jp"
+      ),
+    200
   )
 })
 app.get("/nvapi-recommend", async (c) => {

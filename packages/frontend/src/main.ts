@@ -24,6 +24,8 @@ import {
 import { discordSdkPlugin } from "./plugins/useDiscordSdk"
 import App from "./App.vue"
 import "./style.scss"
+// eslint-disable-next-line import/order
+import { patchUrlMappings } from "@discord/embedded-app-sdk"
 
 addIcons(
   MdOpeninnew,
@@ -45,6 +47,13 @@ addIcons(
   MdSettings,
   MdBugreport
 )
+
+patchUrlMappings([
+  {
+    prefix: "/api",
+    target: `${location.origin}/api`,
+  },
+])
 
 const pinia = createPinia()
 createApp(App)
