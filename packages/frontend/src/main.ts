@@ -25,6 +25,7 @@ import { patchUrlMappings } from "@discord/embedded-app-sdk"
 import { discordSdkPlugin } from "./plugins/useDiscordSdk.ts"
 import App from "./App.vue"
 import "./style.scss"
+import { consolaReporterPlugin } from "./plugins/useConsolaMessages.ts"
 
 addIcons(
   MdOpeninnew,
@@ -59,4 +60,5 @@ createApp(App)
   .component("v-icon", OhVueIcon)
   .use(pinia)
   .use(discordSdkPlugin)
+  .use(consolaReporterPlugin)
   .mount("#app")
