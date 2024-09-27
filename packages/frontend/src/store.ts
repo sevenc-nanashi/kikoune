@@ -5,7 +5,7 @@ import {
   Session,
   defaultSessionSetting,
 } from "@kikoune/shared"
-import { Participant } from "./plugins/useDiscordSdk"
+import { Participant } from "./plugins/useDiscordSdk.ts"
 
 export const useStore = defineStore("auth", {
   state: () => ({
@@ -51,7 +51,7 @@ export const useStore = defineStore("auth", {
       const base = state.session.video?.thumbnailUrl
       if (!base) return ""
       const path = new URL(base).pathname
-      return `/external/nicovideo-cdn-nimg-jp${path}`
+      return `/external/nicovideo--cdn--nimg--jp${path}`
     },
     sessionSetting(state) {
       return {

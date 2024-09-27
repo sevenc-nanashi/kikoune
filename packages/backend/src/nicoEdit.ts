@@ -12,28 +12,11 @@ const replaceToExternal = (src: string) =>
       "/nico/watch/$1"
     )
     .replace("https://stella.nicovideo.jp", "/.proxy/nico/stella")
-    .replace(
-      /https?:\/\/res\.ads\.nicovideo.jp/g,
-      "/.proxy/external/res-ads-nicovideo-jp"
-    )
     .replace(/\/users/g, "/../../nico/users")
     .replace(/\/v1\/watch\/(?!non)/g, "/../../nico/v1-watch/")
-    // .replace(
-    //   /https?:\/\/(?:\/\/)?([^/]+?)\.nicovideo\.jp/g,
-    //   host + "/external/$1-nicovideo-jp"
-    // )
     .replace(
-      /https?:(?:\/\/|\\\/\\\/)([^/]+?)\.nicovideo\.jp/g,
-      (_match, p1) =>
-        host + "/.proxy/external/" + p1.replaceAll(".", "-") + "-nicovideo-jp"
-    )
-    .replace(
-      /https?:(?:\/\/|\\\/\\\/)([^/]+?)\.cdn\.nimg\.jp/g,
-      host + "/.proxy/external/$1-cdn-nimg-jp"
-    )
-    .replace(
-      /https?:\/\/assets\.embed\.res\.nimg\.jp/g,
-      "/.proxy/external/assets-embed-res-nimg-jp"
+      /https?:(?:\/\/|\\\/\\\/)([^/]+?(?:\.nicovideo\.jp|\.nimg\.jp))/g,
+      (_match, p1) => host + "/.proxy/external/" + p1.replaceAll(".", "--")
     )
 
 app.get("/nico-embed/:id", async (c) => {
@@ -140,19 +123,10 @@ app.get("/delivery-domand-nicovideo-jp/:rest{.+}", async (c) => {
     c.header(key, value)
   }
   return c.body(
-    (await res.text())
-      .replace(
-        /https:\/\/asset\.domand\.nicovideo\.jp/g,
-        host + "/.proxy/external/asset-domand-nicovideo-jp"
-      )
-      .replace(
-        /https:\/\/delivery\.domand\.nicovideo\.jp\/hlsext\/(.+?)\.m3u8/g,
-        host + "/.proxy/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
-      )
-      .replace(
-        /https:\/\/delivery\.domand\.nicovideo\.jp/g,
-        host + "/.proxy/external/delivery-domand-nicovideo-jp"
-      ),
+    (await res.text()).replace(
+      /https:\/\/(.+?\.nicovideo\.jp)/g,
+      (_match, p1) => host + "/.proxy/nico/" + p1.replaceAll(".", "--")
+    ),
     200
   )
 })

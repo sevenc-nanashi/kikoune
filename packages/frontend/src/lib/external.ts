@@ -3,7 +3,7 @@ export const toExternal = (url: string) => {
   return (
     location.origin +
     "/external/" +
-    parsedUrl.host.replace(/\./g, "-") +
+    parsedUrl.host.replace(/\./g, "--") +
     parsedUrl.pathname
   )
 }

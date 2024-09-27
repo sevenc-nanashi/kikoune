@@ -1,6 +1,7 @@
 import childProcess from "child_process"
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
+import svgLoader from "vite-svg-loader"
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
@@ -11,7 +12,24 @@ export default defineConfig(async () => {
 
   process.env.VITE_COMMIT = currentCommit
   return {
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      svgLoader({
+        svgoConfig: {
+          multipass: true,
+          plugins: [
+            {
+              name: "preset-default",
+              params: {
+                overrides: {
+                  removeViewBox: false,
+                },
+              },
+            },
+          ],
+        },
+      }),
+    ],
     server: {
       port: 1103,
       proxy: {
@@ -31,6 +49,13 @@ export default defineConfig(async () => {
     resolve: {
       alias: {
         "~": "/src",
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler",
+        },
       },
     },
   }

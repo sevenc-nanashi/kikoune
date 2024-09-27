@@ -136,7 +136,7 @@ const onMessage = (event: MessageEvent) => {
       if (url.includes(location.origin)) {
         url = url.replace(location.origin + "/external/", "")
         const dummyHost = url.split("/")[0]
-        url = "https://" + url.replace(dummyHost, dummyHost.replace(/-/g, "."))
+        url = "https://" + url.replace(dummyHost, dummyHost.replace(/--/g, "."))
       }
       discordSdk.commands.openExternalLink({ url })
       break

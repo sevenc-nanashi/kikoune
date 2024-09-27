@@ -3,6 +3,7 @@ import { watch } from "vue"
 import consola from "consola/browser"
 import { Common } from "@discord/embedded-app-sdk"
 import { discordScope } from "@kikoune/shared"
+import LogoSvg from "~/assets/title.svg?component"
 import BuildInfo from "~/components/BuildInfo.vue"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
 import { useStore } from "~/store"
@@ -111,7 +112,7 @@ const isBrowser = !(
     class="w-screen h-screen place-items-center place-content-center grid bg-gray-900 z-100"
   >
     <div class="absolute inset-0 cursor-wait" />
-    <h1 class="text-5xl sm:text-9xl font-extrabold">Kikoune</h1>
+    <LogoSvg class="h-12 sm:h-32" />
     <p class="text-xl sm:text-2xl">
       Developed by
       <span class="text-[#48b0d5]">Nanashi.</span>
