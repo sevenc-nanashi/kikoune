@@ -39,9 +39,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ inputs.directory-name }}-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-${{ inputs.directory-name }}-
+            ${{ runner.os }}-buildx
       - name: Prepare Current Date Arg
         shell: bash
         env:
@@ -62,15 +62,11 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./${{ inputs.directory-name }}/Dockerfile
-          build-args: |
-            ENV_FILE=.env.build
-            ${{ inputs.build-args }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/kikoune/${{ inputs.directory-name }}:${{ env.CURRENT_DATETIME }}
-            ghcr.io/${{ github.repository_owner }}/kikoune/${{ inputs.directory-name }}:latest
+            ghcr.io/${{ github.repository_owner }}/kikoune:${{ env.CURRENT_DATETIME }}
+            ghcr.io/${{ github.repository_owner }}/kikoune:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           ulimit: nofile=1024000:1024000
