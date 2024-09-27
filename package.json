@@ -2,15 +2,15 @@
   "name": "kikoune",
   "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@9.2.0",
+  "packageManager": "pnpm@9.11.0",
   "type": "module",
   "scripts": {
     "dev": "dotenv -- turbo dev",
     "build": "turbo build",
-    "start": "dotenv -- turbo start",
     "lint": "eslint --ext .ts,.vue packages",
     "lint:fix": "eslint --ext .ts,.vue packages --fix",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "start": "node ./dist/index.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.7.0",

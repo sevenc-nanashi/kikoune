@@ -12,11 +12,8 @@
       "cache": false,
       "outputs": ["dist/**"]
     },
-    "start": {
-      "dependsOn": ["build"],
-      "persistent": true,
-      "cache": false,
-      "env": ["VITE_DISCORD_ID", "DISCORD_SECRET", "REDIS_URL"]
+    "typecheck": {
+      "cache": false
     }
   }
 }
