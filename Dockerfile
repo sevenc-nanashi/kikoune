@@ -4,4 +4,5 @@ COPY ./package.json .
 COPY ./dist ./dist
 
 EXPOSE 1104
+ENV NODE_ENV=production
 CMD ["npm", "start"]
