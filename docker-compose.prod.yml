@@ -7,6 +7,6 @@ services:
     volumes:
       - "./data/redis:/data"
   app:
-    image: "ghcr.io/sevenc-nanashi/kikoune:${{ env.CURRENT_DATETIME }}"
+    image: "ghcr.io/sevenc-nanashi/kikoune:latest"
     ports:
       - "1104:$FINAL_PORT"
