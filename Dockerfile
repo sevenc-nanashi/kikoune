@@ -4,4 +4,4 @@ COPY ./package.json .
 COPY ./dist ./dist
 
 EXPOSE 1104
-CMD ["node", "dist/main.js"]
+CMD ["npm", "start"]
