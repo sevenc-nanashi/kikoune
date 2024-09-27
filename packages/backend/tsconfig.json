@@ -2,10 +2,13 @@
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "target": "ESNext",
     "declaration": true,
     "declarationMap": true,
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node"],
+    "esModuleInterop": true
   },
-  "extends": "@kikoune/shared/tsconfig.base.json"
+  "extends": "@kikoune/shared/tsconfig.base.json",
+  "include": ["src/*.ts", "build.ts"]
 }

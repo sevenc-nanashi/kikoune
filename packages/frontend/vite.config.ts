@@ -12,6 +12,9 @@ export default defineConfig(async () => {
 
   process.env.VITE_COMMIT = currentCommit
   return {
+    build: {
+      outDir: `../../dist/frontend`,
+    },
     plugins: [
       vue(),
       svgLoader({
