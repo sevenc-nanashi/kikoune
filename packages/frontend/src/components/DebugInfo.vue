@@ -26,9 +26,9 @@ const logLevels = ["error", "warn", "log", "info", "debug"]
     </div>
     <div>
       <div>ログ：</div>
-      <div class="text-xs font-mono h-64 overflow-y-auto">
+      <div class="text-xs font-mono h-64 overflow-y-auto overflow-x-scroll">
         <div
-          v-for="message in log"
+          v-for="message in log.toReversed()"
           :key="message.date.toString()"
           class="flex items-center gap-2"
         >

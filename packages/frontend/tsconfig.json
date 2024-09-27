@@ -7,6 +7,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
+    "lib": ["esnext"],
     "paths": {
       "~/*": ["./src/*"]
     }

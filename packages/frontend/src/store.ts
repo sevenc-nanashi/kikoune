@@ -24,6 +24,7 @@ export const useStore = defineStore("auth", {
     settingOverride: {} as Partial<SessionSetting>,
 
     participants: [] as Participant[],
+    allParticipants: [] as Participant[],
     view: "login" as "login" | "main" | "error",
     isHostOverride: undefined as boolean | undefined,
     debug: false,
@@ -89,10 +90,16 @@ export const useStore = defineStore("auth", {
     },
     setParticipants(participants: Participant[]) {
       this.participants = participants
+      const allParticipantIds = new Set(this.allParticipants.map((p) => p.id))
+      for (const participant of participants) {
+        if (!allParticipantIds.has(participant.id)) {
+          this.allParticipants.push(participant)
+        }
+      }
     },
 
     getUser(id: string) {
-      return this.participants.find((user) => user.id === id)
+      return this.allParticipants.find((p) => p.id === id)
     },
     getAvatarUrl(id: string) {
       const user = this.getUser(id)
