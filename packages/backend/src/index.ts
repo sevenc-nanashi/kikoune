@@ -8,6 +8,7 @@ import consola from "consola"
 
 import nicoEdit from "./nicoEdit.js"
 import api from "./api.js"
+import { env } from "./const.js"
 
 const app = new Hono()
 const log = consola.withTag("app")
@@ -34,7 +35,7 @@ if (process.env.NODE_ENV === "production") {
     const replaced = html.replace(
       / id="data".?><\/script>/g,
       ` id="data">${JSON.stringify({
-        discordClientId: process.env.VITE_DISCORD_ID,
+        discordClientId: env.discordId,
       })}</script>`
     )
 
