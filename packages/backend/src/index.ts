@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === "production") {
     const replaced = html.replace(
       / id="data".?><\/script>/g,
       ` id="data">${JSON.stringify({
-        discordClientId: process.env.DISCORD_CLIENT_ID,
+        discordClientId: process.env.VITE_DISCORD_ID,
       })}</script>`
     )
 
