@@ -26,6 +26,8 @@ await bundle.write({
   format: "es",
 })
 
+await fs.mkdir(`${import.meta.dirname}/../../dist`, { recursive: true })
+
 await fs.copyFile(
   `${import.meta.dirname}/dist/index.bundle.js`,
   `${import.meta.dirname}/../../dist/index.js`

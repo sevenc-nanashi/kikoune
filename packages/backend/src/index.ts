@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(
     "*",
     serveStatic({
-      root: relative(process.cwd(), import.meta.dirname),
+      root: relative(process.cwd(), `${import.meta.dirname}/frontend`),
       index: "index.html",
     })
   )
