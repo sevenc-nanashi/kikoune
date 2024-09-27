@@ -18,7 +18,7 @@ app.mount("/api", api.fetch)
 
 if (process.env.NODE_ENV === "production") {
   log.info(
-    `Serving static files from ${import.meta.dirname}, client id is ${process.env.DISCORD_CLIENT_ID}`
+    `Serving static files from ${import.meta.dirname}, client id is ${env.discordId}`
   )
   app.get(
     "/assets/*",
