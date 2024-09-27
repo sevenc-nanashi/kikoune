@@ -10,3 +10,4 @@ services:
     image: "ghcr.io/sevenc-nanashi/kikoune:latest"
     ports:
       - "1104:$FINAL_PORT"
+    env_file: ".env"
