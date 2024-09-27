@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Setup pnpm
-        run: corepack enable
+        run: corepack enable pnpm
       - name: Setup node
         uses: actions/setup-node@v3
         with:
