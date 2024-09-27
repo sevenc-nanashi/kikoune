@@ -115,7 +115,7 @@ const searchVideo = async () => {
     })
     log.info(`Searching videos with ${param}`)
     const resp = await fetch(
-      `/external/snapshot-search-nicovideo-jp/api/v2/snapshot/video/contents/search?${param}`,
+      `/.proxy/external/snapshot--search--nicovideo--jp/api/v2/snapshot/video/contents/search?${param}`,
       {
         headers: {
           "User-Agent": "Kikoune",

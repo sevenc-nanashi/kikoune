@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BuildInfo from "~/components/BuildInfo.vue"
+import LogoSvg from "~/assets/title.svg?component"
 </script>
 <template>
   <div

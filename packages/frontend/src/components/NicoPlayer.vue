@@ -89,7 +89,7 @@ const onMessage = (event: MessageEvent) => {
       status.value = "preload"
       // @ts-expect-error 実際は存在する
       player.value.contentWindow?.eval(
-        (() => {
+        `(${(() => {
           const observer = new MutationObserver(() => {
             observer.disconnect()
             try {
@@ -125,9 +125,7 @@ const onMessage = (event: MessageEvent) => {
             childList: true,
             subtree: true,
           })
-        })
-          .toString()
-          .slice(12, -1)
+        }).toString()})()`
       )
       break
     }

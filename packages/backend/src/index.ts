@@ -1,4 +1,5 @@
 import { relative } from "path"
+import fs from "fs/promises"
 import { serve } from "@hono/node-server"
 import { serveStatic } from "@hono/node-server/serve-static"
 import { Hono } from "hono"
@@ -15,14 +16,30 @@ app.mount("/nico", nicoEdit.fetch)
 app.mount("/api", api.fetch)
 
 if (process.env.NODE_ENV === "production") {
-  log.info(`Serving static files from ${import.meta.dirname}`)
-  app.use(
-    "*",
+  log.info(
+    `Serving static files from ${import.meta.dirname}, client id is ${process.env.DISCORD_CLIENT_ID}`
+  )
+  app.get(
+    "/assets/*",
     serveStatic({
       root: relative(process.cwd(), `${import.meta.dirname}/frontend`),
       index: "index.html",
     })
   )
+  app.get("/", async (c) => {
+    const html = await fs.readFile(
+      `${import.meta.dirname}/frontend/index.html`,
+      "utf-8"
+    )
+    const replaced = html.replace(
+      / id="data".?><\/script>/g,
+      ` id="data">${JSON.stringify({
+        discordClientId: process.env.DISCORD_CLIENT_ID,
+      })}</script>`
+    )
+
+    return c.html(replaced)
+  })
 } else {
   log.info("Redirecting to Vite server")
   app.get("/", async (c) => c.redirect("http://localhost:1103"))

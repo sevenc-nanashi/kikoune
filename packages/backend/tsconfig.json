@@ -7,7 +7,8 @@
     "declarationMap": true,
     "outDir": "dist",
     "types": ["node"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["esnext"]
   },
   "extends": "@kikoune/shared/tsconfig.base.json",
   "include": ["src/*.ts", "build.ts"]

@@ -8,6 +8,10 @@ const withParams = (url: string, obj: Record<string, string>) =>
 const replaceToExternal = (src: string) =>
   src
     .replace(
+      /https?:\/\/delivery\.domand\.nicovideo\.jp\/hlsext\/(.+?)\.m3u8/g,
+      host + "/.proxy/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
+    )
+    .replace(
       /https?:\/\/assets\.embed\.res\.nimg\.jp\/js\/(.+?).js/g,
       "/nico/watch/$1"
     )
@@ -59,7 +63,7 @@ app.post("/stella/v1/watch/:id{.+}", async (c) => {
     body: JSON.stringify(await c.req.json()),
   }).then((res) => res.json())
 
-  return c.json(stellaData)
+  return c.json(stellaData as never)
 })
 app.get("/users/:id{.+}", async (c) => {
   const id = c.req.param("id")
@@ -89,14 +93,7 @@ app.post("/v1-watch/:id/:rest{.+}", async (c) => {
       },
     }
   ).then((res) => res.text())
-  return c.json(
-    JSON.parse(
-      json.replace(
-        /https?:\/\/delivery\.domand\.nicovideo\.jp\/hlsext\/(.+?)\.m3u8/g,
-        host + "/.proxy/nico/delivery-domand-nicovideo-jp/hlsext/$1.m3u8"
-      )
-    )
-  )
+  return c.json(JSON.parse(replaceToExternal(json)))
 })
 app.get("/api-watch/:rest{.+}", async (c) => {
   const rest = c.req.param("rest")
@@ -122,13 +119,7 @@ app.get("/delivery-domand-nicovideo-jp/:rest{.+}", async (c) => {
 
     c.header(key, value)
   }
-  return c.body(
-    (await res.text()).replace(
-      /https:\/\/(.+?\.nicovideo\.jp)/g,
-      (_match, p1) => host + "/.proxy/nico/" + p1.replaceAll(".", "--")
-    ),
-    200
-  )
+  return c.body(replaceToExternal(await res.text()), 200)
 })
 app.get("/nvapi-recommend", async (c) => {
   const res = await fetch(

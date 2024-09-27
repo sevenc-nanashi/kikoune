@@ -5,8 +5,9 @@ import { Common } from "@discord/embedded-app-sdk"
 import { discordScope } from "@kikoune/shared"
 import LogoSvg from "~/assets/title.svg?component"
 import BuildInfo from "~/components/BuildInfo.vue"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
+import { useDiscordSdk } from "~/plugins/useDiscordSdk.ts"
+import { useStore } from "~/store.ts"
+import data from "~/lib/data.ts"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
@@ -17,7 +18,7 @@ const authorize = async () => {
   await discordSdk.ready()
   log.info("Authorizing with Discord")
   const { code } = await discordSdk.commands.authorize({
-    client_id: import.meta.env.VITE_DISCORD_ID,
+    client_id: data.discordClientId,
     response_type: "code",
     state: "",
     prompt: "none",
