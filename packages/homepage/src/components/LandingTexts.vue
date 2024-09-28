@@ -32,7 +32,7 @@ import privacy from "~/contents/privacy.md?raw"
     <a
       class="text-cyan-500 border-1 border-cyan-500 p-2 px-4 my-2 rounded-full"
       href="#install"
-      >インストール</a
+      >導入</a
     >
     <nav
       class="text-center sm:absolute sm:w-screen sm:bottom-4 flex navigation max-sm:pt-4 max-sm:flex-col gap-1 sm:gap-4 justify-center"
