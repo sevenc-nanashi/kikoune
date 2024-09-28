@@ -13,7 +13,7 @@ import privacy from "~/contents/privacy.md?raw"
     <DialogBox id="install" title="使い方" :content="install" />
     <DialogBox id="terms" title="利用規約" :content="terms" />
     <DialogBox id="privacy" title="プライバシーポリシー" :content="privacy" />
-    <LogoSvg class="max-sm:w-[90vw] h-auto sm:h-32" />
+    <LogoSvg class="max-sm:w-[80vw] max-h-[20vh] h-auto sm:h-32" />
     <p class="text-xl sm:text-2xl">
       Developed by
       <a
@@ -35,7 +35,7 @@ import privacy from "~/contents/privacy.md?raw"
       >インストール</a
     >
     <nav
-      class="text-center sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:bottom-4 flex navigation max-sm:pt-4 max-sm:flex-col gap-1 sm:gap-4"
+      class="text-center sm:absolute sm:w-screen sm:bottom-4 flex navigation max-sm:pt-4 max-sm:flex-col gap-1 sm:gap-4 justify-center"
     >
       <a href="#terms">利用規約</a><span class="navigation-border" /><a
         href="#privacy"
