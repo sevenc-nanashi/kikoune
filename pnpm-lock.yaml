@@ -170,6 +170,9 @@ importers:
       '@fontsource/zen-kaku-gothic-new':
         specifier: ^5.1.0
         version: 5.1.0
+      '@kikoune/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@unhead/vue':
         specifier: ^1.11.6
         version: 1.11.6(vue@3.5.9(typescript@5.6.2))
