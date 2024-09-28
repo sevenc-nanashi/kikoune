@@ -4,10 +4,14 @@ import svgLoader from "vite-svg-loader"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/kikoune",
+  base: "/kikoune/",
   plugins: [
     vue({
-      customElement: ["budoux-ja"],
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith("budoux-"),
+        },
+      },
     }),
     svgLoader({
       svgoConfig: {

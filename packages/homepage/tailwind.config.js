@@ -9,6 +9,9 @@ export default {
       screens: {
         xs: "350px",
       },
+      borderWidth: {
+        1: "1px",
+      },
     },
   },
   plugins: [],

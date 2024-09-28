@@ -14,7 +14,7 @@ marked.use({
   renderer: {
     // budouxを適用する
     text(token) {
-      const html = originalRenderer.text(token)
+      const html = originalRenderer.text.call(this, token)
       return `<budoux-ja>${html}</budoux-ja>`
     },
 

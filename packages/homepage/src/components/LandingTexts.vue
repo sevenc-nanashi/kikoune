@@ -29,12 +29,16 @@ import privacy from "~/contents/privacy.md?raw"
         >DiscordのActivityで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。</budoux-ja
       >
     </p>
+    <a
+      class="text-cyan-500 border-1 border-cyan-500 p-2 px-4 my-2 rounded-full"
+      href="#install"
+      >インストール</a
+    >
     <nav
       class="text-center absolute bottom-4 flex navigation max-sm:flex-col gap-1 sm:gap-4"
     >
-      <a class="text-cyan-500" href="#install">インストール</a
-      ><span class="navigation-border" /><a href="#terms">利用規約</a
-      ><span class="navigation-border" /><a href="#privacy"
+      <a href="#terms">利用規約</a><span class="navigation-border" /><a
+        href="#privacy"
         >プライバシーポリシー</a
       ><span class="navigation-border" /><a
         href="https://github.com/sevenc-nanashi/kikoune"
@@ -58,7 +62,7 @@ import privacy from "~/contents/privacy.md?raw"
   }
   @media not all and (min-width: 640px) {
     border-bottom: 1px solid #fff4;
-    @apply scale-125;
+    width: 75vw;
   }
 }
 </style>
