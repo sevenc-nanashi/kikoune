@@ -54,6 +54,13 @@ patchUrlMappings([
     target: `${location.origin}/api`,
   },
 ])
+;(async () => {
+  if (typeof window === "undefined") return
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ts-expect-errorだとエラーになる
+  // @ts-ignore 何故か型がない
+  import("budoux/module/webcomponents/budoux-ja")
+})()
 
 const pinia = createPinia()
 createApp(App)

@@ -14,6 +14,7 @@
     "@discord/embedded-app-sdk": "^1.4.3",
     "@fontsource/zen-kaku-gothic-new": "^5.1.0",
     "@kikoune/shared": "workspace:*",
+    "budoux": "^0.6.2",
     "oh-vue-icons": "1.0.0-rc3",
     "pinia": "^2.2.2",
     "radix-vue": "^1.9.6",

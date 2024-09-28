@@ -7,12 +7,13 @@ import {
 } from "@kikoune/shared"
 import { Participant } from "./plugins/useDiscordSdk.ts"
 
+export const sessionNotStarted = 0
 export const useStore = defineStore("auth", {
   state: () => ({
     _token: "",
     session: {
       queue: [],
-      startedAt: 0,
+      startedAt: sessionNotStarted,
       host: "",
       video: undefined,
       setting: defaultSessionSetting,

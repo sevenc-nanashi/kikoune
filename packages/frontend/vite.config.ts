@@ -16,7 +16,13 @@ export default defineConfig(async () => {
       outDir: `../../dist/frontend`,
     },
     plugins: [
-      vue(),
+      vue({
+        template: {
+          compilerOptions: {
+            isCustomElement: (tag) => tag.startsWith("budoux-"),
+          },
+        },
+      }),
       svgLoader({
         svgoConfig: {
           multipass: true,

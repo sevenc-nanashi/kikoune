@@ -8,8 +8,8 @@ import NowPlaying from "~/components/NowPlaying.vue"
 import CafeController from "~/components/CafeController.vue"
 import CafeSpace from "~/components/CafeSpace.vue"
 import MobileView from "~/components/MobileView.vue"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
+import { useDiscordSdk } from "~/plugins/useDiscordSdk.ts"
+import { sessionNotStarted, useStore } from "~/store.ts"
 
 const discordSdk = useDiscordSdk()
 const store = useStore()
@@ -75,6 +75,12 @@ onUnmounted(() => {
   clearTimeout(initialTimeout)
 })
 
+const state = computed(() => {
+  if (store.session.video) return "play"
+  if (store.session.startedAt === sessionNotStarted) return "sync"
+  return "idle"
+})
+
 watch(
   () => store.session.video,
   async () => {
@@ -129,7 +135,10 @@ watch(
     <div
       class="background"
       :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
-      :class="{ 'bg-slate-500': !currentId }"
+      :class="{
+        'bg-slate-500': state == 'idle',
+        'bg-slate-900': state == 'sync',
+      }"
     />
   </div>
 </template>

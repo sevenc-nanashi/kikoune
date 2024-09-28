@@ -30,7 +30,11 @@ const onTitleClick = () => {
     >
       Kikoune
     </h1>
-    <p>Kikoune は、ニコニコ動画の動画を同時視聴できるアクティビティです。</p>
+    <p>
+      <budoux-ja>
+        Discordのアクティビティで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。
+      </budoux-ja>
+    </p>
     <ul class="pt-2">
       <li>
         開発者：

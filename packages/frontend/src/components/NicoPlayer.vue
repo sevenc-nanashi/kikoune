@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid"
 import { computed, ref, onMounted, onUnmounted, watch } from "vue"
 import { buffer } from "@kikoune/shared"
 import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
+import { sessionNotStarted, useStore } from "~/store"
 
 const store = useStore()
 const discordSdk = useDiscordSdk()
@@ -245,7 +245,7 @@ onUnmounted(() => {
       :src
       class="block absolute w-full h-full"
     />
-    <template v-else-if="store.session.startedAt === 0">
+    <template v-else-if="store.session.startedAt === sessionNotStarted">
       <h1 class="text-2xl">同期中...</h1>
     </template>
     <template v-else>

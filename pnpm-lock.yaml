@@ -121,6 +121,9 @@ importers:
       '@kikoune/shared':
         specifier: workspace:*
         version: link:../shared
+      budoux:
+        specifier: ^0.6.2
+        version: 0.6.2
       oh-vue-icons:
         specifier: 1.0.0-rc3
         version: 1.0.0-rc3(vue@3.5.9(typescript@5.6.2))
