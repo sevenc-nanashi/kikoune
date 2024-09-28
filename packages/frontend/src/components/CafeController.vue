@@ -44,6 +44,8 @@ const clearMessage = () => {
   updateState({ message: "" })
   store.setStateOverride({ message: "" })
 }
+
+let prevMessageTimeout: ReturnType<typeof setTimeout>
 const onSubmit = () => {
   if (!message.value?.value) return
   if (window.innerWidth < 640 && !mobileSend.value) {
@@ -52,6 +54,10 @@ const onSubmit = () => {
   }
   updateState({ message: message.value.value })
   store.setStateOverride({ message: message.value.value })
+  if (prevMessageTimeout) clearTimeout(prevMessageTimeout)
+  prevMessageTimeout = setTimeout(() => {
+    clearMessage()
+  }, 120 * 1000)
 }
 </script>
 <template>
