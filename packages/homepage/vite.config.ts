@@ -6,7 +6,9 @@ import svgLoader from "vite-svg-loader"
 export default defineConfig({
   base: "/kikoune",
   plugins: [
-    vue(),
+    vue({
+      customElement: ["budoux-ja"],
+    }),
     svgLoader({
       svgoConfig: {
         multipass: true,

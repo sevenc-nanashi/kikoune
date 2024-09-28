@@ -13,7 +13,7 @@ import privacy from "~/contents/privacy.md?raw"
     <DialogBox id="install" title="使い方" :content="install" />
     <DialogBox id="terms" title="利用規約" :content="terms" />
     <DialogBox id="privacy" title="プライバシーポリシー" :content="privacy" />
-    <LogoSvg class="h-12 sm:h-32" />
+    <LogoSvg class="max-sm:w-[90vw] h-auto sm:h-32" />
     <p class="text-xl sm:text-2xl">
       Developed by
       <a
@@ -24,10 +24,14 @@ import privacy from "~/contents/privacy.md?raw"
       >
     </p>
     <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
-    <p class="text-xl">
-      DiscordのActivityで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。
+    <p class="text-md sm:text-xl w-full text-center">
+      <budoux-ja
+        >DiscordのActivityで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。</budoux-ja
+      >
     </p>
-    <nav class="absolute bottom-4 gap-4 flex navigation">
+    <nav
+      class="text-center absolute bottom-4 flex navigation max-sm:flex-col gap-1 sm:gap-4"
+    >
       <a class="text-cyan-500" href="#install">インストール</a
       ><span class="navigation-border" /><a href="#terms">利用規約</a
       ><span class="navigation-border" /><a href="#privacy"
@@ -49,6 +53,12 @@ import privacy from "~/contents/privacy.md?raw"
 
 <style scoped lang="scss">
 .navigation-border {
-  border-right: 1px solid white;
+  @media (min-width: 640px) {
+    border-right: 1px solid white;
+  }
+  @media not all and (min-width: 640px) {
+    border-bottom: 1px solid #fff4;
+    @apply scale-125;
+  }
 }
 </style>
