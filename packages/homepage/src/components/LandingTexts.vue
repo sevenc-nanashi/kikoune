@@ -26,7 +26,7 @@ import privacy from "~/contents/privacy.md?raw"
     <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
     <p class="text-md sm:text-xl w-full px-4 text-center">
       <budoux-ja
-        >DiscordのActivityで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。</budoux-ja
+        >Discordのアクティビティで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。</budoux-ja
       >
     </p>
     <a

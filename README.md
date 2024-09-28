@@ -1,6 +1,6 @@
 # Kikoune
 
-DiscordのActivityで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。
+Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。
 
 ## コマンド
 

@@ -26,7 +26,7 @@ useHead({
     {
       property: "og:description",
       content:
-        "DiscordのActivityで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
+        "Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
     },
     {
       property: "twitter:card",
@@ -39,7 +39,7 @@ useHead({
     {
       property: "twitter:description",
       content:
-        "DiscordのActivityで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
+        "Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
     },
   ],
 })
