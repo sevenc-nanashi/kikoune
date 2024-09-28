@@ -317,8 +317,13 @@ const placeholder = computed(() => {
       class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll overflow-x-hidden"
       @sort="setReordered"
     >
-      <template v-if="store.isHost && !store.sessionSetting.random" #header>
-        <p class="pl-2">数字をドラッグして順番を変更できます。</p>
+      <template #header>
+        <p v-if="store.isHost && !store.sessionSetting.random" class="pl-2">
+          数字をドラッグして順番を変更できます。
+        </p>
+        <p v-if="store.sessionSetting.random" class="pl-2">
+          ランダム再生が有効です。
+        </p>
       </template>
       <template #item="{ element: video, index: i }">
         <div class="bg-black/50 flex gap-2 relative">
