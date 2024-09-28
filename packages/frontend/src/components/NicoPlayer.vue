@@ -19,7 +19,7 @@ const src = computed(
     `/.proxy/nico/nico-embed/${videoId.value}?${new URLSearchParams({
       jsapi: "1",
       playerId: playerNonce,
-      noRelatedVideo: "0",
+      noRelatedVideo: "1",
       autoplay: "1",
       mute: "1",
       defaultNoComment: "0",
@@ -132,9 +132,9 @@ const onMessage = (event: MessageEvent) => {
       break
     }
     case "navigate": {
-      let url: string = data.data.url
+      let url = data.data.url
       if (url.includes(location.origin)) {
-        url = url.replace(location.origin + "/external/", "")
+        url = url.replace(location.origin + "/.proxy/external/", "")
         const dummyHost = url.split("/")[0]
         url = "https://" + url.replace(dummyHost, dummyHost.replace(/--/g, "."))
       }
