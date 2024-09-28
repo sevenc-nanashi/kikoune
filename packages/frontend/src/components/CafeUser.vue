@@ -20,6 +20,25 @@ const showTooltip = ref(false)
 </script>
 <template>
   <div
+    class="absolute w-12 h-12 z-10 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out pointer-events-none"
+    :style="{
+      left: `${50 + (memberState.x || 0) * 50}%`,
+      top: `${50 + (memberState.y || 0) * 50}%`,
+    }"
+  >
+    <Transition name="fade">
+      <p
+        v-if="memberState.message && memberState.message.trim()"
+        :class="[
+          'absolute top-[-0.5rem] -translate-y-full w-48 break-words left-1/2 -translate-x-1/2 text-center',
+          'text-sm p-1 text-slate-950 rounded border-[1px] border-cyan-500 bg-cyan-100 drop-shadow-md transition-all',
+        ]"
+      >
+        {{ memberState.message }}
+      </p>
+    </Transition>
+  </div>
+  <div
     class="w-12 h-12 absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out cafe-user drop-shadow"
     :class="{
       'z-10': store.me.id !== props.id,
@@ -44,16 +63,10 @@ const showTooltip = ref(false)
       }"
     />
     <p
-      v-if="memberState.message && memberState.message.trim()"
-      class="absolute top-[-0.5rem] -translate-y-full w-48 break-words left-1/2 -translate-x-1/2 text-center text-sm p-1 text-slate-950 rounded border-[1px] border-cyan-500 bg-cyan-100 drop-shadow-md transition-all"
-    >
-      {{ memberState.message }}
-    </p>
-    <p
-      class="absolute bottom-[-1rem] left-0 right-0 text-center text-xs text-white drop-shadow"
+      class="absolute top-16 left-0 right-0 text-center text-xs text-white drop-shadow break-words pointer-events-none"
       :class="{
-        'opacity-0 pointer-events-none': !showTooltip,
-        'opacity-100 pointer-events-auto': showTooltip,
+        'opacity-0': !showTooltip,
+        'opacity-100': showTooltip,
       }"
     >
       {{ name }}
@@ -65,5 +78,15 @@ const showTooltip = ref(false)
   .cafe-user {
     @apply w-16 h-16;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
