@@ -20,7 +20,11 @@ const showTooltip = ref(false)
 </script>
 <template>
   <div
-    class="absolute w-12 h-12 z-10 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out pointer-events-none"
+    class="cafe-user absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out pointer-events-none"
+    :class="{
+      'z-30': store.me.id !== props.id,
+      'z-40': store.me.id === props.id,
+    }"
     :style="{
       left: `${50 + (memberState.x || 0) * 50}%`,
       top: `${50 + (memberState.y || 0) * 50}%`,
@@ -39,7 +43,7 @@ const showTooltip = ref(false)
     </Transition>
   </div>
   <div
-    class="w-12 h-12 absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out cafe-user drop-shadow"
+    class="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out cafe-user drop-shadow"
     :class="{
       'z-10': store.me.id !== props.id,
       'z-20': store.me.id === props.id,
@@ -74,10 +78,8 @@ const showTooltip = ref(false)
   </div>
 </template>
 <style scoped lang="scss">
-@media (min-height: 600px) {
-  .cafe-user {
-    @apply w-16 h-16;
-  }
+.cafe-user {
+  @apply w-12 h-12 sm:w-16 sm:h-16;
 }
 
 .fade-enter-active,

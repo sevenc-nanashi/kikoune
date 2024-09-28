@@ -22,6 +22,10 @@ const openVideo = () => {
     discordSdk.commands.openExternalLink({
       url: `https://www.nicovideo.jp/watch/${store.session.video.id}`,
     })
+  } else {
+    discordSdk.commands.openExternalLink({
+      url: "https://sevenc7c.com/kikoune",
+    })
   }
 }
 const skipVideo = async () => {
@@ -111,11 +115,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune")
       </div>
     </div>
     <a
-      class="h-full aspect-square place-items-center transition-colors hidden sm:grid"
-      :class="{
-        'hover:bg-black cursor-pointer': store.session.video,
-        'cursor-not-allowed': !store.session.video,
-      }"
+      class="h-full aspect-square place-items-center transition-colors hidden sm:grid hover:bg-black cursor-pointer"
       @click="openVideo"
     >
       <v-icon
