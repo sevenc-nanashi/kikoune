@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue"
 import LandingTexts from "./components/LandingTexts.vue"
-import demo from "./assets/demo.png"
+
+const demos = Object.values(
+  import.meta.glob("./assets/demo/*.png", {
+    eager: true,
+  }) as Record<string, { default: string }>
+).map((v) => v.default)
+const demo = demos[Math.floor(Math.random() * demos.length)]
 
 useHead({
   meta: [
