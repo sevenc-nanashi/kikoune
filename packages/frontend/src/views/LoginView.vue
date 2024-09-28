@@ -37,7 +37,11 @@ const authorize = async () => {
   if (!response.ok) {
     throw new Error("Failed to authenticate")
   }
-  const body = await response.json()
+  const body = (await response.json()) as {
+    discordAccessToken: string
+    kikouneAccessToken: string
+    userId: string
+  }
   try {
     await discordSdk.commands.authenticate({
       access_token: body.discordAccessToken,
@@ -80,7 +84,10 @@ const authorize = async () => {
 
   log.info("Fetching time")
   const currentTime = Date.now()
-  const { time } = await fetch("/api/time").then((res) => res.json())
+  const { time } = (await fetch("/api/time").then((res) => res.json())) as {
+    time: number
+  }
+
   const requestTime = Date.now() - currentTime
   store.setDelay(time - currentTime - requestTime)
   log.info(

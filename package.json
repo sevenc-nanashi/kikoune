@@ -24,5 +24,10 @@
   },
   "dependencies": {
     "dotenv-cli": "^7.4.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "picomatch": "4.0.2"
+    }
   }
 }
