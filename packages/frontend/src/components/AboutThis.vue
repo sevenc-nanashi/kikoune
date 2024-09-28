@@ -14,8 +14,14 @@ let debugCount = 0
 const onTitleClick = () => {
   debugCount++
   if (debugCount >= 10) {
-    consola.info("Debug mode enabled")
-    store.setDebug(true)
+    if (store.debug) {
+      consola.info("Debug mode disabled")
+      store.setDebug(false)
+    } else {
+      consola.info("Debug mode enabled")
+      store.setDebug(true)
+    }
+    debugCount = 0
   }
 }
 </script>
