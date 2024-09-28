@@ -48,7 +48,7 @@ const changeTab = () => {
 </script>
 <template>
   <div
-    class="absolute inset-0 z-40 hidden flex-col"
+    class="absolute inset-0 z-40 hidden flex-col hidden-on-miniplayer"
     :class="{
       'xs:max-sm:flex': selectedTab !== 'main',
     }"
@@ -66,7 +66,10 @@ const changeTab = () => {
       <DebugInfo v-else-if="selectedTab === 'debug'" />
     </div>
   </div>
-  <div class="absolute inset-0 root z-50 pointer-events-none" v-bind="$attrs">
+  <div
+    class="absolute inset-0 root z-50 pointer-events-none hidden-on-miniplayer"
+    v-bind="$attrs"
+  >
     <button
       class="h-10 fill-white aspect-square absolute left-2 bottom-14 rounded-full drop-shadow-md pointer-events-auto"
       :class="{

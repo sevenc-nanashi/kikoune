@@ -26,3 +26,10 @@
     transform: rotate(360deg);
   }
 }
+
+// ミニプレイヤー
+@media (max-height: 240px) {
+  .hidden-on-miniplayer {
+    display: none !important;
+  }
+}

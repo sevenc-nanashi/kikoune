@@ -114,14 +114,16 @@ watch(
       class="xs:relative flex top-section h-full justify-center sm:justify-normal"
     >
       <NicoPlayer
-        class="h-screen w-screen xs:max-sm:w-full sm:w-auto xs:h-full aspect-video"
+        class="nico-player max-sm:w-full sm:w-auto xs:h-full aspect-video"
       />
-      <InfoPanel class="hidden sm:flex h-full" />
+      <InfoPanel class="hidden sm:flex h-full hidden-on-miniplayer" />
     </div>
-    <NowPlaying class="hidden xs:flex h-full" />
-    <CafeSpace class="hidden xs:block" />
-    <CafeController class="hidden xs:flex z-10" />
-    <MobileView class="hidden xs:max-sm:block z-10" />
+    <NowPlaying class="hidden xs:flex h-full hidden-on-miniplayer" />
+    <CafeSpace class="hidden xs:block hidden-on-miniplayer" />
+    <CafeController class="hidden xs:flex z-10 hidden-on-miniplayer" />
+    <MobileView
+      class="hidden xs:max-sm:block z-10 mobile-view hidden-on-miniplayer"
+    />
   </div>
   <div class="background-container hidden xs:block">
     <div
@@ -185,5 +187,15 @@ $padding: 8px;
   background-size: cover;
   background-position: center;
   filter: blur(25px) brightness(0.8);
+}
+// ミニプレイヤー
+@media (max-height: 240px) {
+  .nico-player {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
 }
 </style>
