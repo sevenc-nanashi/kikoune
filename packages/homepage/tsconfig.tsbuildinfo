@@ -1,1 +1,0 @@
-{"root":["./vite.config.ts","./src/App.vue","./src/main.ts","./src/vite-env.d.ts","./src/components/DialogBox.vue","./src/components/LandingTexts.vue","./src/components/MarkdownRenderer.vue"],"version":"5.6.2"}

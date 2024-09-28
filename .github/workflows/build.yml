@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  main:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,7 +19,6 @@ jobs:
         with:
           node-version-file: .node-version
           cache: "pnpm"
-          cache-dependency-path: pnpm-lock.yaml
 
       - name: Run check
         run: |
