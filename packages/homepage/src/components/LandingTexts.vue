@@ -37,6 +37,11 @@ import privacy from "~/contents/privacy.md?raw"
         target="_blank"
         rel="noopener noreferrer"
         >ソースコード</a
+      ><span class="navigation-border" /><a
+        href="https://discord.gg/CE3h4NNK2W"
+        target="_blank"
+        rel="noopener noreferrer"
+        >サポートサーバー</a
       >
     </nav>
   </section>

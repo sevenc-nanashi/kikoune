@@ -41,6 +41,14 @@ const onTitleClick = () => {
         </a>
       </li>
       <li>
+        ホームページ：
+        <a
+          class="text-cyan-500 hover:underline cursor-pointer"
+          @click="openExternal('https://sevenc7c.com/kikoune')"
+          >sevenc7c.com/kikoune
+        </a>
+      </li>
+      <li>
         サポートサーバー：
         <a
           class="text-cyan-500 hover:underline cursor-pointer"
