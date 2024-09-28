@@ -12,7 +12,7 @@ import { env } from "./const.js"
 
 const app = new Hono()
 const log = consola.withTag("app")
-app.use(logger())
+app.use(logger(consola.log))
 app.mount("/nico", nicoEdit.fetch)
 app.mount("/api", api.fetch)
 
