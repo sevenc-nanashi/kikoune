@@ -93,7 +93,9 @@ const onMessage = (event: MessageEvent) => {
           const observer = new MutationObserver(() => {
             observer.disconnect()
             try {
-              const anchors = document.querySelectorAll("a:not([patched])")
+              const anchors = Array.from(
+                document.querySelectorAll("a:not([patched])")
+              )
 
               for (const anchor of anchors) {
                 anchor.setAttribute("patched", "")
