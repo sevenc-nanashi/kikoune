@@ -2,7 +2,8 @@
   "name": "@kikoune/shared",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "assets"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

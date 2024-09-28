@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LogoSvg from "~/assets/title.svg?component"
+import LogoSvg from "@kikoune/shared/assets/logo_wide.svg?component"
 import DialogBox from "~/components/DialogBox.vue"
 import install from "~/contents/install.md?raw"
 import terms from "~/contents/terms.md?raw"
@@ -24,7 +24,7 @@ import privacy from "~/contents/privacy.md?raw"
       >
     </p>
     <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
-    <p class="text-md sm:text-xl w-full text-center">
+    <p class="text-md sm:text-xl w-full px-4 text-center">
       <budoux-ja
         >DiscordのActivityで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。</budoux-ja
       >
@@ -35,7 +35,7 @@ import privacy from "~/contents/privacy.md?raw"
       >インストール</a
     >
     <nav
-      class="text-center absolute bottom-4 flex navigation max-sm:flex-col gap-1 sm:gap-4"
+      class="text-center absolute left-1/2 -translate-x-1/2 bottom-4 flex navigation max-sm:flex-col gap-1 sm:gap-4"
     >
       <a href="#terms">利用規約</a><span class="navigation-border" /><a
         href="#privacy"
