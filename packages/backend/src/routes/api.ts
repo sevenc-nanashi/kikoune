@@ -9,9 +9,9 @@ import consola from "consola"
 import { z } from "zod"
 import { zValidator } from "@hono/zod-validator"
 import { discordScope } from "@kikoune/shared"
-import * as db from "./db.js"
-import { env } from "./const.js"
 import room from "./room.js"
+import * as db from "~/db.ts"
+import { env } from "~/const.ts"
 
 const log = consola.withTag("api")
 

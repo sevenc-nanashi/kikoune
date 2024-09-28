@@ -1,5 +1,5 @@
 import { Hono } from "hono"
-import { host } from "./const.js"
+import { host } from "~/const.ts"
 
 const app = new Hono()
 const withParams = (url: string, obj: Record<string, string>) =>

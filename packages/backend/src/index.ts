@@ -6,8 +6,8 @@ import { Hono } from "hono"
 import { logger } from "hono/logger"
 import consola from "consola"
 
-import nicoEdit from "./nicoEdit.js"
-import api from "./api.js"
+import nicoEdit from "./routes/nicoEdit.js"
+import api from "./routes/api.js"
 import { env } from "./const.js"
 
 const app = new Hono()

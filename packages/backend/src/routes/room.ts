@@ -10,8 +10,8 @@ import {
   sessionSettingSchema,
 } from "@kikoune/shared"
 import { defaultMemberState, memberStateSchema } from "@kikoune/shared"
-import * as db from "./db.js"
-import { fetchSession, getVideo } from "./nico.js"
+import * as db from "~/db.js"
+import { fetchSession, getVideo } from "~/nico.js"
 
 const app = new Hono<{
   Variables: { userId: string }
