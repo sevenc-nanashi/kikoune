@@ -5,10 +5,11 @@
 * {
   margin: 0;
   padding: 0;
+  color: white;
 }
 
-#app {
-  @apply bg-gray-900 text-white;
+body {
+  @apply bg-gray-900;
   min-height: 100vh;
 }
 

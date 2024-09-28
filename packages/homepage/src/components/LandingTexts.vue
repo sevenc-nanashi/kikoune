@@ -35,7 +35,7 @@ import privacy from "~/contents/privacy.md?raw"
       >インストール</a
     >
     <nav
-      class="text-center absolute left-1/2 -translate-x-1/2 bottom-4 flex navigation max-sm:flex-col gap-1 sm:gap-4"
+      class="text-center sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:bottom-4 flex navigation max-sm:flex-col gap-1 sm:gap-4"
     >
       <a href="#terms">利用規約</a><span class="navigation-border" /><a
         href="#privacy"
