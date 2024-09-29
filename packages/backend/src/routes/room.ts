@@ -70,6 +70,21 @@ app.put(
         if (!(!session.video && session.queue.length === 0)) {
           log.info(`[${c.req.param("id")}] Dequeueing video`)
           await db.dequeueVideo(c.req.param("id"), session)
+
+          for (const userId of data.userIds) {
+            if (!memberStates[userId]) {
+              continue
+            }
+            if (memberStates[userId].message || memberStates[userId].rotate) {
+              memberStates[userId].message = ""
+              memberStates[userId].rotate = false
+              await db.setMemberState(
+                c.req.param("id"),
+                userId,
+                memberStates[userId]
+              )
+            }
+          }
         }
       }
       if (!memberStates[session.host]) {
@@ -102,7 +117,7 @@ app.post(
     let video
     try {
       video = await getVideo(c.req.valid("json").videoId)
-    } catch (e) {
+    } catch {
       c.status(400)
       return c.json({ error: "Invalid video" })
     }
