@@ -16,7 +16,7 @@ await rest.put(Routes.applicationCommands(me.id), {
       name: "launch",
       description: "Kikouneを起動します。",
       handler: 2,
-      integration_types: [1],
+      integration_types: [0, 1],
     },
   ],
 })
