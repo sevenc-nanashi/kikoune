@@ -3,7 +3,7 @@ import { useHead } from "@unhead/vue"
 import LandingTexts from "./components/LandingTexts.vue"
 
 const demos = Object.values(
-  import.meta.glob("./assets/demo/*.png", {
+  import.meta.glob("./assets/demo/*.webp", {
     eager: true,
   }) as Record<string, { default: string }>
 ).map((v) => v.default)
