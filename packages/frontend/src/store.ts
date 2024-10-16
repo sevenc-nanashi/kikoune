@@ -8,7 +8,7 @@ import {
 import { Participant } from "./plugins/useDiscordSdk.ts"
 
 export const sessionNotStarted = 0
-export const useStore = defineStore("auth", {
+export const useStore = defineStore("main", {
   state: () => ({
     _token: "",
     session: {
