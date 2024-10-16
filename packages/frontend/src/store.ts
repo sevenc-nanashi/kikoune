@@ -108,7 +108,7 @@ export const useStore = defineStore("main", {
       if (user.avatar) {
         return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
       } else {
-        return `https://cdn.discordapp.com/embed/avatars/${(parseInt(user.id) >> 22) % 6}.png`
+        return `https://cdn.discordapp.com/embed/avatars/${(BigInt(user.id) >> 22n) % 6n}.png`
       }
     },
     getName(id: string) {
