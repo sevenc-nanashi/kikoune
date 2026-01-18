@@ -1,2 +1,6 @@
 packages:
   - packages/*
+
+catalogs:
+  types:
+    "@types/node": "^24.10.9"
