@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { Marked, Parser, Renderer } from "marked"
+import { Marked, Parser, Renderer } from "marked";
 
 const props = defineProps<{
-  source: string
-}>()
+  source: string;
+}>();
 
-const marked = new Marked()
-const originalRenderer = new Renderer()
-originalRenderer.parser = new Parser()
+const marked = new Marked();
+const originalRenderer = new Renderer();
+originalRenderer.parser = new Parser();
 
 marked.use({
   breaks: true,
   renderer: {
     // budouxを適用する
     text(token) {
-      const html = originalRenderer.text.call(this, token)
-      return `<budoux-ja>${html}</budoux-ja>`
+      const html = originalRenderer.text.call(this, token);
+      return `<budoux-ja>${html}</budoux-ja>`;
     },
 
     // リンクを新しいタブで開く
     link({ href, text }) {
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
     },
 
     // BASE_URLからの相対パスを絶対パスに変換
     image({ href, text }) {
       if (href.startsWith("/")) {
-        return `<img src="${import.meta.env.BASE_URL}${href}" alt="${text}" />`
+        return `<img src="${import.meta.env.BASE_URL}${href}" alt="${text}" />`;
       }
-      return `<img src="${href}" alt="${text}" />`
+      return `<img src="${href}" alt="${text}" />`;
     },
   },
-})
+});
 
-const html = marked.parse(props.source) as string
+const html = marked.parse(props.source) as string;
 </script>
 <template>
   <!-- eslint-disable-next-line vue/no-v-html-->

@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from "vue"
-import MarkdownRenderer from "./MarkdownRenderer.vue"
+import { onMounted, onUnmounted, ref, watch } from "vue";
+import MarkdownRenderer from "./MarkdownRenderer.vue";
 
-const open = ref(false)
-const fadeOut = ref(false)
-const dialog = ref<HTMLDialogElement>(null!)
+const open = ref(false);
+const fadeOut = ref(false);
+const dialog = ref<HTMLDialogElement>(null!);
 const props = defineProps<{
-  id: string
-  title: string
-  content: string
-}>()
+  id: string;
+  title: string;
+  content: string;
+}>();
 
 const watchHash = () => {
-  open.value = location.hash === `#${props.id}`
-}
+  open.value = location.hash === `#${props.id}`;
+};
 const close = () => {
-  location.hash = ""
-}
+  location.hash = "";
+};
 
 watch(open, (open) => {
   if (open) {
-    dialog.value.showModal()
+    dialog.value.showModal();
   } else {
-    fadeOut.value = true
+    fadeOut.value = true;
     setTimeout(() => {
-      fadeOut.value = false
-      dialog.value.close()
-    }, 300)
+      fadeOut.value = false;
+      dialog.value.close();
+    }, 300);
   }
-})
+});
 
 onMounted(() => {
-  watchHash()
-  window.addEventListener("hashchange", watchHash)
-})
+  watchHash();
+  window.addEventListener("hashchange", watchHash);
+});
 
 onUnmounted(() => {
-  window.removeEventListener("hashchange", watchHash)
-})
+  window.removeEventListener("hashchange", watchHash);
+});
 </script>
 
 <template>

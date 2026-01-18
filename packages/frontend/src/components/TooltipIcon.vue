@@ -1,29 +1,24 @@
 <script setup lang="ts">
-import {
-  TooltipContent,
-  TooltipPortal,
-  TooltipRoot,
-  TooltipTrigger,
-} from "radix-vue"
+import { TooltipContent, TooltipPortal, TooltipRoot, TooltipTrigger } from "radix-vue";
 
 defineOptions({
   inheritAttrs: false,
-})
+});
 
 const props = withDefaults(
   defineProps<{
-    name: string
-    tooltip: string
-    disabled?: boolean
-    offset?: string
-    direction?: "top" | "bottom"
+    name: string;
+    tooltip: string;
+    disabled?: boolean;
+    offset?: string;
+    direction?: "top" | "bottom";
   }>(),
   {
     disabled: false,
     offset: "0px",
     direction: "top",
-  }
-)
+  },
+);
 </script>
 <template>
   <TooltipRoot>

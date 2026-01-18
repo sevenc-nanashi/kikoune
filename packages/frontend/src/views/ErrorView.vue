@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import BuildInfo from "~/components/BuildInfo.vue"
-import LogoSvg from "~/assets/title.svg?component"
+import BuildInfo from "~/components/BuildInfo.vue";
+import LogoSvg from "~/assets/title.svg?component";
 </script>
 <template>
-  <div
-    class="w-screen h-screen relative place-items-center place-content-center grid bg-red-950"
-  >
+  <div class="w-screen h-screen relative place-items-center place-content-center grid bg-red-950">
     <LogoSvg class="h-12 sm:h-32" />
     <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
     <p class="text-md sm:text-2xl text-red-500">

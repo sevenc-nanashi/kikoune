@@ -1,7 +1,7 @@
 {
   "name": "@kikoune/homepage",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@kikoune/shared": "workspace:*",
     "@fontsource/zen-kaku-gothic-new": "^5.1.0",
+    "@kikoune/shared": "workspace:*",
     "@unhead/vue": "^1.11.6",
     "budoux": "^0.6.2",
     "marked": "^14.1.2",

@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import consola from "consola/browser"
-import { computed, ref, watch } from "vue"
-import TooltipIcon from "./TooltipIcon.vue"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
+import consola from "consola/browser";
+import { computed, ref, watch } from "vue";
+import TooltipIcon from "./TooltipIcon.vue";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
 
-const store = useStore()
-const discordSdk = useDiscordSdk()
-const log = consola.withTag("NowPlaying")
+const store = useStore();
+const discordSdk = useDiscordSdk();
+const log = consola.withTag("NowPlaying");
 
-const skipped = ref(false)
+const skipped = ref(false);
 watch(
   () => store.session.video?.nonce,
   () => {
-    skipped.value = false
-  }
-)
+    skipped.value = false;
+  },
+);
 
 const openVideo = () => {
   if (store.session.video) {
     discordSdk.commands.openExternalLink({
       url: `https://www.nicovideo.jp/watch/${store.session.video.id}`,
-    })
+    });
   } else {
     discordSdk.commands.openExternalLink({
       url: "https://sevenc7c.com/kikoune",
-    })
+    });
   }
-}
+};
 const skipVideo = async () => {
-  skipped.value = true
+  skipped.value = true;
   const resp = await fetch(`/api/room/${discordSdk.instanceId}/skip`, {
     method: "POST",
     headers: {
@@ -39,24 +39,22 @@ const skipVideo = async () => {
     body: JSON.stringify({
       nonce: store.session.video?.nonce,
     }),
-  })
+  });
   if (!resp.ok) {
-    log.error("Failed to skip video")
-    skipped.value = false
+    log.error("Failed to skip video");
+    skipped.value = false;
   }
-}
+};
 const openProfile = () => {
   discordSdk.commands.openExternalLink({
     url: "https://sevenc7c.com",
-  })
-}
-const title = computed(() => store.session.video?.title ?? "Kikoune")
+  });
+};
+const title = computed(() => store.session.video?.title ?? "Kikoune");
 </script>
 <template>
   <div class="*:bg-black/75 gap-2 flex-row">
-    <div
-      class="h-full aspect-square bg-slate-500 relative rounded overflow-hidden hidden sm:block"
-    >
+    <div class="h-full aspect-square bg-slate-500 relative rounded overflow-hidden hidden sm:block">
       <div
         class="absolute inset-[-16%] bg-cover bg-center"
         :style="{
@@ -77,9 +75,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune")
           </template>
           <template v-else>
             Developed by
-            <span
-              class="text-[#48b0d5] cursor-pointer hover:underline"
-              @click="openProfile"
+            <span class="text-[#48b0d5] cursor-pointer hover:underline" @click="openProfile"
               >Nanashi.</span
             >
           </template>
@@ -118,11 +114,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune")
       class="h-full aspect-square place-items-center transition-colors hidden sm:grid hover:bg-black cursor-pointer"
       @click="openVideo"
     >
-      <v-icon
-        name="md-openinnew"
-        class="w-1/2 h-1/2"
-        :disabled="!store.session.video"
-      />
+      <v-icon name="md-openinnew" class="w-1/2 h-1/2" :disabled="!store.session.video" />
     </a>
   </div>
 </template>

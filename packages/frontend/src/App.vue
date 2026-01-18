@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { TooltipProvider } from "radix-vue"
-import { useStore } from "./store"
-import LoginView from "./views/LoginView.vue"
-import MainView from "./views/MainView.vue"
-import ErrorView from "./views/ErrorView.vue"
+import { TooltipProvider } from "radix-vue";
+import { useStore } from "./store";
+import LoginView from "./views/LoginView.vue";
+import MainView from "./views/MainView.vue";
+import ErrorView from "./views/ErrorView.vue";
 
-const store = useStore()
+const store = useStore();
 </script>
 
 <template>

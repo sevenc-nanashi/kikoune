@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useHead } from "@unhead/vue"
-import LandingTexts from "./components/LandingTexts.vue"
+import { useHead } from "@unhead/vue";
+import LandingTexts from "./components/LandingTexts.vue";
 
 const demos = Object.values(
   import.meta.glob("./assets/demo/*.webp", {
     eager: true,
-  }) as Record<string, { default: string }>
-).map((v) => v.default)
-const demo = demos[Math.floor(Math.random() * demos.length)]
+  }) as Record<string, { default: string }>,
+).map((v) => v.default);
+const demo = demos[Math.floor(Math.random() * demos.length)];
 
 useHead({
   meta: [
@@ -25,8 +25,7 @@ useHead({
     },
     {
       property: "og:description",
-      content:
-        "Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
+      content: "Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
     },
     {
       property: "twitter:card",
@@ -38,11 +37,10 @@ useHead({
     },
     {
       property: "twitter:description",
-      content:
-        "Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
+      content: "Discordのアクティビティで動く、Kiite Cafe風にニコニコ動画を同時再生するアプリ。",
     },
   ],
-})
+});
 </script>
 
 <template>

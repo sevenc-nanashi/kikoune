@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import consola from "consola"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
+import consola from "consola";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
 
-const store = useStore()
-const sha = import.meta.env.VITE_COMMIT
+const store = useStore();
+const sha = import.meta.env.VITE_COMMIT;
 
-const discordSdk = useDiscordSdk()
+const discordSdk = useDiscordSdk();
 const openExternal = (url: string) => {
-  discordSdk.commands.openExternalLink({ url })
-}
-let debugCount = 0
+  discordSdk.commands.openExternalLink({ url });
+};
+let debugCount = 0;
 const onTitleClick = () => {
-  debugCount++
+  debugCount++;
   if (debugCount >= 10) {
     if (store.debug) {
-      consola.info("Debug mode disabled")
-      store.setDebug(false)
+      consola.info("Debug mode disabled");
+      store.setDebug(false);
     } else {
-      consola.info("Debug mode enabled")
-      store.setDebug(true)
+      consola.info("Debug mode enabled");
+      store.setDebug(true);
     }
-    debugCount = 0
+    debugCount = 0;
   }
-}
+};
 </script>
 <template>
   <div class="min-h-full w-full bg-black/50 p-2">
@@ -78,11 +78,7 @@ const onTitleClick = () => {
         ビルド：
         <a
           class="text-cyan-500 hover:underline cursor-pointer font-mono"
-          @click="
-            openExternal(
-              `https://github.com/sevenc-nanashi/kikoune/tree/${sha}`
-            )
-          "
+          @click="openExternal(`https://github.com/sevenc-nanashi/kikoune/tree/${sha}`)"
           >{{ sha }}
         </a>
       </li>

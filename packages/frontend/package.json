@@ -1,5 +1,8 @@
 {
   "name": "@kikoune/frontend",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -7,9 +10,6 @@
     "typecheck": "vue-tsc --noEmit",
     "start": "serve dist -l 1103"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@discord/embedded-app-sdk": "^1.4.3",
     "@fontsource/zen-kaku-gothic-new": "^5.1.0",

@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import consola from "consola/browser"
-import { computed, ref, watch } from "vue"
-import { Participant, useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
-import TooltipIcon from "~/components/TooltipIcon.vue"
+import consola from "consola/browser";
+import { computed, ref, watch } from "vue";
+import { Participant, useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
+import TooltipIcon from "~/components/TooltipIcon.vue";
 
-const store = useStore()
-const discordSdk = useDiscordSdk()
-const log = consola.withTag("UserList")
+const store = useStore();
+const discordSdk = useDiscordSdk();
+const log = consola.withTag("UserList");
 
-const isSubmitting = ref(false)
-const popup = ref<string | undefined>()
-const popupType = ref<"error" | "info">("error")
-const popupCount = ref(0)
+const isSubmitting = ref(false);
+const popup = ref<string | undefined>();
+const popupType = ref<"error" | "info">("error");
+const popupCount = ref(0);
 const spawnPopup = (message: string, type: "error" | "info") => {
-  popup.value = message
-  popupType.value = type
-  popupCount.value++
+  popup.value = message;
+  popupType.value = type;
+  popupCount.value++;
   setTimeout(() => {
-    popupCount.value--
-  }, 5000)
-}
-const moveHostConfirm = ref<string | undefined>(undefined)
-const temporaryHost = ref<string | undefined>(undefined)
+    popupCount.value--;
+  }, 5000);
+};
+const moveHostConfirm = ref<string | undefined>(undefined);
+const temporaryHost = ref<string | undefined>(undefined);
 watch(
   () => store.session.host,
   () => {
-    temporaryHost.value = store.session.host
-  }
-)
+    temporaryHost.value = store.session.host;
+  },
+);
 
 const moveHost = async (member: Participant) => {
-  if (isSubmitting.value) return
-  log.info("Moving host", member.id)
+  if (isSubmitting.value) return;
+  log.info("Moving host", member.id);
 
   try {
-    isSubmitting.value = true
-    moveHostConfirm.value = undefined
+    isSubmitting.value = true;
+    moveHostConfirm.value = undefined;
 
     const res = await fetch(`/api/room/${discordSdk.instanceId}/host`, {
       method: "put",
@@ -47,39 +47,37 @@ const moveHost = async (member: Participant) => {
       body: JSON.stringify({
         id: member.id,
       }),
-    })
+    });
     if (!res.ok) {
-      log.error("Failed to delete video")
-      spawnPopup(`ホストを移動できませんでした。`, "error")
-      return
+      log.error("Failed to delete video");
+      spawnPopup(`ホストを移動できませんでした。`, "error");
+      return;
     }
 
-    spawnPopup(`ホストを移動しました。`, "info")
-    store.setIsHostOverride(false)
-    temporaryHost.value = member.id
+    spawnPopup(`ホストを移動しました。`, "info");
+    store.setIsHostOverride(false);
+    temporaryHost.value = member.id;
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
+};
 
 const host = computed(() => {
   return (
     store.participants.find((user) => user.id === temporaryHost.value) ??
     store.participants.find((user) => user.id === store.session.host)
-  )
-})
+  );
+});
 
 const otherMembers = computed(() =>
-  store.participants.filter(
-    (user) => user.id !== store.me.id && user.id !== host.value?.id
-  )
-)
+  store.participants.filter((user) => user.id !== store.me.id && user.id !== host.value?.id),
+);
 const orderedMembers = computed(() => {
   if (host.value?.id === store.me.id || !host.value) {
-    return [store.me, ...otherMembers.value]
+    return [store.me, ...otherMembers.value];
   }
-  return [host.value, store.me, ...otherMembers.value]
-})
+  return [host.value, store.me, ...otherMembers.value];
+});
 </script>
 <template>
   <div
@@ -90,10 +88,7 @@ const orderedMembers = computed(() => {
       :key="member.id"
       class="bg-black/50 p-2 flex gap-2 relative items-center"
     >
-      <img
-        class="rounded-full h-8 mr-1 inline"
-        :src="store.getAvatarUrl(member.id)"
-      />
+      <img class="rounded-full h-8 mr-1 inline" :src="store.getAvatarUrl(member.id)" />
       <div class="text-md">{{ store.getName(member.id) }}</div>
       <TooltipIcon
         v-if="host && host.id === member.id"
@@ -120,10 +115,7 @@ const orderedMembers = computed(() => {
       />
       <TooltipIcon
         v-if="
-          host &&
-          moveHostConfirm !== member.id &&
-          host.id === store.me.id &&
-          host.id !== member.id
+          host && moveHostConfirm !== member.id && host.id === store.me.id && host.id !== member.id
         "
         :disabled="isSubmitting"
         name="md-staroutline"

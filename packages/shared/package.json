@@ -1,10 +1,10 @@
 {
   "name": "@kikoune/shared",
-  "type": "module",
   "files": [
-    "dist",
-    "assets"
+    "assets",
+    "dist"
   ],
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

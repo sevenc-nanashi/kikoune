@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { useConsolaMessages } from "~/plugins/useConsolaMessages"
-import { useStore } from "~/store"
+import { computed } from "vue";
+import { useConsolaMessages } from "~/plugins/useConsolaMessages";
+import { useStore } from "~/store";
 
-const store = useStore()
-const log = useConsolaMessages()
-const sha = import.meta.env.VITE_COMMIT
-const formattedSession = computed(() => JSON.stringify(store.$state, null, 2))
+const store = useStore();
+const log = useConsolaMessages();
+const sha = import.meta.env.VITE_COMMIT;
+const formattedSession = computed(() => JSON.stringify(store.$state, null, 2));
 
-const logLevels = ["error", "warn", "log", "info", "debug"]
+const logLevels = ["error", "warn", "log", "info", "debug"];
 </script>
 <template>
   <div class="min-h-full w-full bg-black/50 p-2 overflow-y-auto">
@@ -56,9 +56,7 @@ const logLevels = ["error", "warn", "log", "info", "debug"]
             }"
             >{{ message.tag }}</span
           >
-          <span>{{
-            (message.args || []).map((obj) => obj.toString()).join(" ")
-          }}</span>
+          <span>{{ (message.args || []).map((obj) => obj.toString()).join(" ") }}</span>
         </div>
       </div>
     </div>

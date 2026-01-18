@@ -1,6 +1,5 @@
-import { createApp } from "vue"
-import { createPinia } from "pinia"
-import { OhVueIcon, addIcons } from "oh-vue-icons"
+import { patchUrlMappings } from "@discord/embedded-app-sdk";
+import { OhVueIcon, addIcons } from "oh-vue-icons";
 import {
   MdOpeninnew,
   MdDelete,
@@ -20,12 +19,14 @@ import {
   MdZoomout,
   MdSettings,
   MdBugreport,
-} from "oh-vue-icons/icons"
-import { patchUrlMappings } from "@discord/embedded-app-sdk"
-import { discordSdkPlugin } from "./plugins/useDiscordSdk.ts"
-import App from "./App.vue"
-import "./style.scss"
-import { consolaReporterPlugin } from "./plugins/useConsolaMessages.ts"
+} from "oh-vue-icons/icons";
+import { createPinia } from "pinia";
+import { createApp } from "vue";
+
+import App from "./App.vue";
+import { consolaReporterPlugin } from "./plugins/useConsolaMessages.ts";
+import "./style.scss";
+import { discordSdkPlugin } from "./plugins/useDiscordSdk.ts";
 
 addIcons(
   MdOpeninnew,
@@ -45,27 +46,27 @@ addIcons(
   MdZoomin,
   MdZoomout,
   MdSettings,
-  MdBugreport
-)
+  MdBugreport,
+);
 
 patchUrlMappings([
   {
     prefix: "/api",
     target: `${location.origin}/api`,
   },
-])
-;(async () => {
-  if (typeof window === "undefined") return
+]);
+(async () => {
+  if (typeof window === "undefined") return;
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ts-expect-errorだとエラーになる
   // @ts-ignore 何故か型がない
-  import("budoux/module/webcomponents/budoux-ja")
-})()
+  import("budoux/module/webcomponents/budoux-ja");
+})();
 
-const pinia = createPinia()
+const pinia = createPinia();
 createApp(App)
   .component("v-icon", OhVueIcon)
   .use(pinia)
   .use(discordSdkPlugin)
   .use(consolaReporterPlugin)
-  .mount("#app")
+  .mount("#app");

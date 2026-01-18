@@ -3,7 +3,7 @@ export const discordScope = [
   "guilds",
   "rpc.activities.write",
   "rpc.voice.read",
-] as const
+] as const;
 
-export const buffer = 5000
-export const maxMessageLength = 50
+export const buffer = 5000;
+export const maxMessageLength = 50;

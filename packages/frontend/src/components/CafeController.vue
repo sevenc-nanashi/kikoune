@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
-import { maxMessageLength } from "@kikoune/shared"
-import { MemberState } from "@kikoune/shared"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
+import { computed, ref } from "vue";
+import { maxMessageLength } from "@kikoune/shared";
+import { MemberState } from "@kikoune/shared";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
 
-const store = useStore()
-const discordSdk = useDiscordSdk()
+const store = useStore();
+const discordSdk = useDiscordSdk();
 
 const updateState = (state: Partial<MemberState>) =>
   fetch(`/api/room/${discordSdk.instanceId}/state`, {
@@ -16,54 +16,51 @@ const updateState = (state: Partial<MemberState>) =>
       Authorization: `${store.me.id} ${store.token}`,
     },
     body: JSON.stringify({ state }),
-  })
+  });
 const switchRotate = () => {
-  updateState({ rotate: !rotate.value })
+  updateState({ rotate: !rotate.value });
   store.setStateOverride({
     rotate: !rotate.value,
-  })
-}
+  });
+};
 const rotate = computed(
-  () => store.stateOverride.rotate ?? store.memberStates[store.me.id]?.rotate
-)
+  () => store.stateOverride.rotate ?? store.memberStates[store.me.id]?.rotate,
+);
 const mobileSend = computed(() => {
-  if (!store.memberStates[store.me.id]) return true
+  if (!store.memberStates[store.me.id]) return true;
 
   return (
     message.value &&
-    ((store.stateOverride.message ??
-      store.memberStates[store.me.id].message) !== message.value.value ||
-      (store.stateOverride.message ??
-        store.memberStates[store.me.id].message) === "")
-  )
-})
-const message = ref<HTMLInputElement>()
+    ((store.stateOverride.message ?? store.memberStates[store.me.id].message) !==
+      message.value.value ||
+      (store.stateOverride.message ?? store.memberStates[store.me.id].message) === "")
+  );
+});
+const message = ref<HTMLInputElement>();
 const clearMessage = () => {
-  if (!message.value) return
-  message.value.value = ""
-  updateState({ message: "" })
-  store.setStateOverride({ message: "" })
-}
+  if (!message.value) return;
+  message.value.value = "";
+  updateState({ message: "" });
+  store.setStateOverride({ message: "" });
+};
 
-let prevMessageTimeout: ReturnType<typeof setTimeout>
+let prevMessageTimeout: ReturnType<typeof setTimeout>;
 const onSubmit = () => {
-  if (!message.value?.value) return
+  if (!message.value?.value) return;
   if (window.innerWidth < 640 && !mobileSend.value) {
-    clearMessage()
-    return
+    clearMessage();
+    return;
   }
-  updateState({ message: message.value.value })
-  store.setStateOverride({ message: message.value.value })
-  if (prevMessageTimeout) clearTimeout(prevMessageTimeout)
+  updateState({ message: message.value.value });
+  store.setStateOverride({ message: message.value.value });
+  if (prevMessageTimeout) clearTimeout(prevMessageTimeout);
   prevMessageTimeout = setTimeout(() => {
-    clearMessage()
-  }, 120 * 1000)
-}
+    clearMessage();
+  }, 120 * 1000);
+};
 </script>
 <template>
-  <div
-    class="w-full flex xs:max-sm:z-20 flex-row gap-2 bottom-0 sm:bottom-auto relative"
-  >
+  <div class="w-full flex xs:max-sm:z-20 flex-row gap-2 bottom-0 sm:bottom-auto relative">
     <button
       class="h-10 sm:h-full aspect-square sm:aspect-auto sm:py-0 sm:px-4 absolute sm:relative right-2 bottom-[6.5rem] rounded-full sm:rounded-none sm:right-auto sm:bottom-auto drop-shadow-md sm:drop-shadow-none"
       :class="{

@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import LogoSvg from "@kikoune/shared/assets/logo_wide.svg?component"
-import DialogBox from "~/components/DialogBox.vue"
-import install from "~/contents/install.md?raw"
-import terms from "~/contents/terms.md?raw"
-import privacy from "~/contents/privacy.md?raw"
+import LogoSvg from "@kikoune/shared/assets/logo_wide.svg?component";
+import DialogBox from "~/components/DialogBox.vue";
+import install from "~/contents/install.md?raw";
+import terms from "~/contents/terms.md?raw";
+import privacy from "~/contents/privacy.md?raw";
 </script>
 
 <template>
-  <section
-    class="grid place-items-center place-content-center w-screen h-screen"
-  >
+  <section class="grid place-items-center place-content-center w-screen h-screen">
     <DialogBox id="install" title="使い方" :content="install" />
     <DialogBox id="terms" title="利用規約" :content="terms" />
     <DialogBox id="privacy" title="プライバシーポリシー" :content="privacy" />
     <LogoSvg class="max-sm:w-[80vw] max-h-[20vh] h-auto sm:h-32" />
     <p class="text-xl sm:text-2xl">
       Developed by
-      <a
-        class="text-[#48b0d5] hover:underline"
-        href="https://sevenc7c.com"
-        target="_blank"
+      <a class="text-[#48b0d5] hover:underline" href="https://sevenc7c.com" target="_blank"
         >Nanashi.</a
       >
     </p>
@@ -29,16 +24,13 @@ import privacy from "~/contents/privacy.md?raw"
         >Discordのアクティビティで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。</budoux-ja
       >
     </p>
-    <a
-      class="text-cyan-500 border-1 border-cyan-500 p-2 px-4 my-2 rounded-full"
-      href="#install"
+    <a class="text-cyan-500 border-1 border-cyan-500 p-2 px-4 my-2 rounded-full" href="#install"
       >導入</a
     >
     <nav
       class="text-center sm:absolute sm:w-screen sm:bottom-4 flex navigation max-sm:pt-4 max-sm:flex-col gap-1 sm:gap-4 justify-center"
     >
-      <a href="#terms">利用規約</a><span class="navigation-border" /><a
-        href="#privacy"
+      <a href="#terms">利用規約</a><span class="navigation-border" /><a href="#privacy"
         >プライバシーポリシー</a
       ><span class="navigation-border" /><a
         href="https://github.com/sevenc-nanashi/kikoune"

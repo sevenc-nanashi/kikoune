@@ -1,13 +1,9 @@
-import { defineStore } from "pinia"
-import {
-  MemberState,
-  SessionSetting,
-  Session,
-  defaultSessionSetting,
-} from "@kikoune/shared"
-import { Participant } from "./plugins/useDiscordSdk.ts"
+import { MemberState, SessionSetting, Session, defaultSessionSetting } from "@kikoune/shared";
+import { defineStore } from "pinia";
 
-export const sessionNotStarted = 0
+import { Participant } from "./plugins/useDiscordSdk.ts";
+
+export const sessionNotStarted = 0;
 export const useStore = defineStore("main", {
   state: () => ({
     _token: "",
@@ -34,32 +30,32 @@ export const useStore = defineStore("main", {
   getters: {
     token(state) {
       if (!state._token) {
-        throw new Error("Token is not set")
+        throw new Error("Token is not set");
       }
-      return state._token
+      return state._token;
     },
     me(state) {
       if (!state._me) {
-        throw new Error("Me is not set")
+        throw new Error("Me is not set");
       }
-      return state._me
+      return state._me;
     },
     isHost(state) {
       return state.isHostOverride !== undefined
         ? state.isHostOverride
-        : state._me?.id === state.session.host
+        : state._me?.id === state.session.host;
     },
     thumbnailUrl(state) {
-      const base = state.session.video?.thumbnailUrl
-      if (!base) return ""
-      const path = new URL(base).pathname
-      return `/external/nicovideo--cdn--nimg--jp${path}`
+      const base = state.session.video?.thumbnailUrl;
+      if (!base) return "";
+      const path = new URL(base).pathname;
+      return `/external/nicovideo--cdn--nimg--jp${path}`;
     },
     sessionSetting(state) {
       return {
         ...state.session.setting,
         ...state.settingOverride,
-      }
+      };
     },
 
     canQueue(state): boolean {
@@ -67,86 +63,86 @@ export const useStore = defineStore("main", {
         this.isHost ||
         (state.session.queue.length < this.sessionSetting.queueLimit &&
           !this.sessionSetting.queueLocked)
-      )
+      );
     },
   },
   actions: {
     async setToken(token: string) {
-      this._token = token
+      this._token = token;
     },
     async setSession(session: Session) {
-      this.session = session
+      this.session = session;
     },
     async setMemberStates(memberState: Record<string, MemberState>) {
-      this.memberStates = memberState
+      this.memberStates = memberState;
     },
     async panic() {
-      this.setView("error")
+      this.setView("error");
     },
     setView(view: "login" | "main" | "error") {
-      this.view = view
+      this.view = view;
     },
     setMe(me: Participant) {
-      this._me = me
+      this._me = me;
     },
     setParticipants(participants: Participant[]) {
-      this.participants = participants
-      const allParticipantIds = new Set(this.allParticipants.map((p) => p.id))
+      this.participants = participants;
+      const allParticipantIds = new Set(this.allParticipants.map((p) => p.id));
       for (const participant of participants) {
         if (!allParticipantIds.has(participant.id)) {
-          this.allParticipants.push(participant)
+          this.allParticipants.push(participant);
         }
       }
     },
 
     getUser(id: string) {
-      return this.allParticipants.find((p) => p.id === id)
+      return this.allParticipants.find((p) => p.id === id);
     },
     getAvatarUrl(id: string) {
-      const user = this.getUser(id)
-      if (!user) return "https://cdn.discordapp.com/embed/avatars/0.png"
+      const user = this.getUser(id);
+      if (!user) return "https://cdn.discordapp.com/embed/avatars/0.png";
       if (user.avatar) {
-        return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+        return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
       } else {
-        return `https://cdn.discordapp.com/embed/avatars/${(BigInt(user.id) >> 22n) % 6n}.png`
+        return `https://cdn.discordapp.com/embed/avatars/${(BigInt(user.id) >> 22n) % 6n}.png`;
       }
     },
     getName(id: string) {
-      const user = this.getUser(id)
-      if (!user) return "Unknown"
-      return user.nickname || user.global_name || user.username || "Unknown"
+      const user = this.getUser(id);
+      if (!user) return "Unknown";
+      return user.nickname || user.global_name || user.username || "Unknown";
     },
 
     resetIsHostOverride() {
-      this.isHostOverride = undefined
+      this.isHostOverride = undefined;
     },
     setIsHostOverride(isHost: boolean) {
-      this.isHostOverride = isHost
+      this.isHostOverride = isHost;
     },
     resetStateOverride() {
-      this.stateOverride = {}
+      this.stateOverride = {};
     },
     setStateOverride(state: Partial<MemberState>) {
       this.stateOverride = {
         ...this.stateOverride,
         ...state,
-      }
-      this.stateOverrideUpdatedAt = Date.now()
+      };
+      this.stateOverrideUpdatedAt = Date.now();
     },
     setDebug(debug: boolean) {
-      this.debug = debug
+      this.debug = debug;
     },
     setDelay(delay: number) {
-      this.delay = delay
+      this.delay = delay;
     },
     setSettingOverride(setting: Partial<SessionSetting>) {
       this.settingOverride = {
         ...this.settingOverride,
         ...setting,
-      }
+      };
     },
     resetSettingOverride() {
-      this.settingOverride = {}
+      this.settingOverride = {};
     },
   },
-})
+});

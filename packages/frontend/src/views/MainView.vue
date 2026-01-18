@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue"
-import consola from "consola/browser"
-import { MemberState, Session, defaultMemberState } from "@kikoune/shared"
-import NicoPlayer from "~/components/NicoPlayer.vue"
-import InfoPanel from "~/components/InfoPanel.vue"
-import NowPlaying from "~/components/NowPlaying.vue"
-import CafeController from "~/components/CafeController.vue"
-import CafeSpace from "~/components/CafeSpace.vue"
-import MobileView from "~/components/MobileView.vue"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk.ts"
-import { sessionNotStarted, useStore } from "~/store.ts"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import consola from "consola/browser";
+import { MemberState, Session, defaultMemberState } from "@kikoune/shared";
+import NicoPlayer from "~/components/NicoPlayer.vue";
+import InfoPanel from "~/components/InfoPanel.vue";
+import NowPlaying from "~/components/NowPlaying.vue";
+import CafeController from "~/components/CafeController.vue";
+import CafeSpace from "~/components/CafeSpace.vue";
+import MobileView from "~/components/MobileView.vue";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk.ts";
+import { sessionNotStarted, useStore } from "~/store.ts";
 
-const discordSdk = useDiscordSdk()
-const store = useStore()
-const log = consola.withTag("MainView")
+const discordSdk = useDiscordSdk();
+const store = useStore();
+const log = consola.withTag("MainView");
 
-const errorCount = ref(0)
+const errorCount = ref(0);
 
 const update = async () => {
   const res = await fetch(`/api/room/${discordSdk.instanceId}/sync`, {
@@ -32,54 +32,52 @@ const update = async () => {
         ...store.stateOverride,
       },
     }),
-  })
+  });
   if (!res.ok) {
-    log.error(
-      `Failed to sync (${res.status}), panic in ${3 - errorCount.value}`
-    )
-    errorCount.value++
+    log.error(`Failed to sync (${res.status}), panic in ${3 - errorCount.value}`);
+    errorCount.value++;
     if (errorCount.value > 3) {
-      store.panic()
+      store.panic();
     }
-    return
+    return;
   }
-  log.info("Synced")
-  errorCount.value = 0
+  log.info("Synced");
+  errorCount.value = 0;
   const data: {
-    memberStates: Record<string, MemberState>
-    session: Session
-  } = await res.json()
-  store.setSession(data.session)
-  store.setMemberStates(data.memberStates)
-  store.resetIsHostOverride()
-  store.resetSettingOverride()
+    memberStates: Record<string, MemberState>;
+    session: Session;
+  } = await res.json();
+  store.setSession(data.session);
+  store.setMemberStates(data.memberStates);
+  store.resetIsHostOverride();
+  store.resetSettingOverride();
   if (Date.now() - store.stateOverrideUpdatedAt > 500) {
-    store.resetStateOverride()
+    store.resetStateOverride();
   }
-}
+};
 
-const currentId = computed(() => store.session.video?.id ?? "")
-let interval: ReturnType<typeof setInterval>
-let initialTimeout: ReturnType<typeof setTimeout>
+const currentId = computed(() => store.session.video?.id ?? "");
+let interval: ReturnType<typeof setInterval>;
+let initialTimeout: ReturnType<typeof setTimeout>;
 onMounted(() => {
   initialTimeout = setTimeout(
     () => {
-      update()
-      interval = setInterval(update, 5000)
+      update();
+      interval = setInterval(update, 5000);
     },
-    5000 ^ Date.now() % 5000
-  )
-})
+    5000 ^ (Date.now() % 5000),
+  );
+});
 onUnmounted(() => {
-  clearInterval(interval)
-  clearTimeout(initialTimeout)
-})
+  clearInterval(interval);
+  clearTimeout(initialTimeout);
+});
 
 const state = computed(() => {
-  if (store.session.video) return "play"
-  if (store.session.startedAt === sessionNotStarted) return "sync"
-  return "idle"
-})
+  if (store.session.video) return "play";
+  if (store.session.startedAt === sessionNotStarted) return "sync";
+  return "idle";
+});
 
 watch(
   () => store.session.video,
@@ -102,10 +100,10 @@ watch(
         : {
             state: "選曲中...",
           },
-    })
+    });
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 </script>
 <template>
   <div
@@ -116,20 +114,14 @@ watch(
     }"
   />
   <div class="xs:relative root">
-    <div
-      class="xs:relative flex top-section h-full justify-center sm:justify-normal"
-    >
-      <NicoPlayer
-        class="nico-player max-sm:w-full sm:w-auto xs:h-full aspect-video"
-      />
+    <div class="xs:relative flex top-section h-full justify-center sm:justify-normal">
+      <NicoPlayer class="nico-player max-sm:w-full sm:w-auto xs:h-full aspect-video" />
       <InfoPanel class="hidden sm:flex h-full hidden-on-miniplayer" />
     </div>
     <NowPlaying class="hidden xs:flex h-full hidden-on-miniplayer" />
     <CafeSpace class="hidden xs:block hidden-on-miniplayer" />
     <CafeController class="hidden xs:flex z-10 hidden-on-miniplayer" />
-    <MobileView
-      class="hidden xs:max-sm:block z-10 mobile-view hidden-on-miniplayer"
-    />
+    <MobileView class="hidden xs:max-sm:block z-10 mobile-view hidden-on-miniplayer" />
   </div>
   <div class="background-container hidden xs:block">
     <div

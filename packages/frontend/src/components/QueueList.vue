@@ -1,156 +1,154 @@
 <script setup lang="ts">
-import consola from "consola/browser"
-import { computed, ref, watch } from "vue"
-import { v4 as uuid } from "uuid"
-import Draggable from "vuedraggable"
-import { SessionVideo, Video } from "@kikoune/shared"
-import { useDiscordSdk } from "~/plugins/useDiscordSdk"
-import { useStore } from "~/store"
-import TooltipIcon from "~/components/TooltipIcon.vue"
-import { toExternal } from "~/lib/external"
+import consola from "consola/browser";
+import { computed, ref, watch } from "vue";
+import { v4 as uuid } from "uuid";
+import Draggable from "vuedraggable";
+import { SessionVideo, Video } from "@kikoune/shared";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
+import TooltipIcon from "~/components/TooltipIcon.vue";
+import { toExternal } from "~/lib/external";
 
-const store = useStore()
-const discordSdk = useDiscordSdk()
-const log = consola.withTag("QueueList")
+const store = useStore();
+const discordSdk = useDiscordSdk();
+const log = consola.withTag("QueueList");
 
-const isSubmitting = ref(false)
-const popup = ref<string | undefined>()
-const popupType = ref<"error" | "info">("error")
-const popupCount = ref(0)
+const isSubmitting = ref(false);
+const popup = ref<string | undefined>();
+const popupType = ref<"error" | "info">("error");
+const popupCount = ref(0);
 const spawnPopup = (message: string, type: "error" | "info") => {
-  popup.value = message
-  popupType.value = type
-  popupCount.value++
+  popup.value = message;
+  popupType.value = type;
+  popupCount.value++;
   setTimeout(() => {
-    popupCount.value--
-  }, 5000)
-}
-const temporaryOrder = ref<string[] | undefined>(undefined)
-const temporaryAdded = ref<SessionVideo[]>([])
-const temporaryDeleted = ref<string[]>([])
-const reorderedItems = ref<string[]>([])
-const reorderedCount = ref(0)
-const highlightReordered = computed(() => reorderedCount.value > 0)
+    popupCount.value--;
+  }, 5000);
+};
+const temporaryOrder = ref<string[] | undefined>(undefined);
+const temporaryAdded = ref<SessionVideo[]>([]);
+const temporaryDeleted = ref<string[]>([]);
+const reorderedItems = ref<string[]>([]);
+const reorderedCount = ref(0);
+const highlightReordered = computed(() => reorderedCount.value > 0);
 const queue = computed({
   get: () =>
     (temporaryOrder.value
       ? temporaryOrder.value.flatMap((nonce) => {
-          const video = store.session.queue.find(
-            (video) => video.nonce === nonce
-          )
-          return video ? [video] : []
+          const video = store.session.queue.find((video) => video.nonce === nonce);
+          return video ? [video] : [];
         })
       : store.session.queue
     )
       .filter((video) => !temporaryDeleted.value.includes(video.nonce))
       .concat(temporaryAdded.value),
   set: (value: SessionVideo[]) => {
-    temporaryOrder.value = value.map((video) => video.nonce)
-    sendReorder()
+    temporaryOrder.value = value.map((video) => video.nonce);
+    sendReorder();
   },
-})
+});
 watch(
   () => store.session.queue,
   () => {
-    temporaryOrder.value = undefined
-    temporaryAdded.value = []
-    temporaryDeleted.value = []
-  }
-)
+    temporaryOrder.value = undefined;
+    temporaryAdded.value = [];
+    temporaryDeleted.value = [];
+  },
+);
 
-const videoIdPattern = /(?:sm|so)\d+/g
+const videoIdPattern = /(?:sm|so)\d+/g;
 
-const videoSource = ref<string>("")
+const videoSource = ref<string>("");
 const buttonState = computed<"submit" | "search" | "close">(() => {
   if (
     searchResult.value.length > 0 &&
     (searchQuery.value === videoSource.value || videoSource.value === "")
   ) {
-    return "close"
+    return "close";
   } else if (!videoSource.value) {
-    return "search"
+    return "search";
   } else if (videoSource.value.match(videoIdPattern)) {
-    return "submit"
+    return "submit";
   } else {
-    return "search"
+    return "search";
   }
-})
+});
 const onSubmit = async () => {
   if (buttonState.value === "close") {
-    searchResult.value = []
-    searchQuery.value = ""
-    return
+    searchResult.value = [];
+    searchQuery.value = "";
+    return;
   } else if (videoSource.value === "") {
-    return
+    return;
   } else if (buttonState.value === "search") {
-    searchVideo()
+    searchVideo();
   } else {
-    const videoIds = [...videoSource.value.matchAll(videoIdPattern)]
+    const videoIds = [...videoSource.value.matchAll(videoIdPattern)];
     if (!videoIds.length) {
-      spawnPopup("無効な動画IDです。", "error")
-      return
+      spawnPopup("無効な動画IDです。", "error");
+      return;
     }
 
-    addToQueue(videoIds.map((match) => match[0]))
+    addToQueue(videoIds.map((match) => match[0]));
   }
-}
+};
 const searchResult = ref<
   {
-    contentId: string
-    title: string
-    thumbnailUrl: string
+    contentId: string;
+    title: string;
+    thumbnailUrl: string;
   }[]
->([])
-const searchQuery = ref("")
+>([]);
+const searchQuery = ref("");
 const searchVideo = async () => {
-  if (isSubmitting.value) return
+  if (isSubmitting.value) return;
   try {
-    isSubmitting.value = true
+    isSubmitting.value = true;
     const param = new URLSearchParams({
       q: videoSource.value,
       targets: "title,description,tags",
       fields: "contentId,title,thumbnailUrl",
       _sort: "-viewCounter",
       _limit: "10",
-    })
-    log.info(`Searching videos with ${param}`)
+    });
+    log.info(`Searching videos with ${param}`);
     const resp = await fetch(
       `/.proxy/external/snapshot--search--nicovideo--jp/api/v2/snapshot/video/contents/search?${param}`,
       {
         headers: {
           "User-Agent": "Kikoune",
         },
-      }
-    ).then((res) => res.json())
+      },
+    ).then((res) => res.json());
     if (resp.meta.status !== 200) {
-      log.error("Failed to search videos")
-      spawnPopup("動画の検索に失敗しました。", "error")
-      return
+      log.error("Failed to search videos");
+      spawnPopup("動画の検索に失敗しました。", "error");
+      return;
     }
     if (resp.data.length === 0) {
-      spawnPopup("該当する動画が見つかりませんでした。", "error")
-      return
+      spawnPopup("該当する動画が見つかりませんでした。", "error");
+      return;
     }
-    searchQuery.value = videoSource.value
-    searchResult.value = resp.data
+    searchQuery.value = videoSource.value;
+    searchResult.value = resp.data;
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
+};
 const confirmSearch = async (contentId: string) => {
   addToQueue([contentId]).then(() => {
-    searchResult.value = []
-    searchQuery.value = ""
-  })
-}
+    searchResult.value = [];
+    searchQuery.value = "";
+  });
+};
 const addToQueue = async (videoIds: string[]) => {
-  if (isSubmitting.value) return
+  if (isSubmitting.value) return;
 
-  log.info("Adding video", videoIds)
+  log.info("Adding video", videoIds);
   try {
-    isSubmitting.value = true
+    isSubmitting.value = true;
 
-    const videos: Video[] = []
+    const videos: Video[] = [];
     for (const videoId of videoIds) {
       const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
         method: "POST",
@@ -161,84 +159,79 @@ const addToQueue = async (videoIds: string[]) => {
         body: JSON.stringify({
           videoId: videoId,
         }),
-      })
+      });
       if (!res.ok) {
-        log.error("Failed to queue video")
-        spawnPopup(`動画${videoId}の追加に失敗しました。`, "error")
-        return
+        log.error("Failed to queue video");
+        spawnPopup(`動画${videoId}の追加に失敗しました。`, "error");
+        return;
       }
 
-      videoSource.value = ""
-      const { video }: { video: Video } = await res.json()
+      videoSource.value = "";
+      const { video }: { video: Video } = await res.json();
       temporaryAdded.value.push({
         ...video,
         requestedBy: store.me.id,
         nonce: uuid(),
-      })
-      videos.push(video)
+      });
+      videos.push(video);
     }
 
     if (videos.length === 1) {
-      spawnPopup(`「${videos[0].title}」を追加しました。`, "info")
+      spawnPopup(`「${videos[0].title}」を追加しました。`, "info");
     } else {
-      spawnPopup(`${videos.length}件の動画を追加しました。`, "info")
+      spawnPopup(`${videos.length}件の動画を追加しました。`, "info");
     }
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
+};
 const deleteVideo = async (video: SessionVideo) => {
-  if (isSubmitting.value) return
-  log.info("Deleting video", video.id)
+  if (isSubmitting.value) return;
+  log.info("Deleting video", video.id);
 
   try {
-    isSubmitting.value = true
+    isSubmitting.value = true;
 
-    const res = await fetch(
-      `/api/room/${discordSdk.instanceId}/queue/${video.nonce}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${store.me.id} ${store.token}`,
-        },
-      }
-    )
+    const res = await fetch(`/api/room/${discordSdk.instanceId}/queue/${video.nonce}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.me.id} ${store.token}`,
+      },
+    });
     if (!res.ok) {
-      log.error("Failed to delete video")
-      spawnPopup(`「${video.title}」のキャンセルに失敗しました。`, "error")
-      return
+      log.error("Failed to delete video");
+      spawnPopup(`「${video.title}」のキャンセルに失敗しました。`, "error");
+      return;
     }
 
-    temporaryDeleted.value.push(video.nonce)
+    temporaryDeleted.value.push(video.nonce);
 
-    spawnPopup(`「${video.title}」をキャンセルしました。`, "info")
+    spawnPopup(`「${video.title}」をキャンセルしました。`, "info");
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
+};
 
 const openExternal = (url: string) => {
-  discordSdk.commands.openExternalLink({ url })
-}
+  discordSdk.commands.openExternalLink({ url });
+};
 const setReordered = (event: { newIndex: number; oldIndex: number }) => {
-  const earlierIndex =
-    (event.oldIndex < event.newIndex ? event.oldIndex : event.newIndex) - 1
-  const laterIndex =
-    (event.oldIndex < event.newIndex ? event.newIndex : event.oldIndex) - 1
+  const earlierIndex = (event.oldIndex < event.newIndex ? event.oldIndex : event.newIndex) - 1;
+  const laterIndex = (event.oldIndex < event.newIndex ? event.newIndex : event.oldIndex) - 1;
   reorderedItems.value = queue.value
     .slice(earlierIndex, laterIndex + 1)
-    .map((video) => video.nonce)
-  log.info(`Reordered ${earlierIndex} ... ${laterIndex}`)
+    .map((video) => video.nonce);
+  log.info(`Reordered ${earlierIndex} ... ${laterIndex}`);
 
-  reorderedCount.value++
+  reorderedCount.value++;
   setTimeout(() => {
-    reorderedCount.value--
-  }, 1000)
-}
+    reorderedCount.value--;
+  }, 1000);
+};
 const sendReorder = async () => {
   if (temporaryOrder.value) {
-    log.info("Sending reorder", temporaryOrder.value)
+    log.info("Sending reorder", temporaryOrder.value);
     const res = await fetch(`/api/room/${discordSdk.instanceId}/queue`, {
       method: "PUT",
       headers: {
@@ -248,22 +241,22 @@ const sendReorder = async () => {
       body: JSON.stringify({
         order: temporaryOrder.value,
       }),
-    })
+    });
     if (!res.ok) {
-      log.error("Failed to reorder")
-      spawnPopup("順番の変更に失敗しました。", "error")
+      log.error("Failed to reorder");
+      spawnPopup("順番の変更に失敗しました。", "error");
     }
   }
-}
+};
 const placeholder = computed(() => {
   if (store.canQueue) {
-    return "キーワード / ID / URL（複数可）"
+    return "キーワード / ID / URL（複数可）";
   } else if (store.session.queue.length >= store.sessionSetting.queueLimit) {
-    return `キューの上限（${store.sessionSetting.queueLimit}曲）に達しました。`
+    return `キューの上限（${store.sessionSetting.queueLimit}曲）に達しました。`;
   } else {
-    return "ホスト以外はキューに追加できません。"
+    return "ホスト以外はキューに追加できません。";
   }
-})
+});
 </script>
 <template>
   <div class="bg-black/25 h-full w-full relative flex flex-col">
@@ -272,15 +265,8 @@ const placeholder = computed(() => {
       class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll"
     >
       <p class="text-xl">「{{ searchQuery }}」の検索結果</p>
-      <div
-        v-if="isSubmitting"
-        class="bg-slate-500/25 absolute inset-0 cursor-wait z-10"
-      />
-      <div
-        v-for="(video, i) in searchResult"
-        :key="i"
-        class="flex flex-row gap-1 relative"
-      >
+      <div v-if="isSubmitting" class="bg-slate-500/25 absolute inset-0 cursor-wait z-10" />
+      <div v-for="(video, i) in searchResult" :key="i" class="flex flex-row gap-1 relative">
         <div class="w-16 h-16 rounded-md overflow-hidden relative">
           <div
             class="bg-cover bg-center absolute inset-[-1rem]"
@@ -297,10 +283,7 @@ const placeholder = computed(() => {
         </div>
       </div>
     </div>
-    <div
-      v-else-if="queue.length === 0"
-      class="grid place-content-center flex-grow"
-    >
+    <div v-else-if="queue.length === 0" class="grid place-content-center flex-grow">
       <p class="text-xl">キューは空です。</p>
     </div>
     <div
@@ -321,9 +304,7 @@ const placeholder = computed(() => {
         <p v-if="store.isHost && !store.sessionSetting.random" class="pl-2">
           数字をドラッグして順番を変更できます。
         </p>
-        <p v-if="store.sessionSetting.random" class="pl-2">
-          ランダム再生が有効です。
-        </p>
+        <p v-if="store.sessionSetting.random" class="pl-2">ランダム再生が有効です。</p>
       </template>
       <template #item="{ element: video, index: i }">
         <div class="bg-black/50 flex gap-2 relative">
@@ -331,9 +312,7 @@ const placeholder = computed(() => {
             class="w-8 bg-black grid place-content-center transition-colors duration-200"
             :class="{
               'handle cursor-grab':
-                !temporaryAdded.includes(video) &&
-                store.isHost &&
-                !store.sessionSetting.random,
+                !temporaryAdded.includes(video) && store.isHost && !store.sessionSetting.random,
               'text-opacity-50': temporaryAdded.includes(video),
               '!bg-cyan-900':
                 !temporaryAdded.includes(video) &&
@@ -341,13 +320,7 @@ const placeholder = computed(() => {
                 reorderedItems.includes(video.nonce),
             }"
           >
-            {{
-              temporaryAdded.includes(video)
-                ? "-"
-                : store.sessionSetting.random
-                  ? "?"
-                  : i + 1
-            }}
+            {{ temporaryAdded.includes(video) ? "-" : store.sessionSetting.random ? "?" : i + 1 }}
           </div>
           <div class="flex p-2 gap-2 sm:gap-1 flex-col flex-grow">
             <div class="flex flex-col sm:flex-row sm:items-end relative">
@@ -359,9 +332,7 @@ const placeholder = computed(() => {
                 class="rounded-full h-5 mr-1 inline"
                 :src="store.getAvatarUrl(video.requestedBy)"
               />
-              <span class="text-cyan-500">{{
-                store.getName(video.requestedBy)
-              }}</span
+              <span class="text-cyan-500">{{ store.getName(video.requestedBy) }}</span
               >さんのリクエスト
             </div>
 
@@ -377,9 +348,7 @@ const placeholder = computed(() => {
                 class="self-center cursor-pointer h-full aspect-square grid place-items-center"
                 name="md-openinnew"
                 tooltip="開く"
-                @click="
-                  openExternal(`https://www.nicovideo.jp/watch/${video.id}`)
-                "
+                @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
               />
             </div>
           </div>
@@ -396,9 +365,7 @@ const placeholder = computed(() => {
               class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
               name="md-openinnew"
               tooltip="開く"
-              @click="
-                openExternal(`https://www.nicovideo.jp/watch/${video.id}`)
-              "
+              @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
             />
           </div>
         </div>
@@ -415,10 +382,7 @@ const placeholder = computed(() => {
     >
       {{ popup }}
     </div>
-    <form
-      class="w-full flex h-8 queue-form relative z-50"
-      @submit.prevent="onSubmit"
-    >
+    <form class="w-full flex h-8 queue-form relative z-50" @submit.prevent="onSubmit">
       <div
         class="absolute inset-0 bg-slate-500/25 transition-opacity z-50"
         :style="{
@@ -444,13 +408,7 @@ const placeholder = computed(() => {
           'opacity-50 cursor-not-allowed': !store.canQueue,
         }"
       >
-        {{
-          buttonState === "search"
-            ? "検索"
-            : buttonState === "submit"
-              ? "追加"
-              : "戻る"
-        }}
+        {{ buttonState === "search" ? "検索" : buttonState === "submit" ? "追加" : "戻る" }}
       </button>
     </form>
   </div>

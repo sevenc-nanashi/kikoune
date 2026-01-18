@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
-import { MemberState, defaultMemberState } from "@kikoune/shared"
-import { useStore } from "~/store"
+import { computed, ref } from "vue";
+import { MemberState, defaultMemberState } from "@kikoune/shared";
+import { useStore } from "~/store";
 
 const props = defineProps<{
-  id: string
-  speaking: boolean
-}>()
-const store = useStore()
-const name = computed(() => store.getName(props.id))
+  id: string;
+  speaking: boolean;
+}>();
+const store = useStore();
+const name = computed(() => store.getName(props.id));
 const memberState = computed<MemberState>(() => {
   if (props.id === store.me.id) {
-    return { ...store.memberStates[props.id], ...store.stateOverride }
+    return { ...store.memberStates[props.id], ...store.stateOverride };
   }
-  return { ...defaultMemberState, ...store.memberStates[props.id] }
-})
-const avatarUrl = computed(() => store.getAvatarUrl(props.id))
-const showTooltip = ref(false)
+  return { ...defaultMemberState, ...store.memberStates[props.id] };
+});
+const avatarUrl = computed(() => store.getAvatarUrl(props.id));
+const showTooltip = ref(false);
 </script>
 <template>
   <div
@@ -62,8 +62,7 @@ const showTooltip = ref(false)
         outline: speaking,
       }"
       :style="{
-        animation:
-          memberState.rotate || speaking ? 'spin 5s linear infinite' : 'none',
+        animation: memberState.rotate || speaking ? 'spin 5s linear infinite' : 'none',
       }"
     />
     <p

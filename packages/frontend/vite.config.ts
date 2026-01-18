@@ -1,16 +1,13 @@
-import childProcess from "child_process"
-import { defineConfig } from "vite"
-import vue from "@vitejs/plugin-vue"
-import svgLoader from "vite-svg-loader"
+import vue from "@vitejs/plugin-vue";
+import childProcess from "child_process";
+import { defineConfig } from "vite";
+import svgLoader from "vite-svg-loader";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
-  const currentCommit = childProcess
-    .execSync("git rev-parse --short HEAD")
-    .toString()
-    .trim()
+  const currentCommit = childProcess.execSync("git rev-parse --short HEAD").toString().trim();
 
-  process.env.VITE_COMMIT = currentCommit
+  process.env.VITE_COMMIT = currentCommit;
   return {
     build: {
       outDir: `../../dist/frontend`,
@@ -67,5 +64,5 @@ export default defineConfig(async () => {
         },
       },
     },
-  }
-})
+  };
+});
