@@ -1,35 +1,22 @@
-import commonjs from "@rollup/plugin-commonjs";
-import json from "@rollup/plugin-json";
-import nodeResolve from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-// https://github.com/rollup/plugins/issues/1662
-import fs from "fs/promises";
-import { rollup } from "rollup";
+import fs from "node:fs/promises"
+import { rolldown } from "rolldown"
 
-console.log("Building...");
-const bundle = await rollup({
+console.log("Building...")
+const bundle = await rolldown({
   input: `${import.meta.dirname}/src/index.ts`,
-  plugins: [
-    typescript(),
-    nodeResolve({
-      preferBuiltins: true,
-    }),
-    commonjs(),
-    json(),
-  ],
-});
+  platform: "node",
+})
 
 await bundle.write({
   file: `${import.meta.dirname}/dist/index.bundle.js`,
+  inlineDynamicImports: true,
   format: "es",
-});
+})
 
-await fs.mkdir(`${import.meta.dirname}/../../dist`, { recursive: true });
+await fs.mkdir(`${import.meta.dirname}/../../dist`, { recursive: true })
 
 await fs.copyFile(
   `${import.meta.dirname}/dist/index.bundle.js`,
-  `${import.meta.dirname}/../../dist/index.js`,
-);
-console.log("Build complete");
+  `${import.meta.dirname}/../../dist/index.js`
+)
+console.log("Build complete")
