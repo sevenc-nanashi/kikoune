@@ -25,8 +25,12 @@ import { createApp } from "vue";
 
 import App from "./App.vue";
 import { consolaReporterPlugin } from "./plugins/useConsolaMessages.ts";
-import "./style.scss";
 import { discordSdkPlugin } from "./plugins/useDiscordSdk.ts";
+
+import "@fontsource/zen-kaku-gothic-new/400.css";
+import "@fontsource/zen-kaku-gothic-new/700.css";
+import "virtual:uno.css";
+import "./style.scss";
 
 addIcons(
   MdOpeninnew,
@@ -60,7 +64,7 @@ patchUrlMappings([
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ts-expect-errorだとエラーになる
   // @ts-ignore 何故か型がない
-  import("budoux/module/webcomponents/budoux-ja");
+  import("../node_modules/budoux/module/webcomponents/budoux-ja");
 })();
 
 const pinia = createPinia();

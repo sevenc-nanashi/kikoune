@@ -6,9 +6,9 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { relative } from "path";
 
-import { env } from "./const.js";
-import api from "./routes/api.js";
-import nicoEdit from "./routes/nicoEdit.js";
+import { env } from "./const.ts";
+import api from "./routes/api.ts";
+import nicoEdit from "./routes/nicoEdit.ts";
 
 const app = new Hono();
 const log = consola.withTag("app");

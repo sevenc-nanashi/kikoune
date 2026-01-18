@@ -47,15 +47,10 @@ const changeTab = () => {
 };
 </script>
 <template>
-  <div
-    class="absolute inset-0 z-40 hidden flex-col hidden-on-miniplayer"
-    :class="{
+  <div class="absolute inset-0 z-40 hidden flex-col hidden-on-miniplayer" :class="{
       'xs:max-sm:flex': selectedTab !== 'main',
-    }"
-  >
-    <div
-      class="w-full relative flex bg-black h-16 font-bold text-2xl flex-row items-end justify-start"
-    >
+    }">
+    <div class="w-full relative flex bg-black h-16 font-bold text-2xl flex-row items-end justify-start">
       {{ tabNames[selectedTab] }}
     </div>
     <div class="h-[calc(100vh_-_4rem)] relative w-full bg-black/75">
@@ -72,15 +67,14 @@ const changeTab = () => {
       :class="{
         'bg-black': selectedTab === 'main',
         'bg-cyan-500': selectedTab !== 'main',
-      }"
-      @click="changeTab"
-    >
+      }" @click="changeTab">
       <v-icon :name="tabs[selectedTab]" />
     </button>
   </div>
 </template>
 <style scoped lang="scss">
 $padding: 1rem;
+
 .root {
   padding-top: calc(var(--sait) + $padding);
   padding-left: calc(var(--sail) + $padding);

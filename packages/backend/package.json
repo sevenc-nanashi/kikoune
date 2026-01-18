@@ -5,7 +5,7 @@
     "start": "tsx ./src/index.ts",
     "build": "tsx ./build.ts",
     "dev": "tsx watch ./src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@types/async-lock": "1.4.2",
     "@types/node": "catalog:types",
+    "@typescript/native-preview": "7.0.0-dev.20260117.1",
     "discord-api-types": "^0.38.37",
     "rolldown": "1.0.0-beta.60",
     "tsx": "^4.21.0",

@@ -136,6 +136,7 @@ watch(
 </template>
 <style scoped lang="scss">
 $padding: 8px;
+
 .root {
   padding-top: calc(var(--sait) + $padding);
   padding-left: calc(var(--sail) + $padding);
@@ -164,14 +165,17 @@ $padding: 8px;
   @media (max-width: 640px) {
     grid-template-rows: auto auto 1fr auto;
   }
+
   // PC
   @media (max-height: 480px) and (min-width: 640px) {
     grid-template-rows: calc(45vh - 2rem) 2rem 1fr auto;
   }
 }
+
 .top-section {
   gap: $padding;
 }
+
 .background-container {
   position: absolute;
   top: 0;
@@ -181,6 +185,7 @@ $padding: 8px;
   height: 100%;
   overflow: hidden;
 }
+
 .background {
   position: absolute;
   inset: -3rem;
@@ -189,6 +194,7 @@ $padding: 8px;
   background-position: center;
   filter: blur(25px) brightness(0.8);
 }
+
 // ミニプレイヤー
 @media (max-height: 240px) {
   .nico-player {

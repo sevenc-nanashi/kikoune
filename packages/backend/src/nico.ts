@@ -2,7 +2,7 @@ import { Session, Video } from "@kikoune/shared";
 import ExpiryMap from "expiry-map";
 import { XMLParser } from "fast-xml-parser";
 
-import { DbSession } from "./db.js";
+import { DbSession } from "./db.ts";
 
 const videoCache = new ExpiryMap<string, Video>(1000 * 60 * 60);
 

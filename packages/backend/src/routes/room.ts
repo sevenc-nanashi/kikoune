@@ -6,8 +6,8 @@ import consola from "consola";
 import { Hono } from "hono";
 import { z } from "zod";
 
-import * as db from "~/db.js";
-import { fetchSession, getVideo } from "~/nico.js";
+import * as db from "~/db.ts";
+import { fetchSession, getVideo } from "~/nico.ts";
 
 const app = new Hono<{
   Variables: { userId: string };

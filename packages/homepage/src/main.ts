@@ -10,7 +10,7 @@ import App from "./App.vue";
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ts-expect-errorだとエラーになる
   // @ts-ignore 何故か型がない
-  import("budoux/module/webcomponents/budoux-ja");
+  import("../node_modules/budoux/module/webcomponents/budoux-ja");
 })();
 
 export const createApp = ViteSSG(App);

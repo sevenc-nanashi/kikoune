@@ -1,8 +1,3 @@
-@import "@fontsource/zen-kaku-gothic-new";
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
 :root {
   min-height: 100vh;
   background: #111;
@@ -28,7 +23,7 @@
 }
 
 // ミニプレイヤー
-@media (max-height: 240px) {
+@media (height <= 240px) {
   .hidden-on-miniplayer {
     display: none !important;
   }
