@@ -20,11 +20,15 @@ const showTooltip = ref(false);
 </script>
 <template>
   <div
-    class="cafe-user absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out pointer-events-none"
-    :class="{
-      'z-30': store.me.id !== props.id,
-      'z-40': store.me.id === props.id,
-    }"
+    class="cafe-user"
+    un-absolute
+    un-translate-x="-1/2"
+    un-translate-y="-1/2"
+    un-transition="all"
+    un-duration="300"
+    un-ease="out"
+    un-pointer-events="none"
+    :un-z="store.me.id === props.id ? '40' : '30'"
     :style="{
       left: `${50 + (memberState.x || 0) * 50}%`,
       top: `${50 + (memberState.y || 0) * 50}%`,
@@ -33,21 +37,35 @@ const showTooltip = ref(false);
     <Transition name="fade">
       <p
         v-if="memberState.message && memberState.message.trim()"
-        :class="[
-          'absolute top-[-0.5rem] -translate-y-full w-48 break-words left-1/2 -translate-x-1/2 text-center',
-          'text-sm p-1 text-slate-950 rounded border-[1px] border-cyan-500 bg-cyan-100 drop-shadow-md transition-all',
-        ]"
+        un-absolute
+        un-top="[-0.5rem]"
+        un-translate-y="-full"
+        un-w="48"
+        un-break="words"
+        un-left="1/2"
+        un-translate-x="-1/2"
+        un-text="sm center slate-950"
+        un-p="1"
+        un-rounded
+        un-border="[1px] cyan-500"
+        un-bg="cyan-100"
+        un-drop-shadow="md"
+        un-transition="all"
       >
         {{ memberState.message }}
       </p>
     </Transition>
   </div>
   <div
-    class="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out cafe-user drop-shadow"
-    :class="{
-      'z-10': store.me.id !== props.id,
-      'z-20': store.me.id === props.id,
-    }"
+    class="cafe-user"
+    un-absolute
+    un-translate-x="-1/2"
+    un-translate-y="-1/2"
+    un-transition="all"
+    un-duration="300"
+    un-ease="out"
+    un-drop-shadow
+    :un-z="store.me.id === props.id ? '20' : '10'"
     :style="{
       left: `${50 + (memberState.x || 0) * 50}%`,
       top: `${50 + (memberState.y || 0) * 50}%`,
@@ -57,20 +75,25 @@ const showTooltip = ref(false);
   >
     <img
       :src="avatarUrl"
-      class="absolute inset-0 rounded-full outline-cyan-500 outline-4 outline-offset-4"
-      :class="{
-        outline: speaking,
-      }"
+      un-absolute
+      un-inset="0"
+      un-rounded="full"
+      :un-outline="speaking ? '4 cyan-500' : null"
+      :un-outline-offset="speaking ? '4' : null"
       :style="{
         animation: memberState.rotate || speaking ? 'spin 5s linear infinite' : 'none',
       }"
     />
     <p
-      class="absolute top-16 left-0 right-0 text-center text-xs text-white drop-shadow break-words pointer-events-none"
-      :class="{
-        'opacity-0': !showTooltip,
-        'opacity-100': showTooltip,
-      }"
+      un-absolute
+      un-top="16"
+      un-left="0"
+      un-right="0"
+      un-text="center xs white"
+      un-drop-shadow
+      un-break="words"
+      un-pointer-events="none"
+      :un-opacity="showTooltip ? '100' : '0'"
     >
       {{ name }}
     </p>

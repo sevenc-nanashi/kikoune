@@ -1,7 +1,13 @@
 import { defineConfig, presetAttributify, presetWind4, transformerDirectives } from "unocss";
 
 export default defineConfig({
-  presets: [presetWind4(), presetAttributify()],
+  presets: [
+    presetWind4(),
+    presetAttributify({
+      prefix: "un-",
+      prefixedOnly: true,
+    }),
+  ],
   transformers: [transformerDirectives()],
   theme: {
     font: {

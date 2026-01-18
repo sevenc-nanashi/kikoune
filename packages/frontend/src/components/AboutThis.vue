@@ -26,12 +26,11 @@ const onTitleClick = () => {
 };
 </script>
 <template>
-  <div class="min-h-full w-full bg-black/50 p-2">
+  <div un-min-h="full" un-w="full" un-bg="black/50" un-p="2">
     <h1
-      class="font-bold text-xl"
-      :class="{
-        'text-cyan-500': store.debug,
-      }"
+      un-font="bold"
+      un-text="xl"
+      :un-text="store.debug ? 'cyan-500' : null"
       @click="onTitleClick"
     >
       Kikoune
@@ -41,11 +40,13 @@ const onTitleClick = () => {
         Discordのアクティビティで動く、Kiite&nbsp;Cafe風にニコニコ動画を同時再生するアプリ。
       </budoux-ja>
     </p>
-    <ul class="pt-2">
+    <ul un-pt="2">
       <li>
         開発者：
         <a
-          class="text-[#48b0d5] hover:underline cursor-pointer"
+          un-text="[#48b0d5]"
+          un-hover="underline"
+          un-cursor="pointer"
           @click="openExternal('https://sevenc7c.com')"
           >名無し。
         </a>
@@ -53,7 +54,9 @@ const onTitleClick = () => {
       <li>
         ホームページ：
         <a
-          class="text-cyan-500 hover:underline cursor-pointer"
+          un-text="cyan-500"
+          un-hover="underline"
+          un-cursor="pointer"
           @click="openExternal('https://sevenc7c.com/kikoune')"
           >sevenc7c.com/kikoune
         </a>
@@ -61,7 +64,9 @@ const onTitleClick = () => {
       <li>
         サポートサーバー：
         <a
-          class="text-cyan-500 hover:underline cursor-pointer"
+          un-text="cyan-500"
+          un-hover="underline"
+          un-cursor="pointer"
           @click="openExternal('https://discord.gg/CE3h4NNK2W')"
           >discord.gg/CE3h4NNK2W
         </a>
@@ -69,7 +74,9 @@ const onTitleClick = () => {
       <li>
         ソースコード：
         <a
-          class="text-cyan-500 hover:underline cursor-pointer"
+          un-text="cyan-500"
+          un-hover="underline"
+          un-cursor="pointer"
           @click="openExternal('https://github.com/sevenc-nanashi/kikoune')"
           >sevenc-nanashi/kikoune
         </a>
@@ -77,7 +84,10 @@ const onTitleClick = () => {
       <li>
         ビルド：
         <a
-          class="text-cyan-500 hover:underline cursor-pointer font-mono"
+          un-text="cyan-500"
+          un-hover="underline"
+          un-cursor="pointer"
+          un-font="mono"
           @click="openExternal(`https://github.com/sevenc-nanashi/kikoune/tree/${sha}`)"
           >{{ sha }}
         </a>

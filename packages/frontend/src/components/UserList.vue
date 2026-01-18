@@ -81,22 +81,36 @@ const orderedMembers = computed(() => {
 </script>
 <template>
   <div
-    class="bg-black/25 h-screen sm:h-auto min-h-full w-full relative flex flex-col gap-1 overflow-y-scroll sm:overflow-y-auto pt-1 pb-8 sm:pb-0"
+    un-bg="black/25"
+    un-h="screen sm:auto"
+    un-min-h="full"
+    un-w="full"
+    un-relative
+    un-flex="~ col"
+    un-gap="1"
+    un-overflow-y="scroll sm:auto"
+    un-pt="1"
+    un-pb="8 sm:0"
   >
     <div
       v-for="member in orderedMembers"
       :key="member.id"
-      class="bg-black/50 p-2 flex gap-2 relative items-center"
+      un-bg="black/50"
+      un-p="2"
+      un-flex
+      un-gap="2"
+      un-relative
+      un-items="center"
     >
-      <img class="rounded-full h-8 mr-1 inline" :src="store.getAvatarUrl(member.id)" />
-      <div class="text-md">{{ store.getName(member.id) }}</div>
+      <img un-rounded="full" un-h="8" un-mr="1" un-inline :src="store.getAvatarUrl(member.id)" />
+      <div un-text="md">{{ store.getName(member.id) }}</div>
       <TooltipIcon
         v-if="host && host.id === member.id"
         name="md-star"
         tooltip="ホスト"
         direction="bottom"
       />
-      <div class="flex-grow" />
+      <div un-flex-grow />
 
       <TooltipIcon
         v-if="host && moveHostConfirm === member.id"
@@ -125,11 +139,16 @@ const orderedMembers = computed(() => {
       />
     </div>
     <div
-      class="w-full sticky bottom-0 py-2 left-0 bg-black transition-opacity grid place-content-center"
-      :class="{
-        'text-red-500': popupType === 'error',
-        'text-green-500': popupType === 'info',
-      }"
+      un-w="full"
+      un-sticky
+      un-bottom="0"
+      un-py="2"
+      un-left="0"
+      un-bg="black"
+      un-transition="opacity"
+      un-grid
+      un-place-content="center"
+      :un-text="popupType === 'error' ? 'red-500' : popupType === 'info' ? 'green-500' : null"
       :style="{ opacity: popupCount > 0 ? 1 : 0 }"
     >
       {{ popup }}

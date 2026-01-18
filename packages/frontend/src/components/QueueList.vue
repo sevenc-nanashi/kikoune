@@ -259,93 +259,149 @@ const placeholder = computed(() => {
 });
 </script>
 <template>
-  <div class="bg-black/25 h-full w-full relative flex flex-col">
+  <div un-bg="black/25" un-h="full" un-w="full" un-relative un-flex="~ col">
     <div
       v-if="searchResult.length > 0"
-      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll"
+      un-flex-grow
+      un-flex="~ col"
+      un-relative
+      un-gap="1"
+      un-h="screen sm:auto"
+      un-pt="1"
+      un-pb="1 xs:max-sm:20"
+      un-overflow-y="scroll"
     >
-      <p class="text-xl">「{{ searchQuery }}」の検索結果</p>
-      <div v-if="isSubmitting" class="bg-slate-500/25 absolute inset-0 cursor-wait z-10" />
-      <div v-for="(video, i) in searchResult" :key="i" class="flex flex-row gap-1 relative">
-        <div class="w-16 h-16 rounded-md overflow-hidden relative">
+      <p un-text="xl">「{{ searchQuery }}」の検索結果</p>
+      <div
+        v-if="isSubmitting"
+        un-bg="slate-500/25"
+        un-absolute
+        un-inset="0"
+        un-cursor="wait"
+        un-z="10"
+      />
+      <div v-for="(video, i) in searchResult" :key="i" un-flex="~ row" un-gap="1" un-relative>
+        <div un-w="16" un-h="16" un-rounded="md" un-overflow="hidden" un-relative>
           <div
-            class="bg-cover bg-center absolute inset-[-1rem]"
+            un-bg="cover center"
+            un-absolute
+            un-inset="[-1rem]"
             :style="{
               backgroundImage: `url(${toExternal(video.thumbnailUrl)})`,
             }"
           />
         </div>
         <div
-          class="flex bg-black/50 hover:bg-black cursor-pointer items-center w-[calc(100%_-_4.25rem)] p-2"
+          un-flex
+          un-bg="black/50 hover:black"
+          un-cursor="pointer"
+          un-items="center"
+          un-w="[calc(100%_-_4.25rem)]"
+          un-p="2"
           @click="confirmSearch(video.contentId)"
         >
-          <div class="text-md">{{ video.title }}</div>
+          <div un-text="md">{{ video.title }}</div>
         </div>
       </div>
     </div>
-    <div v-else-if="queue.length === 0" class="grid place-content-center flex-grow">
-      <p class="text-xl">キューは空です。</p>
+    <div v-else-if="queue.length === 0" un-grid un-place-content="center" un-flex-grow>
+      <p un-text="xl">キューは空です。</p>
     </div>
     <div
       v-else-if="!store.isHost && store.sessionSetting.queueHidden"
-      class="grid place-content-center flex-grow"
+      un-grid
+      un-place-content="center"
+      un-flex-grow
     >
-      <p class="text-xl">キューは非表示にされています。</p>
+      <p un-text="xl">キューは非表示にされています。</p>
     </div>
     <Draggable
       v-else
       v-model="queue"
       item-key="nonce"
       :handle="store.sessionSetting.random ? '.__disabled__' : '.handle'"
-      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll overflow-x-hidden"
+      un-flex-grow
+      un-flex="~ col"
+      un-relative
+      un-gap="1"
+      un-h="screen sm:auto"
+      un-pt="1"
+      un-pb="1 xs:max-sm:20"
+      un-overflow-y="scroll"
+      un-overflow-x="hidden"
       @sort="setReordered"
     >
       <template #header>
-        <p v-if="store.isHost && !store.sessionSetting.random" class="pl-2">
+        <p v-if="store.isHost && !store.sessionSetting.random" un-pl="2">
           数字をドラッグして順番を変更できます。
         </p>
-        <p v-if="store.sessionSetting.random" class="pl-2">ランダム再生が有効です。</p>
+        <p v-if="store.sessionSetting.random" un-pl="2">ランダム再生が有効です。</p>
       </template>
       <template #item="{ element: video, index: i }">
-        <div class="bg-black/50 flex gap-2 relative">
+        <div un-bg="black/50" un-flex="~ row" un-gap="2" un-relative>
           <div
-            class="w-8 bg-black grid place-content-center transition-colors duration-200"
+            un-w="8"
+            :un-bg="
+              !temporaryAdded.includes(video) &&
+              highlightReordered &&
+              reorderedItems.includes(video.nonce)
+                ? 'cyan-900'
+                : 'black'
+            "
+            un-grid
+            un-place-content="center"
+            un-transition="colors"
+            un-duration="200"
             :class="{
-              'handle cursor-grab':
+              handle:
                 !temporaryAdded.includes(video) && store.isHost && !store.sessionSetting.random,
-              'text-opacity-50': temporaryAdded.includes(video),
-              '!bg-cyan-900':
-                !temporaryAdded.includes(video) &&
-                highlightReordered &&
-                reorderedItems.includes(video.nonce),
             }"
+            :un-cursor="
+              !temporaryAdded.includes(video) && store.isHost && !store.sessionSetting.random
+                ? 'grab'
+                : null
+            "
+            :un-text-opacity="temporaryAdded.includes(video) ? '50' : null"
           >
             {{ temporaryAdded.includes(video) ? "-" : store.sessionSetting.random ? "?" : i + 1 }}
           </div>
-          <div class="flex p-2 gap-2 sm:gap-1 flex-col flex-grow">
-            <div class="flex flex-col sm:flex-row sm:items-end relative">
-              <div class="text-md">{{ video.title }}</div>
-              <div class="sm:pl-4 font-light text-xs">{{ video.author }}</div>
+          <div un-flex="~ col" un-p="2" un-gap="2 sm:1" un-flex-grow>
+            <div un-flex="~ col sm:row" un-items="sm:end" un-relative>
+              <div un-text="md">{{ video.title }}</div>
+              <div un-pl="sm:4" un-font="light" un-text="xs">{{ video.author }}</div>
             </div>
-            <div class="text-xs flex flex-row items-center">
+            <div un-text="xs" un-flex="~ row" un-items="center">
               <img
-                class="rounded-full h-5 mr-1 inline"
+                un-rounded="full"
+                un-h="5"
+                un-mr="1"
+                un-inline
                 :src="store.getAvatarUrl(video.requestedBy)"
               />
-              <span class="text-cyan-500">{{ store.getName(video.requestedBy) }}</span
+              <span un-text="cyan-500">{{ store.getName(video.requestedBy) }}</span
               >さんのリクエスト
             </div>
 
-            <div class="flex sm:hidden flex-row gap-2">
+            <div un-flex="~ row" un-gap="2" un-sm="hidden">
               <TooltipIcon
                 v-if="store.isHost || video.requestedBy === store.me.id"
-                class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+                un-self="center"
+                un-cursor="pointer"
+                un-h="full"
+                un-aspect="square"
+                un-grid
+                un-place-items="center"
                 name="md-delete"
                 tooltip="削除"
                 @click="deleteVideo(video)"
               />
               <TooltipIcon
-                class="self-center cursor-pointer h-full aspect-square grid place-items-center"
+                un-self="center"
+                un-cursor="pointer"
+                un-h="full"
+                un-aspect="square"
+                un-grid
+                un-place-items="center"
                 name="md-openinnew"
                 tooltip="開く"
                 @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
@@ -353,16 +409,28 @@ const placeholder = computed(() => {
             </div>
           </div>
 
-          <div class="flex-row hidden sm:flex pr-2">
+          <div un-flex="sm:row" un-hidden un-sm="flex" un-pr="2">
             <TooltipIcon
               v-if="store.isHost || video.requestedBy === store.me.id"
-              class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
+              un-self="center"
+              un-cursor="pointer"
+              un-h="3/4"
+              un-aspect="square"
+              un-grid
+              un-place-items="center"
+              un-p="3"
               name="md-delete"
               tooltip="削除"
               @click="deleteVideo(video)"
             />
             <TooltipIcon
-              class="self-center cursor-pointer h-3/4 aspect-square grid place-items-center p-3"
+              un-self="center"
+              un-cursor="pointer"
+              un-h="3/4"
+              un-aspect="square"
+              un-grid
+              un-place-items="center"
+              un-p="3"
               name="md-openinnew"
               tooltip="開く"
               @click="openExternal(`https://www.nicovideo.jp/watch/${video.id}`)"
@@ -373,18 +441,37 @@ const placeholder = computed(() => {
     </Draggable>
 
     <div
-      class="absolute w-full p-2 h-16 bottom-8 left-0 bg-black transition-opacity pointer-events-none grid place-content-center"
-      :class="{
-        'text-red-500': popupType === 'error',
-        'text-green-500': popupType === 'info',
-      }"
+      un-absolute
+      un-w="full"
+      un-p="2"
+      un-h="16"
+      un-bottom="8"
+      un-left="0"
+      un-bg="black"
+      un-transition="opacity"
+      un-pointer-events="none"
+      un-grid
+      un-place-content="center"
+      :un-text="popupType === 'error' ? 'red-500' : popupType === 'info' ? 'green-500' : null"
       :style="{ opacity: popupCount > 0 ? 1 : 0 }"
     >
       {{ popup }}
     </div>
-    <form class="w-full flex h-8 queue-form relative z-50" @submit.prevent="onSubmit">
+    <form
+      class="queue-form"
+      un-w="full"
+      un-flex
+      un-h="8"
+      un-relative
+      un-z="50"
+      @submit.prevent="onSubmit"
+    >
       <div
-        class="absolute inset-0 bg-slate-500/25 transition-opacity z-50"
+        un-absolute
+        un-inset="0"
+        un-bg="slate-500/25"
+        un-transition="opacity"
+        un-z="50"
         :style="{
           pointerEvents: isSubmitting ? 'auto' : 'none',
           opacity: isSubmitting ? 1 : 0,
@@ -393,20 +480,29 @@ const placeholder = computed(() => {
       <input
         v-model="videoSource"
         :disabled="!store.canQueue"
-        class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none w-[calc(100%_-_4rem)] sm:w-auto"
-        :class="{
-          'cursor-not-allowed opacity-50': !store.canQueue,
-        }"
+        un-bg="white"
+        un-p="2"
+        un-text="slate-950"
+        un-outline="none"
+        un-flex-grow
+        un-rounded="none"
+        un-w="[calc(100%_-_4rem)] sm:auto"
+        :un-cursor="store.canQueue ? null : 'not-allowed'"
+        :un-opacity="store.canQueue ? null : '50'"
         :placeholder
       />
       <button
         :disabled="!store.canQueue"
         type="submit"
-        class="h-full bg-black px-4 sm:p-1 w-16 rounded-none"
-        :class="{
-          'cursor-pointer active:bg-cyan-500': store.canQueue,
-          'opacity-50 cursor-not-allowed': !store.canQueue,
-        }"
+        un-h="full"
+        un-bg="black"
+        un-px="4"
+        un-p="sm:1"
+        un-w="16"
+        un-rounded="none"
+        :un-cursor="store.canQueue ? 'pointer' : 'not-allowed'"
+        :un-opacity="store.canQueue ? null : '50'"
+        :un-active="store.canQueue ? 'bg-cyan-500' : null"
       >
         {{ buttonState === "search" ? "検索" : buttonState === "submit" ? "追加" : "戻る" }}
       </button>

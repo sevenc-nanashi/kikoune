@@ -3,7 +3,15 @@ const buildInfo = import.meta.env.VITE_COMMIT;
 const isDev = import.meta.env.DEV;
 </script>
 <template>
-  <div class="absolute left-3 bottom-3 hidden xs:block opacity-50 pointer-events-none">
+  <div
+    un-absolute
+    un-left="3"
+    un-bottom="3"
+    un-hidden
+    un-opacity="50"
+    un-pointer-events="none"
+    un-xs="block"
+  >
     Build: {{ buildInfo }}{{ isDev ? " (dev)" : "" }}
   </div>
 </template>

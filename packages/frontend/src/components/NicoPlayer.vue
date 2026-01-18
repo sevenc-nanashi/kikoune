@@ -215,26 +215,45 @@ onUnmounted(() => {
 </script>
 <template>
   <div
-    class="relative aspect-video"
-    :class="{
-      'bg-slate-500 place-items-center place-content-center grid': !videoId,
-      'bg-black': status === 'play',
-    }"
+    un-relative
+    un-aspect="video"
+    :un-bg="!videoId ? 'slate-500' : status === 'play' ? 'black' : null"
+    :un-grid="!videoId ? '~' : null"
+    :un-place-items="!videoId ? 'center' : null"
+    :un-place-content="!videoId ? 'center' : null"
   >
-    <div v-if="store.debug" class="absolute top-0 right-0 p-2 bg-white/50 text-black text-xs z-10">
+    <div
+      v-if="store.debug"
+      un-absolute
+      un-top="0"
+      un-right="0"
+      un-p="2"
+      un-bg="white/50"
+      un-text="black xs"
+      un-z="10"
+    >
       Server time: {{ serverTime }}<br />
       Time delay: {{ store.delay }}<br />
       Status: {{ status }}<br />
       Muted: {{ lastMuted }}
     </div>
-    <iframe v-if="videoId" ref="player" :key="nonce" :src class="block absolute w-full h-full" />
+    <iframe
+      v-if="videoId"
+      ref="player"
+      :key="nonce"
+      :src
+      un-block
+      un-absolute
+      un-w="full"
+      un-h="full"
+    />
     <template v-else-if="store.session.startedAt === sessionNotStarted">
-      <h1 class="text-2xl">同期中...</h1>
+      <h1 un-text="2xl">同期中...</h1>
     </template>
     <template v-else>
-      <h1 class="text-2xl">待機中...</h1>
-      <p v-if="store.canQueue" class="hidden sm:block">右の欄から動画を再生できます。</p>
-      <p v-if="store.canQueue" class="hidden xs:max-sm:block">キュー画面から動画を再生できます。</p>
+      <h1 un-text="2xl">待機中...</h1>
+      <p v-if="store.canQueue" un-hidden un-sm="block">右の欄から動画を再生できます。</p>
+      <p v-if="store.canQueue" un-hidden un-xs:max-sm="block">キュー画面から動画を再生できます。</p>
     </template>
   </div>
 </template>

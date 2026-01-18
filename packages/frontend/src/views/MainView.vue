@@ -107,30 +107,34 @@ watch(
 </script>
 <template>
   <div
-    class="bg-white/25 absolute inset-0 place-items-center place-content-center grid transition-opacity z-20"
+    un-bg="white/25"
+    un-absolute
+    un-inset="0"
+    un-place-items="center"
+    un-place-content="center"
+    un-grid
+    un-transition="opacity"
+    un-z="20"
     :style="{
       opacity: errorCount > 1 ? 1 : 0,
       pointerEvents: errorCount > 1 ? 'auto' : 'none',
     }"
   />
-  <div class="xs:relative root">
-    <div class="xs:relative flex top-section h-full justify-center sm:justify-normal">
-      <NicoPlayer class="nico-player max-sm:w-full sm:w-auto xs:h-full aspect-video" />
-      <InfoPanel class="hidden sm:flex h-full hidden-on-miniplayer" />
+  <div class="root" un-xs="relative">
+    <div class="top-section" un-xs="relative" un-flex="~" un-h="full" un-justify="center sm:normal">
+      <NicoPlayer class="nico-player" un-w="max-sm:full sm:auto" un-h="xs:full" un-aspect="video" />
+      <InfoPanel class="hidden-on-miniplayer" un-hidden un-sm="flex" un-h="full" />
     </div>
-    <NowPlaying class="hidden xs:flex h-full hidden-on-miniplayer" />
-    <CafeSpace class="hidden xs:block hidden-on-miniplayer" />
-    <CafeController class="hidden xs:flex z-10 hidden-on-miniplayer" />
-    <MobileView class="hidden xs:max-sm:block z-10 mobile-view hidden-on-miniplayer" />
+    <NowPlaying class="hidden-on-miniplayer" un-hidden un-xs="flex" un-h="full" />
+    <CafeSpace class="hidden-on-miniplayer" un-hidden un-xs="block" />
+    <CafeController class="hidden-on-miniplayer" un-hidden un-xs="flex" un-z="10" />
+    <MobileView class="mobile-view hidden-on-miniplayer" un-hidden un-xs:max-sm="block" un-z="10" />
   </div>
-  <div class="background-container hidden xs:block">
+  <div class="background-container" un-hidden un-xs="block">
     <div
       class="background"
       :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
-      :class="{
-        'bg-slate-500': state == 'idle',
-        'bg-slate-900': state == 'sync',
-      }"
+      :un-bg="state === 'idle' ? 'slate-500' : state === 'sync' ? 'slate-900' : null"
     />
   </div>
 </template>

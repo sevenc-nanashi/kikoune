@@ -53,29 +53,45 @@ const openProfile = () => {
 const title = computed(() => store.session.video?.title ?? "Kikoune");
 </script>
 <template>
-  <div class="*:bg-black/75 gap-2 flex-row">
-    <div class="h-full aspect-square bg-slate-500 relative rounded overflow-hidden hidden sm:block">
+  <div class="*:bg-black/75" un-gap="2" un-flex="~ row">
+    <div
+      un-h="full"
+      un-aspect="square"
+      un-bg="slate-500"
+      un-relative
+      un-rounded
+      un-overflow="hidden"
+      un-hidden
+      un-sm="block"
+    >
       <div
-        class="absolute inset-[-16%] bg-cover bg-center"
+        un-absolute
+        un-inset="[-16%]"
+        un-bg="cover center"
         :style="{
           backgroundImage: `url('${store.thumbnailUrl}')`,
         }"
       />
     </div>
     <div
-      class="h-full p-2 flex-grow flex flex-col sm:flex-row items-start sm:items-center info-container"
+      class="info-container"
+      un-h="full"
+      un-p="2"
+      un-flex-grow
+      un-flex="~ col sm:row"
+      un-items="start sm:center"
     >
-      <div class="my-auto flex-grow text-section">
-        <h2 class="text-xl font-bold">
+      <div class="text-section" un-my="auto" un-flex-grow>
+        <h2 un-text="xl" un-font="bold">
           {{ title }}
         </h2>
-        <p class="text-md">
+        <p un-text="md">
           <template v-if="store.session.video">
             {{ store.session.video.author }}
           </template>
           <template v-else>
             Developed by
-            <span class="text-[#48b0d5] cursor-pointer hover:underline" @click="openProfile"
+            <span un-text="[#48b0d5]" un-cursor="pointer" un-hover="underline" @click="openProfile"
               >Nanashi.</span
             >
           </template>
@@ -83,13 +99,20 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       </div>
       <div
         v-if="store.session.video"
-        class="w-full sm:w-auto xs:max-sm:pt-2 flex flex-row items-center"
+        un-w="full sm:auto"
+        un-pt="xs:max-sm:2"
+        un-flex="~ row"
+        un-items="center"
       >
         <TooltipIcon
           name="md-openinnew"
           tooltip="ブラウザで開く"
           offset="2rem"
-          class="w-6 h-6 mr-2 hidden xs:max-sm:block"
+          un-w="6"
+          un-h="6"
+          un-mr="2"
+          un-hidden
+          un-xs:max-sm="block"
           @click="openVideo"
         />
         <TooltipIcon
@@ -97,24 +120,36 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
           name="md-fastforward"
           tooltip="スキップ"
           :disabled="skipped"
-          class="w-6 h-6 mr-2"
+          un-w="6"
+          un-h="6"
+          un-mr="2"
           @click="skipVideo"
         />
-        <div class="flex-grow sm:hidden" />
-        <span class="text-sm requester-name">
+        <div un-flex-grow un-sm="hidden" />
+        <span class="requester-name" un-text="sm">
           {{ store.getName(store.session.video.requestedBy) }}
         </span>
         <img
-          class="rounded-full ml-1 w-6 h-6"
+          un-rounded="full"
+          un-ml="1"
+          un-w="6"
+          un-h="6"
           :src="store.getAvatarUrl(store.session.video.requestedBy)"
         />
       </div>
     </div>
     <a
-      class="h-full aspect-square place-items-center transition-colors hidden sm:grid hover:bg-black cursor-pointer"
+      un-h="full"
+      un-aspect="square"
+      un-place-items="center"
+      un-transition="colors"
+      un-hidden
+      un-sm="grid"
+      un-hover="bg-black"
+      un-cursor="pointer"
       @click="openVideo"
     >
-      <v-icon name="md-openinnew" class="w-1/2 h-1/2" :disabled="!store.session.video" />
+      <v-icon name="md-openinnew" un-w="1/2" un-h="1/2" :disabled="!store.session.video" />
     </a>
   </div>
 </template>

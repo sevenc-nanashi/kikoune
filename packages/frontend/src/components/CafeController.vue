@@ -60,46 +60,81 @@ const onSubmit = () => {
 };
 </script>
 <template>
-  <div class="w-full flex xs:max-sm:z-20 flex-row gap-2 bottom-0 sm:bottom-auto relative">
+  <div un-w="full" un-flex="~ row" un-gap="2" un-bottom="0 sm:auto" un-relative un-z="xs:max-sm:20">
     <button
-      class="h-10 sm:h-full aspect-square sm:aspect-auto sm:py-0 sm:px-4 absolute sm:relative right-2 bottom-[6.5rem] rounded-full sm:rounded-none sm:right-auto sm:bottom-auto drop-shadow-md sm:drop-shadow-none"
-      :class="{
-        'bg-black sm:bg-black/50 focus:bg-black hover:bg-black': !rotate,
-        'bg-cyan-500': rotate,
-      }"
+      un-h="10 sm:full"
+      un-aspect="square sm:auto"
+      un-absolute
+      un-right="2 sm:auto"
+      un-bottom="[6.5rem] sm:auto"
+      un-rounded="full sm:none"
+      un-drop-shadow="md sm:none"
+      un-py="sm:0"
+      un-px="sm:4"
+      un-sm="relative"
+      :un-bg="rotate ? 'cyan-500' : 'black sm:black/50'"
+      :un-focus="rotate ? null : 'bg-black'"
+      :un-hover="rotate ? null : 'bg-black'"
       @click="switchRotate"
     >
-      <span class="hidden sm:inline">回る</span>
-      <v-icon class="sm:!hidden inline" name="md-refresh" />
+      <span un-hidden un-sm="inline">回る</span>
+      <v-icon un-inline un-sm="!hidden" name="md-refresh" />
     </button>
-    <form class="flex-grow flex flex-row gap-2" @submit.prevent="onSubmit">
+    <form un-flex-grow un-flex="~ row" un-gap="2" @submit.prevent="onSubmit">
       <input
         ref="message"
         :maxlength="maxMessageLength"
         placeholder="吹き出しの内容を入力..."
-        class="bg-white p-2 text-slate-950 outline-none flex-grow rounded-none sm:placeholder-transparent"
+        un-bg="white"
+        un-p="2"
+        un-text="slate-950"
+        un-outline="none"
+        un-flex-grow
+        un-rounded="none"
+        un-placeholder="sm:transparent"
       />
       <button
         type="submit"
         :maxlength="maxMessageLength"
-        class="h-10 absolute rounded-full aspect-square bottom-14 right-2 block sm:hidden drop-shadow-md sm:drop-shadow-none"
-        :class="{
-          'bg-black': mobileSend,
-          'bg-cyan-500': !mobileSend,
-        }"
+        un-h="10"
+        un-absolute
+        un-rounded="full"
+        un-aspect="square"
+        un-bottom="14"
+        un-right="2"
+        un-block
+        un-drop-shadow="md sm:none"
+        un-sm="hidden"
+        :un-bg="mobileSend ? 'black' : 'cyan-500'"
       >
         <v-icon v-if="mobileSend" name="md-message" />
         <v-icon v-else name="md-close" />
       </button>
       <button
         type="submit"
-        class="h-full bg-black/50 focus:bg-black hover:bg-black p-3 w-36 cursor-pointer active:bg-cyan-500 hidden sm:block"
+        un-h="full"
+        un-bg="black/50"
+        un-focus="bg-black"
+        un-hover="bg-black"
+        un-p="3"
+        un-w="36"
+        un-cursor="pointer"
+        un-active="bg-cyan-500"
+        un-hidden
+        un-sm="block"
       >
         吹き出し
       </button>
     </form>
     <button
-      class="h-full bg-black/50 focus:bg-black hover:bg-black px-4 active:bg-cyan-500 hidden sm:block"
+      un-h="full"
+      un-bg="black/50"
+      un-focus="bg-black"
+      un-hover="bg-black"
+      un-px="4"
+      un-active="bg-cyan-500"
+      un-hidden
+      un-sm="block"
       @click="clearMessage"
     >
       消す

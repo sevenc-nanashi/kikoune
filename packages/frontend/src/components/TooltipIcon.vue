@@ -23,17 +23,24 @@ const props = withDefaults(
 <template>
   <TooltipRoot>
     <TooltipTrigger>
-      <button class="relative" v-bind="$attrs">
+      <button un-relative v-bind="$attrs">
         <v-icon
           :name="props.name"
-          class="w-full h-full"
-          :class="{ 'opacity-50': props.disabled }"
+          un-w="full"
+          un-h="full"
+          :un-opacity="props.disabled ? '50' : ''"
         />
       </button>
     </TooltipTrigger>
     <TooltipPortal>
       <TooltipContent
-        class="w-max bg-black/75 text-white text-xs px-3 py-1 pointer-events-none transition-all"
+        un-w="max"
+        un-bg="black/75"
+        un-text="white xs"
+        un-px="3"
+        un-py="1"
+        un-pointer-events="none"
+        un-transition="all"
         :side="props.direction"
       >
         {{ props.tooltip }}

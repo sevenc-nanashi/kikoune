@@ -105,16 +105,24 @@ const isBrowser = !(
 );
 </script>
 <template>
-  <div class="w-screen h-screen place-items-center place-content-center grid bg-gray-900 z-100">
-    <div class="absolute inset-0 cursor-wait" />
-    <LogoSvg class="h-12 sm:h-32" />
-    <p class="text-xl sm:text-2xl">
+  <div
+    un-w="screen"
+    un-h="screen"
+    un-place-items="center"
+    un-place-content="center"
+    un-grid
+    un-bg="gray-900"
+    un-z="100"
+  >
+    <div un-absolute un-inset="0" un-cursor="wait" />
+    <LogoSvg un-h="12 sm:32" />
+    <p un-text="xl sm:2xl">
       Developed by
-      <span class="text-[#48b0d5]">Nanashi.</span>
+      <span un-text="[#48b0d5]">Nanashi.</span>
     </p>
-    <hr class="border-b-[1px] border-white w-full my-2 xs:my-5" />
-    <p class="text-xl sm:text-2xl">ログイン中...</p>
-    <p v-if="isBrowser" class="text-xl">アプリ版から参加することを推奨します。</p>
+    <hr un-border-b="[1px]" un-border="white" un-w="full" un-my="2 xs:5" />
+    <p un-text="xl sm:2xl">ログイン中...</p>
+    <p v-if="isBrowser" un-text="xl">アプリ版から参加することを推奨します。</p>
     <BuildInfo />
   </div>
 </template>

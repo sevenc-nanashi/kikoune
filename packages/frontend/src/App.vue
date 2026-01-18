@@ -11,7 +11,10 @@ const store = useStore();
 <template>
   <TooltipProvider :delay-duration="250">
     <LoginView
-      class="transition-opacity absolute inset-0 duration-1000"
+      un-transition-opacity
+      un-absolute
+      un-inset="0"
+      un-duration="1000"
       :style="{
         opacity: store.$state.view === 'login' ? 1 : 0,
         pointerEvents: store.$state.view === 'login' ? 'auto' : 'none',

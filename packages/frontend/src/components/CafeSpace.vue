@@ -64,18 +64,39 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <div ref="container" class="relative" @click="move">
+  <div ref="container" un-relative @click="move">
     <CafeUser
       v-for="user in users"
       :id="user.id"
       :key="user.id"
       :speaking="!!speakingData[user.id]"
     />
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-0 left-0 w-[calc(50%_-_2px)] h-[calc(50%_-_2px)] bg-black/50" />
-      <div class="absolute top-0 right-0 w-1/2 h-[calc(50%_-_2px)] bg-black/50" />
-      <div class="absolute bottom-0 left-0 w-[calc(50%_-_2px)] h-1/2 bg-black/50" />
-      <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-black/50" />
+    <div un-absolute un-inset="0" un-pointer-events="none">
+      <div
+        un-absolute
+        un-top="0"
+        un-left="0"
+        un-w="[calc(50%_-_2px)]"
+        un-h="[calc(50%_-_2px)]"
+        un-bg="black/50"
+      />
+      <div
+        un-absolute
+        un-top="0"
+        un-right="0"
+        un-w="1/2"
+        un-h="[calc(50%_-_2px)]"
+        un-bg="black/50"
+      />
+      <div
+        un-absolute
+        un-bottom="0"
+        un-left="0"
+        un-w="[calc(50%_-_2px)]"
+        un-h="1/2"
+        un-bg="black/50"
+      />
+      <div un-absolute un-bottom="0" un-right="0" un-w="1/2" un-h="1/2" un-bg="black/50" />
     </div>
   </div>
 </template>

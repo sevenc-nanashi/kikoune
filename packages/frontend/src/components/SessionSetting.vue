@@ -54,26 +54,33 @@ const queueLimit = computed({
 });
 </script>
 <template>
-  <div class="bg-black/25 h-full w-full relative flex flex-col">
+  <div un-bg="black/25" un-h="full" un-w="full" un-relative un-flex="~ col">
     <div
-      class="flex-grow flex flex-col relative gap-1 h-screen pt-1 xs:max-sm:pb-20 pb-1 sm:h-auto overflow-y-scroll"
+      un-flex-grow
+      un-flex="~ col"
+      un-relative
+      un-gap="1"
+      un-h="screen sm:auto"
+      un-pt="1"
+      un-pb="1 xs:max-sm:20"
+      un-overflow-y="scroll"
     >
-      <p class="pl-2">ホストは殆どの設定を無視することができます。</p>
-      <div class="px-2 config-item">
+      <p un-pl="2">ホストは殆どの設定を無視することができます。</p>
+      <div class="config-item" un-px="2">
         <label>キューの追加を制限する <input v-model="queueLocked" type="checkbox" /></label>
         <p>キューの追加をホストのみに制限します。</p>
       </div>
-      <div class="px-2 config-item">
+      <div class="config-item" un-px="2">
         <label>キューを非表示にする <input v-model="queueHidden" type="checkbox" /></label>
         <p>キューを非表示にします。キューの追加を制限することを推奨します。</p>
       </div>
-      <div class="px-2 config-item">
+      <div class="config-item" un-px="2">
         <label
-          >キューの最大曲数 <input v-model="queueLimit" type="number" class="text-black" min="1"
+          >キューの最大曲数 <input v-model="queueLimit" type="number" un-text="black" min="1"
         /></label>
         <p>キューに追加できる最大曲数を制限します。</p>
       </div>
-      <div class="px-2 config-item">
+      <div class="config-item" un-px="2">
         <label>ランダム再生 <input v-model="random" type="checkbox" /></label>
         <p>キューをランダムな順序で再生します。</p>
       </div>

@@ -11,49 +11,44 @@ const formattedSession = computed(() => JSON.stringify(store.$state, null, 2));
 const logLevels = ["error", "warn", "log", "info", "debug"];
 </script>
 <template>
-  <div class="min-h-full w-full bg-black/50 p-2 overflow-y-auto">
+  <div un-min-h="full" un-w="full" un-bg="black/50" un-p="2" un-overflow-y="auto">
     <div>
       ビルド：
-      <span class="text-cyan-500 font-mono">{{ sha }} </span>
+      <span un-text="cyan-500" un-font="mono">{{ sha }} </span>
     </div>
     <div>
       <div>セッション：</div>
       <textarea
-        class="font-mono w-full h-64 text-black text-xs"
+        un-font="mono"
+        un-w="full"
+        un-h="64"
+        un-text="black xs"
         readonly
         :value="formattedSession"
       />
     </div>
     <div>
       <div>ログ：</div>
-      <div class="text-xs font-mono h-64 overflow-y-auto overflow-x-scroll">
+      <div un-text="xs" un-font="mono" un-h="64" un-overflow-y="auto" un-overflow-x="scroll">
         <div
           v-for="message in log.toReversed()"
           :key="message.date.toString()"
-          class="flex items-center gap-2"
+          un-flex="~ row"
+          un-items="center"
+          un-gap="2"
         >
           <span>{{ message.date.toISOString() }}</span>
           <span
-            :class="{
-              'bg-red-500': message.level === 0,
-              'bg-yellow-500': message.level === 1,
-              'bg-green-500': message.level === 2,
-              'bg-blue-500': message.level === 3,
-              'bg-gray-500': message.level === 4,
-            }"
-            class="rounded px-1 text-white text-xs"
+            :un-bg="['red-500', 'yellow-500', 'green-500', 'blue-500', 'gray-500'][message.level]"
+            un-rounded
+            un-px="1"
+            un-text="white xs"
           >
             {{ logLevels[message.level] }}
           </span>
           <span
             v-if="message.tag"
-            :class="{
-              'text-red-500': message.level === 0,
-              'text-yellow-500': message.level === 1,
-              'text-green-500': message.level === 2,
-              'text-blue-500': message.level === 3,
-              'text-gray-500': message.level === 4,
-            }"
+            :un-text="['red-500', 'yellow-500', 'green-500', 'blue-500', 'gray-500'][message.level]"
             >{{ message.tag }}</span
           >
           <span>{{ (message.args || []).map((obj) => obj.toString()).join(" ") }}</span>
