@@ -4,8 +4,41 @@ import { useStore } from "./store";
 import LoginView from "./views/LoginView.vue";
 import MainView from "./views/MainView.vue";
 import ErrorView from "./views/ErrorView.vue";
+import { useDiscordSdk } from "./plugins/useDiscordSdk";
+import { onMounted, onUnmounted } from "vue";
+import consola from "consola/browser";
+
+const log = consola.withTag("root");
 
 const store = useStore();
+const discordSdk = useDiscordSdk();
+
+const onLayoutUpdate = (event: { layout_mode: -1 | 0 | 1 | 2 }) => {
+  log.info("Layout mode update received:", event.layout_mode);
+  let layout: "focused" | "pip" | "grid" | "unhandled" = "unhandled";
+  switch (event.layout_mode) {
+    case -1:
+      layout = "unhandled";
+      break;
+    case 0:
+      layout = "focused";
+      break;
+    case 1:
+      layout = "pip";
+      break;
+    case 2:
+      layout = "grid";
+      break;
+  }
+  document.body.setAttribute("data-layout", layout);
+};
+onMounted(async () => {
+  await discordSdk.ready();
+  discordSdk.subscribe("ACTIVITY_LAYOUT_MODE_UPDATE", onLayoutUpdate);
+});
+onUnmounted(() => {
+  discordSdk.unsubscribe("ACTIVITY_LAYOUT_MODE_UPDATE", onLayoutUpdate);
+});
 </script>
 
 <template>

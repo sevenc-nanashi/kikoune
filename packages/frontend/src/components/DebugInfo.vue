@@ -23,6 +23,8 @@ const logLevels = ["error", "warn", "log", "info", "debug"];
         un-w="full"
         un-h="64"
         un-text="black xs"
+        un-p="2"
+        un-bg="white"
         readonly
         :value="formattedSession"
       />
@@ -30,18 +32,13 @@ const logLevels = ["error", "warn", "log", "info", "debug"];
     <div>
       <div>ログ：</div>
       <div un-text="xs" un-font="mono" un-h="64" un-overflow-y="auto" un-overflow-x="scroll">
-        <div
-          v-for="message in log.toReversed()"
-          :key="message.date.toString()"
-          un-flex="~ row"
-          un-items="center"
-          un-gap="2"
-        >
+        <div v-for="message in log.toReversed()" :key="message.date.toString()" un-gap="2">
           <span>{{ message.date.toISOString() }}</span>
           <span
             :un-bg="['red-500', 'yellow-500', 'green-500', 'blue-500', 'gray-500'][message.level]"
             un-rounded
             un-px="1"
+            un-ml="1"
             un-text="white xs"
           >
             {{ logLevels[message.level] }}
@@ -49,9 +46,10 @@ const logLevels = ["error", "warn", "log", "info", "debug"];
           <span
             v-if="message.tag"
             :un-text="['red-500', 'yellow-500', 'green-500', 'blue-500', 'gray-500'][message.level]"
+            un-ml="1"
             >{{ message.tag }}</span
           >
-          <span>{{ (message.args || []).map((obj) => obj.toString()).join(" ") }}</span>
+          <span un-ml="1">{{ (message.args || []).map((obj) => obj.toString()).join(" ") }}</span>
         </div>
       </div>
     </div>

@@ -26,20 +26,24 @@ watch(
   { immediate: true },
 );
 
-const tabs = computed(() => {
-  const ret: Record<string, string> = {
-    queue: "キュー",
-    users: "ユーザー",
-    about: "このアプリについて",
-  };
+type Panel = {
+  name: PanelName;
+  label: string;
+  icon: string;
+};
+const panels = computed(() => {
+  const panels: Panel[] = [
+    { name: "queue", label: "キュー", icon: "md-queuemusic" },
+    { name: "users", label: "ユーザー", icon: "md-people" },
+    { name: "about", label: "このアプリについて", icon: "md-info" },
+  ];
   if (store.isHost) {
-    ret.sessionSetting = "部屋の設定";
+    panels.push({ name: "sessionSetting", label: "部屋の設定", icon: "md-settings" });
   }
   if (store.debug) {
-    ret.debug = "デバッグ";
+    panels.push({ name: "debug", label: "デバッグ", icon: "md-bugreport" });
   }
-
-  return ret;
+  return panels;
 });
 
 export type PanelName = "queue" | "users" | "about" | "sessionSetting" | "debug";
@@ -49,13 +53,16 @@ const selectedTab = ref<PanelName>("queue");
   <div un-min-h="full" un-relative un-flex="~ col" un-flex-grow>
     <nav un-bg="black" un-h="8" un-px="2" un-flex="~ row" un-items="center">
       <button
-        v-for="tab in Object.keys(tabs)"
-        :key="tab"
+        v-for="panel in panels"
+        :key="panel.name"
         un-mr="4"
-        :un-opacity="tab !== selectedTab ? '50' : null"
-        @click="selectedTab = tab as PanelName"
+        :un-opacity="panel.name !== selectedTab ? '50' : null"
+        @click="selectedTab = panel.name"
       >
-        {{ tabs[tab as keyof typeof tabs] }}
+        <v-icon un-inline un-hidden="lg:~" un-ml="1" :name="panel.icon" />
+        <span un-hidden un-inline="lg:~">
+          {{ panel.label }}
+        </span>
       </button>
       <div un-flex-grow />
       <span un-text="sm">{{ (zoomScale * 100).toFixed() }} %</span>

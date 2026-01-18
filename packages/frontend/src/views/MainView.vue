@@ -121,16 +121,27 @@ watch(
     }"
   />
   <div class="root" un-xs="relative">
-    <div class="top-section" un-xs="relative" un-flex="~" un-h="full" un-justify="center sm:normal">
-      <NicoPlayer class="nico-player" un-w="max-sm:full sm:auto" un-h="xs:full" un-aspect="video" />
-      <InfoPanel class="hidden-on-miniplayer" un-hidden un-sm="flex" un-h="full" />
+    <div
+      class="top-section"
+      un-xs="relative"
+      un-flex="~"
+      un-h="full"
+      un-justify="max-md:center normal"
+    >
+      <NicoPlayer
+        class="nico-player"
+        un-w="full landscape:auto"
+        un-h="max-md:full"
+        un-aspect="video"
+      />
+      <InfoPanel un-hidden="miniplayer:~ max-md:~" un-h="full" />
     </div>
-    <NowPlaying class="hidden-on-miniplayer" un-hidden un-xs="flex" un-h="full" />
-    <CafeSpace class="hidden-on-miniplayer" un-hidden un-xs="block" />
-    <CafeController class="hidden-on-miniplayer" un-hidden un-xs="flex" un-z="10" />
-    <MobileView class="mobile-view hidden-on-miniplayer" un-hidden un-xs:max-sm="block" un-z="10" />
+    <NowPlaying un-hidden="miniplayer:~" un-h="full" />
+    <CafeSpace un-hidden="miniplayer:~" />
+    <CafeController un-z="100" />
+    <MobileView un-hidden="md:~" />
   </div>
-  <div class="background-container" un-hidden un-xs="block">
+  <div class="background-container" un-hidden un-block="virtual:~">
     <div
       class="background"
       :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
@@ -165,12 +176,12 @@ $padding: 8px;
     transform: none;
   }
 
-  // スマホ
-  @media (max-width: 640px) {
+  // 縦画面
+  @media (aspect-ratio < 1/1) {
     grid-template-rows: auto auto 1fr auto;
   }
 
-  // PC
+  // 横画面
   @media (max-height: 480px) and (min-width: 640px) {
     grid-template-rows: calc(45vh - 2rem) 2rem 1fr auto;
   }

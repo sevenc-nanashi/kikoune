@@ -76,8 +76,16 @@ const queueLimit = computed({
       </div>
       <div class="config-item" un-px="2">
         <label
-          >キューの最大曲数 <input v-model="queueLimit" type="number" un-text="black" min="1"
-        /></label>
+          >キューの最大曲数
+          <input
+            v-model="queueLimit"
+            type="number"
+            un-text="black"
+            un-bg="white"
+            min="1"
+            un-p="x-2"
+          />
+        </label>
         <p>キューに追加できる最大曲数を制限します。</p>
       </div>
       <div class="config-item" un-px="2">

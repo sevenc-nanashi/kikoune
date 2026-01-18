@@ -48,12 +48,11 @@ const changeTab = () => {
 </script>
 <template>
   <div
-    class="hidden-on-miniplayer"
     un-absolute
     un-inset="0"
-    un-z="40"
+    un-z="100"
     un-hidden
-    :un-flex="selectedTab !== 'main' ? 'xs:max-sm:~ xs:max-sm:col' : null"
+    :un-flex="selectedTab !== 'main' ? 'portrait:~ portrait:col' : null"
   >
     <div
       un-w="full"
@@ -77,11 +76,12 @@ const changeTab = () => {
     </div>
   </div>
   <div
-    class="root hidden-on-miniplayer"
+    class="root"
     un-absolute
     un-inset="0"
-    un-z="50"
+    un-z="100"
     un-pointer-events="none"
+    un-hidden="miniplayer:~"
     v-bind="$attrs"
   >
     <button
@@ -89,8 +89,8 @@ const changeTab = () => {
       un-fill="white"
       un-aspect="square"
       un-absolute
-      un-left="2"
-      un-bottom="14"
+      un-left="4"
+      un-bottom="16 sm:18"
       un-rounded="full"
       un-drop-shadow="md"
       un-pointer-events="auto"

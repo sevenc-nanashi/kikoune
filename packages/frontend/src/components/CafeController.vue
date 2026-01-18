@@ -5,6 +5,10 @@ import { MemberState } from "@kikoune/shared";
 import { useDiscordSdk } from "~/plugins/useDiscordSdk";
 import { useStore } from "~/store";
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 const store = useStore();
 const discordSdk = useDiscordSdk();
 
@@ -60,25 +64,29 @@ const onSubmit = () => {
 };
 </script>
 <template>
-  <div un-w="full" un-flex="~ row" un-gap="2" un-bottom="0 sm:auto" un-relative un-z="xs:max-sm:20">
+  <div
+    un-w="full"
+    un-flex="sm:~ miniplayer:~ row"
+    un-gap="2"
+    un-bottom="auto"
+    un-relative
+    un-hidden
+    v-bind="$attrs"
+  >
     <button
-      un-h="10 sm:full"
-      un-aspect="square sm:auto"
+      un-h="full"
+      un-aspect="auto"
       un-absolute
-      un-right="2 sm:auto"
-      un-bottom="[6.5rem] sm:auto"
-      un-rounded="full sm:none"
-      un-drop-shadow="md sm:none"
-      un-py="sm:0"
-      un-px="sm:4"
+      un-right="auto"
+      un-py="0"
+      un-px="4"
       un-sm="relative"
-      :un-bg="rotate ? 'cyan-500' : 'black sm:black/50'"
+      :un-bg="rotate ? 'cyan-500' : 'black/50'"
       :un-focus="rotate ? null : 'bg-black'"
       :un-hover="rotate ? null : 'bg-black'"
       @click="switchRotate"
     >
       <span un-hidden un-sm="inline">回る</span>
-      <v-icon un-inline un-sm="!hidden" name="md-refresh" />
     </button>
     <form un-flex-grow un-flex="~ row" un-gap="2" @submit.prevent="onSubmit">
       <input
@@ -91,7 +99,6 @@ const onSubmit = () => {
         un-outline="none"
         un-flex-grow
         un-rounded="none"
-        un-placeholder="sm:transparent"
       />
       <button
         type="submit"
@@ -140,5 +147,58 @@ const onSubmit = () => {
       消す
     </button>
   </div>
+  <form un-hidden="sm:~ miniplayer:~" un-w="full" un-relative @submit.prevent="onSubmit" v-bind="$attrs">
+    <input
+      ref="message"
+      :maxlength="maxMessageLength"
+      placeholder="吹き出しの内容を入力..."
+      un-w="full"
+      un-h="10"
+      un-bg="white"
+      un-p="2"
+      un-text="slate-950"
+      un-outline="none"
+      un-flex-grow
+      un-rounded="none"
+      un-placeholder="sm:transparent"
+    />
+    <div
+      un-absolute
+      un-bottom="14"
+      un-right="2"
+      un-pointer-events="none"
+      un-flex="~ col"
+      un-gap="2"
+    >
+      <button
+        type="button"
+        un-pointer-events="auto"
+        un-grid
+        un-size="10"
+        un-aspect="square"
+        un-rounded="full"
+        un-place-items="center"
+        un-drop-shadow="md"
+        :un-bg="rotate ? 'cyan-500' : 'black'"
+        @click="switchRotate"
+      >
+        <v-icon name="md-refresh" />
+      </button>
+      <button
+        type="submit"
+        un-pointer-events="auto"
+        un-grid
+        un-size="10"
+        un-aspect="square"
+        un-rounded="full"
+        un-place-items="center"
+        un-drop-shadow="md"
+        :un-bg="mobileSend ? 'black' : 'cyan-500'"
+      >
+        <v-icon v-if="mobileSend" name="md-message" />
+        <v-icon v-else name="md-close" />
+      </button>
+    </div>
+  </form>
 </template>
 <style scoped lang="scss"></style>

@@ -26,13 +26,8 @@ const onTitleClick = () => {
 };
 </script>
 <template>
-  <div un-min-h="full" un-w="full" un-bg="black/50" un-p="2">
-    <h1
-      un-font="bold"
-      un-text="xl"
-      :un-text="store.debug ? 'cyan-500' : null"
-      @click="onTitleClick"
-    >
+  <div un-min-h="full" un-w="full" un-bg="black/25" un-p="2">
+    <h1 un-font="bold" :un-text="store.debug ? 'xl cyan-500' : 'xl'" @click="onTitleClick">
       Kikoune
     </h1>
     <p>
