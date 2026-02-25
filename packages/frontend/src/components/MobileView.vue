@@ -51,8 +51,8 @@ const changeTab = () => {
     un-absolute
     un-inset="0"
     un-z="100"
-    un-hidden
-    :un-flex="selectedTab !== 'main' ? 'portrait:~ portrait:col' : null"
+    :un-hidden="selectedTab === 'main' ? '~' : 'md:~'"
+    un-flex="~ col"
   >
     <div
       un-w="full"
@@ -60,6 +60,9 @@ const changeTab = () => {
       un-flex="~ row"
       un-bg="black"
       un-h="16"
+      un-pt="[calc(var(--sait)_+_1rem)]"
+      un-pl="[calc(var(--sail)_+_1rem)]"
+      un-pr="[calc(var(--sair)_+_1rem)]"
       un-font="bold"
       un-text="2xl"
       un-items="end"
@@ -67,7 +70,16 @@ const changeTab = () => {
     >
       {{ tabNames[selectedTab] }}
     </div>
-    <div un-h="[calc(100vh_-_4rem)]" un-relative un-w="full" un-bg="black/75">
+    <div
+      un-h="[calc(100%_-_4rem)]"
+      un-relative
+      un-w="full"
+      un-bg="black/75"
+      un-backdrop-blur="sm"
+      un-pl="[var(--sail)]"
+      un-pr="[var(--sair)]"
+      un-pb="[var(--saib)]"
+    >
       <QueueList v-if="selectedTab === 'queue'" />
       <UserList v-else-if="selectedTab === 'users'" />
       <AboutThis v-else-if="selectedTab === 'about'" />
@@ -75,31 +87,24 @@ const changeTab = () => {
       <DebugInfo v-else-if="selectedTab === 'debug'" />
     </div>
   </div>
-  <div
-    class="root"
+  <button
+    un-h="10"
+    un-fill="white"
+    un-aspect="square"
     un-absolute
-    un-inset="0"
-    un-z="100"
-    un-pointer-events="none"
-    un-hidden="miniplayer:~"
-    v-bind="$attrs"
+    un-left="4"
+    un-bottom="16 sm:18"
+    un-rounded="full"
+    un-drop-shadow="md"
+    un-pointer-events="auto"
+    un-grid
+    un-place-items="center"
+    un-hidden="md:~"
+    :un-bg="selectedTab === 'main' ? 'black' : 'cyan-500'"
+    @click="changeTab"
   >
-    <button
-      un-h="10"
-      un-fill="white"
-      un-aspect="square"
-      un-absolute
-      un-left="4"
-      un-bottom="16 sm:18"
-      un-rounded="full"
-      un-drop-shadow="md"
-      un-pointer-events="auto"
-      :un-bg="selectedTab === 'main' ? 'black' : 'cyan-500'"
-      @click="changeTab"
-    >
-      <v-icon :name="tabs[selectedTab]" />
-    </button>
-  </div>
+    <v-icon :name="tabs[selectedTab]" />
+  </button>
 </template>
 <style scoped lang="scss">
 $padding: 1rem;

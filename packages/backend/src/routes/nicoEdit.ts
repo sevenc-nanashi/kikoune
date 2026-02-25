@@ -108,11 +108,7 @@ app.get("/delivery-domand-nicovideo-jp/:rest{.+}", async (c) => {
   const res = await fetch(
     withParams(`https://delivery.domand.nicovideo.jp/${rest}`, c.req.query()),
   );
-  for (const [key, value] of res.headers.entries()) {
-    if (key.toLowerCase() === "transfer-encoding") continue;
-
-    c.header(key, value);
-  }
+  c.header("Content-Type", res.headers.get("Content-Type") || "application/octet-stream");
   return c.body(replaceToExternal(await res.text()), 200);
 });
 app.get("/nvapi-recommend", async (c) => {

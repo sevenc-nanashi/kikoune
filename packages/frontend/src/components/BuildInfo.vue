@@ -5,8 +5,8 @@ const isDev = import.meta.env.DEV;
 <template>
   <div
     un-absolute
-    un-left="3"
-    un-bottom="3"
+    un-left="[calc(var(--sail)_+_1rem)]"
+    un-bottom="[calc(var(--saib)_+_1rem)]"
     un-hidden
     un-opacity="50"
     un-pointer-events="none"

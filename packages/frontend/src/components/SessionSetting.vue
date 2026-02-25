@@ -54,7 +54,7 @@ const queueLimit = computed({
 });
 </script>
 <template>
-  <div un-bg="black/25" un-h="full" un-w="full" un-relative un-flex="~ col">
+  <div un-h="full" un-w="full" un-relative un-flex="~ col">
     <div
       un-flex-grow
       un-flex="~ col"

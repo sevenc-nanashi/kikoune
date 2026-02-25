@@ -62,7 +62,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       un-rounded
       un-overflow="hidden"
       un-hidden
-      un-sm="block"
+      un-md="block"
     >
       <div
         un-absolute
@@ -78,8 +78,8 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       un-h="full"
       un-p="2"
       un-flex-grow
-      un-flex="~ col sm:row"
-      un-items="start sm:center"
+      un-flex="~ col md:row"
+      un-items="start md:center"
     >
       <div class="text-section" un-my="auto" un-flex-grow>
         <h2 un-text="xl" un-font="bold">
@@ -99,8 +99,8 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       </div>
       <div
         v-if="store.session.video"
-        un-w="full sm:auto"
-        un-pt="xs:max-sm:2"
+        un-w="full md:auto"
+        un-pt="max-md:2"
         un-flex="~ row"
         un-items="center"
       >
@@ -112,7 +112,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
           un-h="6"
           un-mr="2"
           un-hidden
-          un-xs:max-sm="block"
+          un-block="max-md:~"
           @click="openVideo"
         />
         <TooltipIcon
@@ -125,8 +125,8 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
           un-mr="2"
           @click="skipVideo"
         />
-        <div un-flex-grow un-sm="hidden" />
-        <span class="requester-name" un-text="sm">
+        <div un-flex-grow un-md="hidden" />
+        <span class="requester-name" un-text="md">
           {{ store.getName(store.session.video.requestedBy) }}
         </span>
         <img
@@ -144,7 +144,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       un-place-items="center"
       un-transition="colors"
       un-hidden
-      un-sm="grid"
+      un-grid="md:~"
       un-hover="bg-black"
       un-cursor="pointer"
       @click="openVideo"

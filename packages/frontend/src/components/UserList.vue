@@ -81,7 +81,6 @@ const orderedMembers = computed(() => {
 </script>
 <template>
   <div
-    un-bg="black/25"
     un-h="screen sm:auto"
     un-min-h="full"
     un-w="full"

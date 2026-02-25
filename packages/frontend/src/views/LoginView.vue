@@ -106,6 +106,7 @@ const isBrowser = !(
 </script>
 <template>
   <div
+    class="root"
     un-w="screen"
     un-h="screen"
     un-place-items="center"
@@ -126,4 +127,11 @@ const isBrowser = !(
     <BuildInfo />
   </div>
 </template>
-<style lang="scss"></style>
+<style scoped lang="scss">
+.root {
+  padding-top: var(--sait);
+  padding-left: var(--sail);
+  padding-right: var(--sair);
+  padding-bottom: var(--saib);
+}
+</style>

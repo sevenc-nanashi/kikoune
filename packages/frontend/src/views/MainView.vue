@@ -106,47 +106,24 @@ watch(
 );
 </script>
 <template>
-  <div
-    un-bg="white/25"
-    un-absolute
-    un-inset="0"
-    un-place-items="center"
-    un-place-content="center"
-    un-grid
-    un-transition="opacity"
-    un-z="20"
-    :style="{
+  <div un-bg="white/25" un-absolute un-inset="0" un-place-items="center" un-place-content="center" un-grid
+    un-transition="opacity" un-z="20" :style="{
       opacity: errorCount > 1 ? 1 : 0,
       pointerEvents: errorCount > 1 ? 'auto' : 'none',
-    }"
-  />
-  <div class="root" un-xs="relative">
-    <div
-      class="top-section"
-      un-xs="relative"
-      un-flex="~"
-      un-h="full"
-      un-justify="max-md:center normal"
-    >
-      <NicoPlayer
-        class="nico-player"
-        un-w="full landscape:auto"
-        un-h="max-md:full"
-        un-aspect="video"
-      />
-      <InfoPanel un-hidden="miniplayer:~ max-md:~" un-h="full" />
+    }" />
+  <div class="root" un-relative>
+    <div class="top-section" un-xs="relative" un-flex="~" un-h="full" un-justify="max-md:center normal">
+      <NicoPlayer class="nico-player" un-w="full landscape:auto" un-h="max-md:full" un-aspect="video" />
+      <InfoPanel un-hidden="miniplayer:~ lt-md:~" un-h="full" />
     </div>
     <NowPlaying un-hidden="miniplayer:~" un-h="full" />
     <CafeSpace un-hidden="miniplayer:~" />
     <CafeController un-z="100" />
-    <MobileView un-hidden="md:~" />
+    <MobileView />
   </div>
   <div class="background-container" un-hidden un-block="virtual:~">
-    <div
-      class="background"
-      :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
-      :un-bg="state === 'idle' ? 'slate-500' : state === 'sync' ? 'slate-900' : null"
-    />
+    <div class="background" :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
+      :un-bg="state === 'idle' ? 'slate-500' : state === 'sync' ? 'slate-900' : null" />
   </div>
 </template>
 <style scoped lang="scss">
@@ -165,25 +142,11 @@ $padding: 8px;
   transform: scale(var(--zoom-scale));
 
   display: grid;
-  grid-template-rows: calc(45% - 4.5rem) 4.5rem 1fr auto;
+  --now-playing-height: 4.5rem;
+  grid-template-rows: calc(45% - var(--now-playing-height)) var(--now-playing-height) 1fr auto;
 
-  // ミニプレイヤー
-  @media (max-width: 375px) {
-    padding: 0;
-
-    width: 100vw;
-    height: 100vh;
-    transform: none;
-  }
-
-  // 縦画面
-  @media (aspect-ratio < 1/1) {
-    grid-template-rows: auto auto 1fr auto;
-  }
-
-  // 横画面
-  @media (max-height: 480px) and (min-width: 640px) {
-    grid-template-rows: calc(45vh - 2rem) 2rem 1fr auto;
+  @screen lt-md {
+    --now-playing-height: 6rem;
   }
 }
 

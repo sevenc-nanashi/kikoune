@@ -11,7 +11,7 @@ const formattedSession = computed(() => JSON.stringify(store.$state, null, 2));
 const logLevels = ["error", "warn", "log", "info", "debug"];
 </script>
 <template>
-  <div un-min-h="full" un-w="full" un-bg="black/50" un-p="2" un-overflow-y="auto">
+  <div un-min-h="full" un-w="full" un-p="2" un-overflow-y="auto">
     <div>
       ビルド：
       <span un-text="cyan-500" un-font="mono">{{ sha }} </span>
@@ -51,6 +51,14 @@ const logLevels = ["error", "warn", "log", "info", "debug"];
           >
           <span un-ml="1">{{ (message.args || []).map((obj) => obj.toString()).join(" ") }}</span>
         </div>
+      </div>
+    </div>
+    <div>
+      <div>Panic：</div>
+      <div>
+        <button un-bg="red-500" un-text="white" un-p="2" un-rounded @click="store.panic()">
+          Panic
+        </button>
       </div>
     </div>
   </div>
