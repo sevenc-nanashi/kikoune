@@ -260,17 +260,16 @@ const placeholder = computed(() => {
 });
 </script>
 <template>
-  <div un-h="full" un-w="full" un-relative un-flex="~ col">
+  <div un-h="full" un-w="full" un-relative un-flex="~ col" un-pb="8">
     <div
       v-if="searchResult.length > 0"
       un-flex-grow
       un-flex="~ col"
       un-relative
       un-gap="1"
-      un-h="screen sm:auto"
       un-pt="1"
-      un-pb="1 xs:max-sm:20"
-      un-overflow-y="scroll"
+      un-pb="1"
+      un-overflow-y="auto"
     >
       <p un-text="xl">「{{ searchQuery }}」の検索結果</p>
       <div
@@ -321,15 +320,16 @@ const placeholder = computed(() => {
       v-model="queue"
       item-key="nonce"
       :handle="store.sessionSetting.random ? '.__disabled__' : '.handle'"
-      un-flex-grow
-      un-flex="~ col"
-      un-relative
-      un-gap="1"
-      un-h="screen sm:auto"
-      un-pt="1"
-      un-pb="1 xs:max-sm:20"
-      un-overflow-y="scroll"
-      un-overflow-x="hidden"
+      :componentData="{
+        'un-flex-grow': true,
+        'un-flex': '~ col',
+        'un-relative': true,
+        'un-gap': '1',
+        'un-pt': '1',
+        'un-pb': '1',
+        'un-overflow-y': 'auto',
+        'un-overflow-x': 'hidden',
+      }"
       @sort="setReordered"
     >
       <template #header>
@@ -440,7 +440,8 @@ const placeholder = computed(() => {
         </div>
       </template>
     </Draggable>
-
+  </div>
+  <div un-absolute un-w="full" un-bottom="0">
     <div
       un-absolute
       un-w="full"
@@ -458,15 +459,7 @@ const placeholder = computed(() => {
     >
       {{ popup }}
     </div>
-    <form
-      class="queue-form"
-      un-w="full"
-      un-flex
-      un-h="8"
-      un-relative
-      un-z="50"
-      @submit.prevent="onSubmit"
-    >
+    <form class="queue-form" un-w="full" un-flex un-h="8" un-z="50" @submit.prevent="onSubmit">
       <div
         un-absolute
         un-inset="0"

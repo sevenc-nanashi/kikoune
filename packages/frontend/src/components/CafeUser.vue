@@ -40,11 +40,11 @@ const showTooltip = ref(false);
         v-if="memberState.message && memberState.message.trim()"
         un-absolute
         un-top="[-0.5rem]"
-        un-translate-y="-full"
         un-w="48"
         un-break="words"
         un-left="1/2"
         un-translate-x="-1/2"
+        un-translate-y="[-100%]"
         un-text="sm center slate-950"
         un-p="1"
         un-rounded

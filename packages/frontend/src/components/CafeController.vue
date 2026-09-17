@@ -36,28 +36,27 @@ const mobileSend = computed(() => {
 
   return (
     message.value &&
-    ((store.stateOverride.message ?? store.memberStates[store.me.id].message) !==
-      message.value.value ||
+    ((store.stateOverride.message ?? store.memberStates[store.me.id].message) !== message.value ||
       (store.stateOverride.message ?? store.memberStates[store.me.id].message) === "")
   );
 });
-const message = ref<HTMLInputElement>();
+const message = ref<string>();
 const clearMessage = () => {
   if (!message.value) return;
-  message.value.value = "";
+  message.value = "";
   updateState({ message: "" });
   store.setStateOverride({ message: "" });
 };
 
 let prevMessageTimeout: ReturnType<typeof setTimeout>;
 const onSubmit = () => {
-  if (!message.value?.value) return;
+  if (!message.value) return;
   if (window.innerWidth < 640 && !mobileSend.value) {
     clearMessage();
     return;
   }
-  updateState({ message: message.value.value });
-  store.setStateOverride({ message: message.value.value });
+  updateState({ message: message.value });
+  store.setStateOverride({ message: message.value });
   if (prevMessageTimeout) clearTimeout(prevMessageTimeout);
   prevMessageTimeout = setTimeout(() => {
     clearMessage();
@@ -91,7 +90,7 @@ const onSubmit = () => {
     </button>
     <form un-flex-grow un-flex="~ row" un-gap="2" @submit.prevent="onSubmit">
       <input
-        ref="message"
+        v-model="message"
         :maxlength="maxMessageLength"
         placeholder="吹き出しの内容を入力..."
         un-bg="white"
@@ -156,7 +155,7 @@ const onSubmit = () => {
     v-bind="$attrs"
   >
     <input
-      ref="message"
+      v-model="message"
       :maxlength="maxMessageLength"
       placeholder="吹き出しの内容を入力..."
       un-w="full"

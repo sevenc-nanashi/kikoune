@@ -96,6 +96,7 @@ const changeTab = () => {
     un-absolute
     un-left="4"
     un-bottom="16 sm:18"
+    un-z="101"
     un-rounded="full"
     un-drop-shadow="md"
     un-pointer-events="auto"
