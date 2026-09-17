@@ -18,6 +18,7 @@ const replaceToExternal = (src: string) =>
     .replace("https://stella.nicovideo.jp", "/.proxy/nico/stella")
     .replace(/\/users/g, "/../../nico/users")
     .replace(/\/v1\/watch\/(?!non)/g, "/../../nico/v1-watch/")
+    .replace(/\/v4\/watch\/(?!non)/g, "/../../nico/v4-watch/")
     .replace(
       /https?:(?:\/\/|\\\/\\\/)([^/]+?(?:\.nicovideo\.jp|\.nimg\.jp))/g,
       (_match, p1) => host + "/.proxy/external/" + p1.replaceAll(".", "--")
@@ -76,6 +77,29 @@ app.post("/v1-watch/:id/:rest{.+}", async (c) => {
   const id = c.req.param("id")
   const json = await fetch(
     withParams(`https://nvapi.nicovideo.jp/v1/watch/${id}/access-rights/hls`, {
+      actionTrackId: c.req.query("actionTrackId")!,
+    }),
+    {
+      method: "POST",
+      body: JSON.stringify(await c.req.json()),
+      headers: {
+        origin: "https://embed.nicovideo.jp",
+        referer: "https://embed.nicovideo.jp/",
+        "user-agent": c.req.header("user-agent")!,
+        "x-access-right-key": c.req.header("x-access-right-key")!,
+        "x-frontend-id": c.req.header("x-frontend-id")!,
+        "x-frontend-version": c.req.header("x-frontend-version")!,
+        "x-request-with": c.req.header("x-request-with")!,
+        "content-type": "application/json",
+      },
+    }
+  ).then((res) => res.text())
+  return c.json(JSON.parse(replaceToExternal(json)))
+})
+app.post("/v4-watch/:rest{.+}", async (c) => {
+  const rest = c.req.param("rest")
+  const json = await fetch(
+    withParams(`https://nvapi.nicovideo.jp/v4/watch/${rest}`, {
       actionTrackId: c.req.query("actionTrackId")!,
     }),
     {
