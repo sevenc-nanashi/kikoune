@@ -40,7 +40,7 @@ const html = marked.parse(props.source) as string;
   <div class="markdown" v-html="html" />
 </template>
 <style lang="scss">
-@use "~/style.scss";
+@reference "tailwindcss";
 
 .markdown {
   li {

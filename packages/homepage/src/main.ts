@@ -1,7 +1,7 @@
 import "@fontsource/zen-kaku-gothic-new/400.css";
 import "@fontsource/zen-kaku-gothic-new/500.css";
 import "@fontsource/zen-kaku-gothic-new/700.css";
-import "./style.scss";
+import "./style.css";
 import { ViteSSG } from "vite-ssg/single-page";
 
 import App from "./App.vue";

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import consola from "consola/browser";
-import { computed, ref, watch } from "vue";
-import { v4 as uuid } from "uuid";
-import Draggable from "vuedraggable";
 import { SessionVideo, Video } from "@kikoune/shared";
-import { useDiscordSdk } from "~/plugins/useDiscordSdk";
-import { useStore } from "~/store";
+import consola from "consola/browser";
+import { v4 as uuid } from "uuid";
+import { computed, ref, watch } from "vue";
+import Draggable from "vuedraggable";
+
 import TooltipIcon from "~/components/TooltipIcon.vue";
 import { toExternal } from "~/lib/external";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
 
 const store = useStore();
 const discordSdk = useDiscordSdk();

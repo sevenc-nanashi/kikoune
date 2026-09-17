@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { watch } from "vue";
-import consola from "consola/browser";
 import { Common } from "@discord/embedded-app-sdk";
 import { discordScope } from "@kikoune/shared";
 import LogoSvg from "@kikoune/shared/assets/logo_wide.svg?component";
+import consola from "consola/browser";
+import { watch } from "vue";
+
 import BuildInfo from "~/components/BuildInfo.vue";
+import data from "~/lib/data.ts";
 import { useDiscordSdk } from "~/plugins/useDiscordSdk.ts";
 import { useStore } from "~/store.ts";
-import data from "~/lib/data.ts";
 
 const discordSdk = useDiscordSdk();
 const store = useStore();

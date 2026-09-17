@@ -11,13 +11,13 @@
     "register": "tsx ./src/register.ts"
   },
   "dependencies": {
-    "@discordjs/rest": "^2.6.0",
-    "discord-api-types": "^0.38.37",
-    "dotenv": "^17.2.3",
-    "tsx": "^4.21.0"
+    "@discordjs/rest": "^2.6.3",
+    "discord-api-types": "^0.38.55",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.23.13"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.5",
-    "typescript": "^5.9.3"
+    "@tsconfig/node22": "^22.0.6",
+    "typescript": "^7.0.2"
   }
 }

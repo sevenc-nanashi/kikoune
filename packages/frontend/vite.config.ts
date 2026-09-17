@@ -1,8 +1,7 @@
-import vue from "@vitejs/plugin-vue";
+import vize from "@vizejs/vite-plugin";
 import childProcess from "child_process";
 import unocss from "unocss/vite";
 import { defineConfig, UserConfig } from "vite";
-import { consoleForwardPlugin } from "vite-console-forward-plugin";
 import svgLoader from "vite-svg-loader";
 
 // https://vitejs.dev/config/
@@ -21,14 +20,7 @@ export default defineConfig(async (): Promise<UserConfig> => {
     },
     plugins: [
       unocss(),
-      consoleForwardPlugin(),
-      vue({
-        template: {
-          compilerOptions: {
-            isCustomElement: (tag) => tag.startsWith("budoux-"),
-          },
-        },
-      }),
+      vize({ customElements: ["budoux-*"], templateSyntax: "quirks" }),
       svgLoader({
         svgoConfig: {
           multipass: true,
@@ -48,6 +40,7 @@ export default defineConfig(async (): Promise<UserConfig> => {
     server: {
       port: 1103,
       allowedHosts: true,
+      forwardConsole: true,
       proxy: {
         "/api": {
           target: "http://localhost:1104",

@@ -3,4 +3,7 @@ packages:
 
 catalogs:
   types:
-    "@types/node": "^24.10.9"
+    "@types/node": ^24.13.5
+
+overrides:
+  picomatch: 4.0.7

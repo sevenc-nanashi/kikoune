@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import consola from "consola";
+
 import { useDiscordSdk } from "~/plugins/useDiscordSdk";
 import { useStore } from "~/store";
 

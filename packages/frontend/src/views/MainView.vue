@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import consola from "consola/browser";
 import { MemberState, Session, defaultMemberState } from "@kikoune/shared";
-import NicoPlayer from "~/components/NicoPlayer.vue";
-import InfoPanel from "~/components/InfoPanel.vue";
-import NowPlaying from "~/components/NowPlaying.vue";
+import consola from "consola/browser";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+
 import CafeController from "~/components/CafeController.vue";
 import CafeSpace from "~/components/CafeSpace.vue";
+import InfoPanel from "~/components/InfoPanel.vue";
 import MobileView from "~/components/MobileView.vue";
+import NicoPlayer from "~/components/NicoPlayer.vue";
+import NowPlaying from "~/components/NowPlaying.vue";
 import { useDiscordSdk } from "~/plugins/useDiscordSdk.ts";
 import { sessionNotStarted, useStore } from "~/store.ts";
 
@@ -106,14 +107,34 @@ watch(
 );
 </script>
 <template>
-  <div un-bg="white/25" un-absolute un-inset="0" un-place-items="center" un-place-content="center" un-grid
-    un-transition="opacity" un-z="20" :style="{
+  <div
+    un-bg="white/25"
+    un-absolute
+    un-inset="0"
+    un-place-items="center"
+    un-place-content="center"
+    un-grid
+    un-transition="opacity"
+    un-z="20"
+    :style="{
       opacity: errorCount > 1 ? 1 : 0,
       pointerEvents: errorCount > 1 ? 'auto' : 'none',
-    }" />
+    }"
+  />
   <div class="root" un-relative>
-    <div class="top-section" un-xs="relative" un-flex="~" un-h="full" un-justify="max-md:center normal">
-      <NicoPlayer class="nico-player" un-w="full landscape:auto" un-h="max-md:full" un-aspect="video" />
+    <div
+      class="top-section"
+      un-xs="relative"
+      un-flex="~"
+      un-h="full"
+      un-justify="max-md:center normal"
+    >
+      <NicoPlayer
+        class="nico-player"
+        un-w="full landscape:auto"
+        un-h="max-md:full"
+        un-aspect="video"
+      />
       <InfoPanel un-hidden="miniplayer:~ lt-md:~" un-h="full" />
     </div>
     <NowPlaying un-hidden="miniplayer:~" un-h="full" />
@@ -122,8 +143,11 @@ watch(
     <MobileView />
   </div>
   <div class="background-container" un-hidden un-block="virtual:~">
-    <div class="background" :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
-      :un-bg="state === 'idle' ? 'slate-500' : state === 'sync' ? 'slate-900' : null" />
+    <div
+      class="background"
+      :style="{ backgroundImage: currentId && `url(${store.thumbnailUrl})` }"
+      :un-bg="state === 'idle' ? 'slate-500' : state === 'sync' ? 'slate-900' : null"
+    />
   </div>
 </template>
 <style scoped lang="scss">

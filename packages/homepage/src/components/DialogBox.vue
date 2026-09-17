@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
+
 import MarkdownRenderer from "./MarkdownRenderer.vue";
 
 const open = ref(false);

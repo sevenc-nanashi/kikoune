@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import { MemberState, defaultMemberState } from "@kikoune/shared";
+import { computed, ref } from "vue";
+
 import { useStore } from "~/store";
 
 const props = defineProps<{

@@ -30,3 +30,4 @@ docker-compose.yml
 .turbo
 .vite-ssg-temp
 *.tsbuildinfo
+.vize

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import { maxMessageLength } from "@kikoune/shared";
 import { MemberState } from "@kikoune/shared";
+import { computed, ref } from "vue";
+
 import { useDiscordSdk } from "~/plugins/useDiscordSdk";
 import { useStore } from "~/store";
 
@@ -147,7 +148,13 @@ const onSubmit = () => {
       消す
     </button>
   </div>
-  <form un-hidden="sm:~ miniplayer:~" un-w="full" un-relative @submit.prevent="onSubmit" v-bind="$attrs">
+  <form
+    un-hidden="sm:~ miniplayer:~"
+    un-w="full"
+    un-relative
+    @submit.prevent="onSubmit"
+    v-bind="$attrs"
+  >
     <input
       ref="message"
       :maxlength="maxMessageLength"

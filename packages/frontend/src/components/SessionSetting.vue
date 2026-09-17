@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { SessionSetting } from "@kikoune/shared";
 import consola from "consola/browser";
 import { computed, ref } from "vue";
-import { SessionSetting } from "@kikoune/shared";
-import { useStore } from "~/store";
-import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+
 import { debounce } from "~/lib/utils";
+import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
 
 const store = useStore();
 const discordSdk = useDiscordSdk();

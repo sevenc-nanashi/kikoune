@@ -15,14 +15,10 @@
     "dotenv-cli": "^11.0.0"
   },
   "devDependencies": {
-    "oxfmt": "^0.24.0",
-    "oxlint": "^1.39.0",
-    "turbo": "^2.7.5"
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
+    "turbo": "^2.10.13",
+    "vize": "^0.424.10"
   },
-  "packageManager": "pnpm@10.28.0",
-  "pnpm": {
-    "overrides": {
-      "picomatch": "4.0.2"
-    }
-  }
+  "packageManager": "pnpm@10.34.5"
 }

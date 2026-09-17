@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import QueueList from "./QueueList.vue";
-import UserList from "./UserList.vue";
+
+import { useStore } from "~/store";
+
 import AboutThis from "./AboutThis.vue";
 import DebugInfo from "./DebugInfo.vue";
-import SessionSetting from "./SessionSetting.vue";
 import { PanelName as DesktopPanelName } from "./InfoPanel.vue";
-import { useStore } from "~/store";
+import QueueList from "./QueueList.vue";
+import SessionSetting from "./SessionSetting.vue";
+import UserList from "./UserList.vue";
 
 const store = useStore();
 

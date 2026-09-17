@@ -1,15 +1,17 @@
 import fs from "node:fs/promises";
+
 import { rolldown } from "rolldown";
 
 console.log("Building...");
 const bundle = await rolldown({
   input: `${import.meta.dirname}/src/index.ts`,
   platform: "node",
+  tsconfig: `${import.meta.dirname}/tsconfig.json`,
 });
 
 await bundle.write({
   file: `${import.meta.dirname}/dist/index.bundle.js`,
-  inlineDynamicImports: true,
+  codeSplitting: false,
   format: "es",
 });
 

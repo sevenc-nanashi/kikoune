@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
 import consola from "consola/browser";
-import CafeUser from "./CafeUser.vue";
-import { useStore } from "~/store";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+
 import { useDiscordSdk } from "~/plugins/useDiscordSdk";
+import { useStore } from "~/store";
+
+import CafeUser from "./CafeUser.vue";
 
 const store = useStore();
 const discordSdk = useDiscordSdk();

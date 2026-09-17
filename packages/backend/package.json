@@ -8,24 +8,24 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.9",
-    "@hono/zod-validator": "^0.7.6",
+    "@hono/node-server": "^2.1.1",
+    "@hono/zod-validator": "^0.9.1",
     "@kikoune/shared": "workspace:*",
     "async-lock": "1.4.1",
     "consola": "^3.4.2",
     "expiry-map": "^2.0.0",
-    "fast-xml-parser": "^5.3.3",
-    "hono": "^4.11.4",
-    "ioredis": "^5.9.2",
-    "zod": "^4.3.5"
+    "fast-xml-parser": "^5.11.1",
+    "hono": "^4.13.8",
+    "ioredis": "^6.0.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/async-lock": "1.4.2",
     "@types/node": "catalog:types",
-    "@typescript/native-preview": "7.0.0-dev.20260117.1",
-    "discord-api-types": "^0.38.37",
-    "rolldown": "1.0.0-beta.60",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
+    "discord-api-types": "^0.38.55",
+    "rolldown": "1.2.9",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
   }
 }

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import LogoSvg from "@kikoune/shared/assets/logo_wide.svg?component";
+
 import DialogBox from "~/components/DialogBox.vue";
 import install from "~/contents/install.md?raw";
-import terms from "~/contents/terms.md?raw";
 import privacy from "~/contents/privacy.md?raw";
+import terms from "~/contents/terms.md?raw";
 </script>
 
 <template>

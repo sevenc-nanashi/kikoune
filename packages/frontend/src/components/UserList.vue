@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import consola from "consola/browser";
 import { computed, ref, watch } from "vue";
+
+import TooltipIcon from "~/components/TooltipIcon.vue";
 import { Participant, useDiscordSdk } from "~/plugins/useDiscordSdk";
 import { useStore } from "~/store";
-import TooltipIcon from "~/components/TooltipIcon.vue";
 
 const store = useStore();
 const discordSdk = useDiscordSdk();

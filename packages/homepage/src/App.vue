@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
+
 import LandingTexts from "./components/LandingTexts.vue";
 
 const demos = Object.values(

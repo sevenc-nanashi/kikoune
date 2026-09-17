@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { buffer } from "@kikoune/shared";
 import consola from "consola/browser";
 import { v4 as uuid } from "uuid";
 import { computed, ref, onMounted, onUnmounted, watch } from "vue";
-import { buffer } from "@kikoune/shared";
+
 import { useDiscordSdk } from "~/plugins/useDiscordSdk";
 import { sessionNotStarted, useStore } from "~/store";
 

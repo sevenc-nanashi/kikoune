@@ -1,4 +1,4 @@
-import vue from "@vitejs/plugin-vue";
+import vize from "@vizejs/vite-plugin";
 import { defineConfig } from "vite";
 import svgLoader from "vite-svg-loader";
 
@@ -6,13 +6,7 @@ import svgLoader from "vite-svg-loader";
 export default defineConfig({
   base: "/kikoune/",
   plugins: [
-    vue({
-      template: {
-        compilerOptions: {
-          isCustomElement: (tag) => tag.startsWith("budoux-"),
-        },
-      },
-    }),
+    vize({ customElements: ["budoux-*"] }),
     svgLoader({
       svgoConfig: {
         multipass: true,
@@ -32,13 +26,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": "/src",
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern-compiler",
-      },
     },
   },
 });

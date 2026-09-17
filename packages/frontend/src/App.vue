@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import consola from "consola/browser";
 import { TooltipProvider } from "radix-vue";
+import { onMounted, onUnmounted } from "vue";
+
+import { useDiscordSdk } from "./plugins/useDiscordSdk";
 import { useStore } from "./store";
+import ErrorView from "./views/ErrorView.vue";
 import LoginView from "./views/LoginView.vue";
 import MainView from "./views/MainView.vue";
-import ErrorView from "./views/ErrorView.vue";
-import { useDiscordSdk } from "./plugins/useDiscordSdk";
-import { onMounted, onUnmounted } from "vue";
-import consola from "consola/browser";
 
 const log = consola.withTag("root");
 
