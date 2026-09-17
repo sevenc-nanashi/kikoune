@@ -166,6 +166,7 @@ $padding: 8px;
   transform: scale(var(--zoom-scale));
 
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   --now-playing-height: 4.5rem;
   grid-template-rows: calc(45% - var(--now-playing-height)) var(--now-playing-height) 1fr auto;
 

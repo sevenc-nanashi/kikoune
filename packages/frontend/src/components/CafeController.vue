@@ -35,7 +35,6 @@ const mobileSend = computed(() => {
   if (!store.memberStates[store.me.id]) return true;
 
   return (
-    message.value &&
     ((store.stateOverride.message ?? store.memberStates[store.me.id].message) !== message.value ||
       (store.stateOverride.message ?? store.memberStates[store.me.id].message) === "")
   );

@@ -83,11 +83,11 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       un-flex="~ col md:row"
       un-items="start md:center"
     >
-      <div class="text-section" un-my="auto" un-flex-grow>
-        <h2 un-text="xl" un-font="bold">
+      <div class="text-section" un-my="auto" un-flex-grow un-min-w="0" un-w="full md:auto">
+        <h2 un-text="xl" un-leading="max-md:6" un-font="bold" un-truncate :title="title">
           {{ title }}
         </h2>
-        <p un-text="md">
+        <p un-text="md max-md:sm" un-truncate :title="store.session.video?.author">
           <template v-if="store.session.video">
             {{ store.session.video.author }}
           </template>
@@ -102,7 +102,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
       <div
         v-if="store.session.video"
         un-w="full md:auto"
-        un-pt="max-md:2"
+        un-pt="max-md:1"
         un-flex="~ row"
         un-items="center"
       >
@@ -128,7 +128,7 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
           @click="skipVideo"
         />
         <div un-flex-grow un-md="hidden" />
-        <span class="requester-name" un-text="md">
+        <span class="requester-name" un-text="md" un-truncate>
           {{ store.getName(store.session.video.requestedBy) }}
         </span>
         <img
@@ -156,6 +156,10 @@ const title = computed(() => store.session.video?.title ?? "Kikoune");
   </div>
 </template>
 <style scoped lang="scss">
+.info-container {
+  min-width: 0;
+}
+
 @media (max-height: 480px) {
   .requester-name {
     display: none;
