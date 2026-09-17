@@ -65,6 +65,7 @@ const changeTab = () => {
       un-pt="[calc(var(--sait)_+_1rem)]"
       un-pl="[calc(var(--sail)_+_1rem)]"
       un-pr="[calc(var(--sair)_+_1rem)]"
+      un-pb="1"
       un-font="bold"
       un-text="2xl"
       un-items="end"
@@ -82,11 +83,13 @@ const changeTab = () => {
       un-pr="[var(--sair)]"
       un-pb="[var(--saib)]"
     >
-      <QueueList v-if="selectedTab === 'queue'" />
-      <UserList v-else-if="selectedTab === 'users'" />
-      <AboutThis v-else-if="selectedTab === 'about'" />
-      <SessionSetting v-else-if="selectedTab === 'sessionSetting'" />
-      <DebugInfo v-else-if="selectedTab === 'debug'" />
+      <div un-relative un-h="full" un-w="full">
+        <QueueList v-if="selectedTab === 'queue'" />
+        <UserList v-else-if="selectedTab === 'users'" />
+        <AboutThis v-else-if="selectedTab === 'about'" />
+        <SessionSetting v-else-if="selectedTab === 'sessionSetting'" />
+        <DebugInfo v-else-if="selectedTab === 'debug'" />
+      </div>
     </div>
   </div>
   <button
